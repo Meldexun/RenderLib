@@ -8,6 +8,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.Timer;
 import net.minecraft.util.math.MathHelper;
 
@@ -20,6 +22,10 @@ public class MixinMinecraft {
 	private float renderPartialTicksPaused;
 	@Shadow
 	private Timer timer;
+	@Shadow
+	public WorldClient world;
+	@Shadow
+	private GameSettings gameSettings;
 
 	@ModifyArg(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;onRenderTickStart(F)V"))
 	public float onRenderTickStart(float partialTick) {
@@ -33,14 +39,11 @@ public class MixinMinecraft {
 
 	@Inject(method = "getLimitFramerate", cancellable = true, at = @At("HEAD"))
 	public void getLimitFramerate(CallbackInfoReturnable<Integer> info) {
-		Minecraft mc = Minecraft.getMinecraft();
-
-		if (mc.world == null) {
-			info.setReturnValue(MathHelper.clamp(mc.gameSettings.limitFramerate, 30, 240));
-			return;
+		if (world == null) {
+			info.setReturnValue(MathHelper.clamp(gameSettings.limitFramerate, 30, 240));
+		} else {
+			info.setReturnValue(gameSettings.limitFramerate);
 		}
-
-		info.setReturnValue(mc.gameSettings.limitFramerate);
 	}
 
 }
