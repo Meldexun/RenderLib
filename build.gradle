@@ -85,7 +85,7 @@ mixin {
 processResources {
     inputs.property('mod_id', "${mod_id}")
     inputs.property('mod_name', "${mod_name}")
-    inputs.property('mod_version', "${mod_version}-${mod_stage}")
+    inputs.property('mod_version', "${mod_stage}" != "" ? "${mod_version}-${mod_stage}" : "${mod_version}")
     inputs.property('mc_version', "${mc_version}")
 
     filesMatching('mcmod.info') {
