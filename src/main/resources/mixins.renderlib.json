@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "meldexun.renderlib.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mixins.renderlib.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "caching.boundingbox.MixinEntity",
+    "caching.boundingbox.MixinEntityRenderer",
+    "caching.boundingbox.MixinTileEntity",
+    "caching.loadable.MixinEntity",
+    "caching.loadable.MixinTileEntity",
+    "caching.loadable.MixinWorld",
+    "caching.renderer.MixinEntity",
+    "caching.renderer.MixinRenderManager",
+    "caching.renderer.MixinTileEntity",
+    "caching.renderer.MixinTileEntityRendererDispatcher",
+    "entity.MixinRender",
+    "entity.MixinRenderGlobal",
+    "tileentity.MixinRenderGlobal",
+    "tileentity.MixinTileEntityRendererDispatcher",
+    "MixinClippingHelper",
+    "MixinMinecraft",
+    "MixinRenderGlobal"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

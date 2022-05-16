@@ -1,0 +1,124 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}", changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: "${mixin_gradle_version}"
+    }
+}
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
+
+version = "${mc_version}-${mod_version}-${mod_stage}"
+group = "meldexun.${mod_id}"
+archivesBaseName = "${mod_name}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+minecraft {
+    mappings channel: "${mappings_channel}", version: "${mappings_version}"
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            taskName "runClient ${mod_name} ${mc_version}"
+            environment 'MC_VERSION', "${mc_version}"
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'info'
+            property 'fml.coreMods.load', "${mod_plugin_class}"
+        }
+
+        server {
+            taskName "runServer ${mod_name} ${mc_version}"
+            environment 'MC_VERSION', "${mc_version}"
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'info'
+            property 'fml.coreMods.load', "${mod_plugin_class}"
+        }
+    }
+}
+
+configurations {
+    includedDependencies
+    implementation.extendsFrom(includedDependencies)
+
+    buildDependencies
+}
+
+repositories {
+    ivy {
+        url 'https://github.com/'
+
+        patternLayout {
+            artifact '[organisation]/[module]/releases/download/v[revision]/[module]-[revision].[ext]'
+        }
+
+        metadataSources { artifact() } 
+    }
+
+    maven { url = 'https://www.cursemaven.com' }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+
+    includedDependencies 'meldexun:ASMUtil:1.0.0@jar'
+    includedDependencies 'meldexun:MatrixUtil:1.12.2-1.0.0@jar'
+    includedDependencies 'meldexun:RandomUtil:1.0.0@jar'
+    includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
+    buildDependencies 'curse.maven:FairyLights-233342:3068499'
+    buildDependencies 'curse.maven:ValkyrienSkies-258371:3286262'
+
+    implementation "org.spongepowered:mixin:${mixin_version}"
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+}
+
+mixin {
+    add sourceSets.main, "mixins.${mod_id}.refmap.json"
+    config "mixins.${mod_id}.json"
+}
+
+processResources {
+    inputs.property('mod_id', "${mod_id}")
+    inputs.property('mod_name', "${mod_name}")
+    inputs.property('mod_version', "${mod_version}-${mod_stage}")
+    inputs.property('mc_version', "${mc_version}")
+
+    filesMatching('mcmod.info') {
+        expand mod_id: inputs.properties.get('mod_id'),
+               mod_name: inputs.properties.get('mod_name'),
+               mod_version: inputs.properties.get('mod_version'),
+               mc_version: inputs.properties.get('mc_version')
+    }
+}
+
+jar {
+    archiveBaseName = mod_name
+    archiveAppendix = mc_version
+    archiveVersion = mod_version
+    archiveClassifier = mod_stage
+
+    from {
+        configurations.includedDependencies.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes 'FMLAT': 'accesstransformer.cfg'
+        attributes 'FMLCorePlugin': "${mod_plugin_class}"
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
+        attributes 'ForceLoadAsMod': 'true'
+        attributes 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
+        attributes 'TweakOrder': '0'
+        attributes 'MixinConfigs': "mixins.${mod_id}.json"
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+compileJava {
+    classpath = sourceSets.main.compileClasspath + configurations.buildDependencies
+}
