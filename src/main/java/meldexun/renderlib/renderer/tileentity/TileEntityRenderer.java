@@ -3,9 +3,9 @@ package meldexun.renderlib.renderer.tileentity;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import meldexun.renderlib.util.IBoundingBoxCache;
-import meldexun.renderlib.util.ILoadable;
-import meldexun.renderlib.util.ITileEntityRendererCache;
+import meldexun.renderlib.api.IBoundingBoxCache;
+import meldexun.renderlib.api.ILoadable;
+import meldexun.renderlib.api.ITileEntityRendererCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;

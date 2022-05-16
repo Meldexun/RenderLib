@@ -6,9 +6,9 @@ import java.util.Queue;
 import org.lwjgl.opengl.GL11;
 
 import meldexun.renderlib.RenderLib;
+import meldexun.renderlib.api.IEntityRendererCache;
+import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
-import meldexun.renderlib.util.IEntityRendererCache;
-import meldexun.renderlib.util.ILoadable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

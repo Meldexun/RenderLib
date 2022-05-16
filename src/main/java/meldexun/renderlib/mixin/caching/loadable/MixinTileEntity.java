@@ -3,7 +3,7 @@ package meldexun.renderlib.mixin.caching.loadable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import meldexun.renderlib.util.ILoadable;
+import meldexun.renderlib.api.ILoadable;
 import net.minecraft.tileentity.TileEntity;
 
 @Mixin(TileEntity.class)

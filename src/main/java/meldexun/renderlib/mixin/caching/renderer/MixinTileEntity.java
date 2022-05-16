@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import meldexun.renderlib.util.ITileEntityRendererCache;
+import meldexun.renderlib.api.ITileEntityRendererCache;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 

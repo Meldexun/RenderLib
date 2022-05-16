@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import meldexun.renderlib.util.IBoundingBoxCache;
-import meldexun.renderlib.util.IEntityRendererCache;
-import meldexun.renderlib.util.ILoadable;
-import meldexun.renderlib.util.ITileEntityRendererCache;
+import meldexun.renderlib.api.IBoundingBoxCache;
+import meldexun.renderlib.api.IEntityRendererCache;
+import meldexun.renderlib.api.ILoadable;
+import meldexun.renderlib.api.ITileEntityRendererCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;

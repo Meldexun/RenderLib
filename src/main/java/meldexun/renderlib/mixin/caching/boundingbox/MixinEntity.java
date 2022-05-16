@@ -3,7 +3,7 @@ package meldexun.renderlib.mixin.caching.boundingbox;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import meldexun.renderlib.util.IBoundingBoxCache;
+import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.util.MutableAABB;
 import net.minecraft.entity.Entity;
 

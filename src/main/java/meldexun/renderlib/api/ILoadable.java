@@ -1,4 +1,4 @@
-package meldexun.renderlib.util;
+package meldexun.renderlib.api;
 
 public interface ILoadable {
 

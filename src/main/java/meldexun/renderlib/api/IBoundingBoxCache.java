@@ -1,4 +1,6 @@
-package meldexun.renderlib.util;
+package meldexun.renderlib.api;
+
+import meldexun.renderlib.util.MutableAABB;
 
 public interface IBoundingBoxCache {
 

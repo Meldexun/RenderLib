@@ -4,8 +4,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import meldexun.renderlib.RenderLib;
+import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.integration.ValkyrienSkies;
-import meldexun.renderlib.util.IBoundingBoxCache;
 import meldexun.renderlib.util.MutableAABB;
 import net.minecraft.tileentity.TileEntity;
 
