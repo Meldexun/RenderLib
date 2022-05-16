@@ -52,44 +52,34 @@ public class EntityRenderer {
 		mc.world.loadedEntityList.forEach(entity -> this.addToRenderLists(entity, camera, camX, camY, camZ, partialTicks));
 	}
 
-	protected <T extends Entity> boolean addToRenderLists(T entity, ICamera camera, double camX, double camY, double camZ, double partialTicks) {
-		this.totalEntities++;
-
+	protected <T extends Entity> void addToRenderLists(T entity, ICamera camera, double camX, double camY, double camZ, double partialTicks) {
 		if (!((IEntityRendererCache) entity).hasRenderer()) {
-			return false;
+			return;
 		}
 		if (!((ILoadable) entity).isChunkLoaded()) {
-			return false;
+			return;
 		}
 
-		Minecraft mc = Minecraft.getMinecraft();
-		Render<T> renderer = ((IEntityRendererCache) entity).getRenderer();
+		this.totalEntities++;
 
-		if (!renderer.shouldRender(entity, camera, camX, camY, camZ)
-				&& !entity.isRidingOrBeingRiddenBy(mc.player)
+		if (!((IEntityRendererCache) entity).getRenderer().shouldRender(entity, camera, camX, camY, camZ)
+				&& !entity.isRidingOrBeingRiddenBy(Minecraft.getMinecraft().player)
 				&& (!RenderLib.isFairyLightsInstalled || !FairyLights.isFairyLightEntity(entity))) {
-			return false;
+			return;
 		}
 		if (!this.shouldRenderEntity(entity, camX, camY, camZ)) {
-			return false;
+			return;
 		}
 
-		this.renderedEntities++;
-
-		if (entity.shouldRenderInPass(0)) {
-			this.entityListStaticPass0.add(entity);
-			if (renderer.isMultipass()) {
-				this.entityListMultipassPass0.add(entity);
-			}
-			if (this.shouldRenderOutlines(entity)) {
-				this.entityListOutlinePass0.add(entity);
-			}
+		if (this.isOcclusionCulled(entity)) {
+			this.occludedEntities++;
+		} else {
+			this.renderedEntities++;
+			this.render(entity);
 		}
-		if (entity.shouldRenderInPass(1)) {
-			this.entityListStaticPass1.add(entity);
-			if (renderer.isMultipass()) {
-				this.entityListMultipassPass1.add(entity);
-			}
+
+		if (this.shouldRenderOutlines(entity)) {
+			this.renderOutline(entity);
 		}
 
 		Entity[] parts = entity.getParts();
@@ -98,8 +88,34 @@ public class EntityRenderer {
 				this.addToRenderLists(part, camera, camX, camY, camZ, partialTicks);
 			}
 		}
+	}
 
-		return true;
+	protected <T extends Entity> void render(T entity) {
+		Render<T> renderer = ((IEntityRendererCache) entity).getRenderer();
+
+		if (entity.shouldRenderInPass(0)) {
+			this.entityListStaticPass0.add(entity);
+			if (renderer.isMultipass()) {
+				this.entityListMultipassPass0.add(entity);
+			}
+		}
+
+		if (entity.shouldRenderInPass(1)) {
+			this.entityListStaticPass1.add(entity);
+			if (renderer.isMultipass()) {
+				this.entityListMultipassPass1.add(entity);
+			}
+		}
+	}
+
+	protected <T extends Entity> void renderOutline(T entity) {
+		if (entity.shouldRenderInPass(0)) {
+			this.entityListOutlinePass0.add(entity);
+		}
+	}
+
+	protected <T extends Entity> boolean isOcclusionCulled(T entity) {
+		return false;
 	}
 
 	protected boolean shouldRenderEntity(Entity entity, double camX, double camY, double camZ) {

@@ -38,34 +38,42 @@ public class TileEntityRenderer {
 		mc.world.loadedTileEntityList.forEach(tileEntity -> this.addToRenderLists(tileEntity, camera, camX, camY, camZ, partialTicks));
 	}
 
-	protected <T extends TileEntity> boolean addToRenderLists(T tileEntity, ICamera camera, double camX, double camY, double camZ, double partialTicks) {
+	protected <T extends TileEntity> void addToRenderLists(T tileEntity, ICamera camera, double camX, double camY, double camZ, double partialTicks) {
 		if (!((ITileEntityRendererCache) tileEntity).hasRenderer()) {
-			return false;
+			return;
+		}
+		if (!((ILoadable) tileEntity).isChunkLoaded()) {
+			return;
 		}
 
 		this.totalTileEntities++;
 
-		if (!((ILoadable) tileEntity).isChunkLoaded()) {
-			return false;
-		}
-
 		if (!((IBoundingBoxCache) tileEntity).getCachedBoundingBox().isVisible(camera)) {
-			return false;
+			return;
 		}
 		if (tileEntity.getDistanceSq(camX, camY, camZ) >= tileEntity.getMaxRenderDistanceSquared()) {
-			return false;
+			return;
 		}
 
-		this.renderedTileEntities++;
+		if (this.isOcclusionCulled(tileEntity)) {
+			this.occludedTileEntities++;
+		} else {
+			this.renderedTileEntities++;
+			this.render(tileEntity);
+		}
+	}
 
+	protected <T extends TileEntity> void render(T tileEntity) {
 		if (tileEntity.shouldRenderInPass(0)) {
 			this.tileEntityListPass0.add(tileEntity);
 		}
 		if (tileEntity.shouldRenderInPass(1)) {
 			this.tileEntityListPass1.add(tileEntity);
 		}
+	}
 
-		return true;
+	protected <T extends TileEntity> boolean isOcclusionCulled(T tileEntity) {
+		return false;
 	}
 
 	public void renderTileEntities(float partialTicks) {

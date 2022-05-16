@@ -53,14 +53,12 @@ public class EntityRendererOptifine extends EntityRenderer {
 	}
 
 	@Override
-	protected <T extends Entity> boolean addToRenderLists(T entity, ICamera camera, double camX, double camY, double camZ, double partialTicks) {
-		if (!super.addToRenderLists(entity, camera, camX, camY, camZ, partialTicks)) {
-			return false;
-		}
-		if (entity.shouldRenderInPass(1) && this.shouldRenderOutlines(entity)) {
+	protected <T extends Entity> void renderOutline(T entity) {
+		super.renderOutline(entity);
+
+		if (entity.shouldRenderInPass(1)) {
 			this.entityListOutlinePass1.add(entity);
 		}
-		return true;
 	}
 
 	@Override
