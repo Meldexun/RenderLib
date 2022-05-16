@@ -1,9 +1,5 @@
 package meldexun.renderlib.util;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-
 import org.lwjgl.opengl.GL11;
 
 import meldexun.matrixutil.Matrix4f;
@@ -14,10 +10,10 @@ import net.minecraft.util.math.Vec3d;
 
 public class RenderUtil {
 
-	private static final FloatBuffer FLOAT_BUFFER = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asFloatBuffer();
-
 	private static int frame;
-	private static double partialTicks;
+	private static double partialTick;
+	private static double partialTickDelta;
+
 	private static Matrix4f projectionMatrix;
 	private static Matrix4f modelViewMatrix;
 	private static Matrix4f projectionModelViewMatrix;
@@ -32,19 +28,25 @@ public class RenderUtil {
 	private static double cameraZ;
 	private static Frustum frustum;
 
-	public static void update() {
+	public static void update(double partialTickIn) {
+		frame++;
+		partialTickDelta = partialTickIn - partialTick;
+		if (partialTickDelta < 0.0D)
+			partialTickDelta += 1.0D;
+		partialTick = partialTickIn;
+	}
+
+	public static void updateCamera() {
 		Minecraft mc = Minecraft.getMinecraft();
 		Entity cameraEntity = mc.getRenderViewEntity();
 		Vec3d cameraOffset = ActiveRenderInfo.getCameraPosition();
-		frame++;
-		partialTicks = mc.isGamePaused() ? mc.renderPartialTicksPaused : mc.getRenderPartialTicks();
-		projectionMatrix = getMatrix(GL11.GL_PROJECTION_MATRIX);
-		modelViewMatrix = getMatrix(GL11.GL_MODELVIEW_MATRIX);
+		projectionMatrix = GLUtil.getMatrix(GL11.GL_PROJECTION_MATRIX);
+		modelViewMatrix = GLUtil.getMatrix(GL11.GL_MODELVIEW_MATRIX);
 		projectionModelViewMatrix = projectionMatrix.copy();
 		projectionModelViewMatrix.multiply(modelViewMatrix);
-		cameraEntityX = cameraEntity.lastTickPosX + (cameraEntity.posX - cameraEntity.lastTickPosX) * partialTicks;
-		cameraEntityY = cameraEntity.lastTickPosY + (cameraEntity.posY - cameraEntity.lastTickPosY) * partialTicks;
-		cameraEntityZ = cameraEntity.lastTickPosZ + (cameraEntity.posZ - cameraEntity.lastTickPosZ) * partialTicks;
+		cameraEntityX = cameraEntity.lastTickPosX + (cameraEntity.posX - cameraEntity.lastTickPosX) * partialTick;
+		cameraEntityY = cameraEntity.lastTickPosY + (cameraEntity.posY - cameraEntity.lastTickPosY) * partialTick;
+		cameraEntityZ = cameraEntity.lastTickPosZ + (cameraEntity.posZ - cameraEntity.lastTickPosZ) * partialTick;
 		cameraOffsetX = cameraOffset.x;
 		cameraOffsetY = cameraOffset.y;
 		cameraOffsetZ = cameraOffset.z;
@@ -54,24 +56,16 @@ public class RenderUtil {
 		frustum = new Frustum(projectionModelViewMatrix, cameraEntityX, cameraEntityY, cameraEntityZ);
 	}
 
-	/**
-	 * {@link GL11#GL_PROJECTION_MATRIX},
-	 * {@link GL11#GL_MODELVIEW_MATRIX},
-	 * {@link GL11#GL_TEXTURE_MATRIX}
-	 */
-	private static Matrix4f getMatrix(int matrix) {
-		GL11.glGetFloat(matrix, FLOAT_BUFFER);
-		Matrix4f m = new Matrix4f();
-		m.load(FLOAT_BUFFER);
-		return m;
-	}
-
 	public static int getFrame() {
 		return frame;
 	}
 
-	public static double getPartialTicks() {
-		return partialTicks;
+	public static double getPartialTick() {
+		return partialTick;
+	}
+
+	public static double getPartialTickDelta() {
+		return partialTickDelta;
 	}
 
 	public static Matrix4f getProjectionMatrix() {

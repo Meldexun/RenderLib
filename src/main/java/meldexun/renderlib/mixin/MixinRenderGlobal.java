@@ -16,7 +16,7 @@ public class MixinRenderGlobal {
 	/** {@link RenderGlobal#setupTerrain(Entity, double, ICamera, int, boolean)} */
 	@Inject(method = "setupTerrain", at = @At("HEAD"))
 	public void setupTerrain(Entity viewEntity, double partialTicks, ICamera camera, int frameCount, boolean playerSpectator, CallbackInfo info) {
-		RenderUtil.update();
+		RenderUtil.updateCamera();
 	}
 
 }
