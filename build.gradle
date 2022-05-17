@@ -107,6 +107,7 @@ jar {
     }
 
     manifest {
+        attributes 'ModSide': 'CLIENT'
         attributes 'FMLAT': 'accesstransformer.cfg'
         attributes 'FMLCorePlugin': "${mod_plugin_class}"
         attributes 'FMLCorePluginContainsFMLMod': 'true'
