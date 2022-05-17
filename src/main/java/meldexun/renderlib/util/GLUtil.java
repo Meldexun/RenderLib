@@ -5,6 +5,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -40,6 +41,11 @@ public class GLUtil {
 		Matrix4f m = new Matrix4f();
 		m.load(FLOAT_BUFFER);
 		return m;
+	}
+
+	public static void setMatrix(int uniform, Matrix4f matrix) {
+		matrix.store(FLOAT_BUFFER);
+		GL20.glUniformMatrix4(uniform, false, FLOAT_BUFFER);
 	}
 
 }
