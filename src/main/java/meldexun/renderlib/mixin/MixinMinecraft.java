@@ -29,7 +29,7 @@ public class MixinMinecraft {
 	@Shadow
 	private GameSettings gameSettings;
 
-	@ModifyArg(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;onRenderTickStart(F)V"))
+	@ModifyArg(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;onRenderTickStart(F)V", remap = false))
 	public float onRenderTickStart(float partialTick) {
 		return isGamePaused ? renderPartialTicksPaused : timer.renderPartialTicks;
 	}
@@ -39,7 +39,7 @@ public class MixinMinecraft {
 		RenderUtil.update(isGamePaused ? renderPartialTicksPaused : timer.renderPartialTicks);
 	}
 
-	@ModifyArg(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;onRenderTickEnd(F)V"))
+	@ModifyArg(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/common/FMLCommonHandler;onRenderTickEnd(F)V", remap = false))
 	public float onRenderTickEnd(float partialTick) {
 		return isGamePaused ? renderPartialTicksPaused : timer.renderPartialTicks;
 	}
