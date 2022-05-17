@@ -71,6 +71,8 @@ public class EntityRenderer {
 			return;
 		}
 
+		this.setupOcclusionCulling(entity);
+
 		if (this.isOcclusionCulled(entity)) {
 			this.occludedEntities++;
 		} else {
@@ -112,6 +114,10 @@ public class EntityRenderer {
 		if (entity.shouldRenderInPass(0)) {
 			this.entityListOutlinePass0.add(entity);
 		}
+	}
+
+	protected <T extends Entity> void setupOcclusionCulling(T entity) {
+
 	}
 
 	protected <T extends Entity> boolean isOcclusionCulled(T entity) {

@@ -55,6 +55,8 @@ public class TileEntityRenderer {
 			return;
 		}
 
+		this.setupOcclusionCulling(tileEntity);
+
 		if (this.isOcclusionCulled(tileEntity)) {
 			this.occludedTileEntities++;
 		} else {
@@ -70,6 +72,10 @@ public class TileEntityRenderer {
 		if (tileEntity.shouldRenderInPass(1)) {
 			this.tileEntityListPass1.add(tileEntity);
 		}
+	}
+
+	protected <T extends TileEntity> void setupOcclusionCulling(T tileEntity) {
+
 	}
 
 	protected <T extends TileEntity> boolean isOcclusionCulled(T tileEntity) {
