@@ -18,4 +18,16 @@ public final class TileEntityRenderManager {
 		tileEntityRenderer.renderTileEntities(partialTicks);
 	}
 
+	public static int totalTileEntities() {
+		return tileEntityRenderer.totalTileEntities;
+	}
+
+	public static int renderedTileEntities() {
+		return tileEntityRenderer.renderedTileEntities;
+	}
+
+	public static int occludedTileEntities() {
+		return tileEntityRenderer.occludedTileEntities;
+	}
+
 }
