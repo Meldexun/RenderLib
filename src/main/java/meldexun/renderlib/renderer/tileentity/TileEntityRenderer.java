@@ -49,13 +49,15 @@ public class TileEntityRenderer {
 		this.totalTileEntities++;
 
 		if (!((IBoundingBoxCache) tileEntity).getCachedBoundingBox().isVisible(camera)) {
+			this.setCanBeOcclusionCulled(tileEntity, false);
 			return;
 		}
 		if (tileEntity.getDistanceSq(camX, camY, camZ) >= tileEntity.getMaxRenderDistanceSquared()) {
+			this.setCanBeOcclusionCulled(tileEntity, false);
 			return;
 		}
 
-		this.setupOcclusionCulling(tileEntity);
+		this.setCanBeOcclusionCulled(tileEntity, true);
 
 		if (this.isOcclusionCulled(tileEntity)) {
 			this.occludedTileEntities++;
@@ -74,7 +76,7 @@ public class TileEntityRenderer {
 		}
 	}
 
-	protected <T extends TileEntity> void setupOcclusionCulling(T tileEntity) {
+	protected <T extends TileEntity> void setCanBeOcclusionCulled(T tileEntity, boolean canBeOcclusionCulled) {
 
 	}
 

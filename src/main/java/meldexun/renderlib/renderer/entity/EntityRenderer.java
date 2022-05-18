@@ -65,13 +65,15 @@ public class EntityRenderer {
 		if (!((IEntityRendererCache) entity).getRenderer().shouldRender(entity, camera, camX, camY, camZ)
 				&& !entity.isRidingOrBeingRiddenBy(Minecraft.getMinecraft().player)
 				&& (!RenderLib.isFairyLightsInstalled || !FairyLights.isFairyLightEntity(entity))) {
+			this.setCanBeOcclusionCulled(entity, false);
 			return;
 		}
 		if (!this.shouldRenderEntity(entity, camX, camY, camZ)) {
+			this.setCanBeOcclusionCulled(entity, false);
 			return;
 		}
 
-		this.setupOcclusionCulling(entity);
+		this.setCanBeOcclusionCulled(entity, true);
 
 		if (this.isOcclusionCulled(entity)) {
 			this.occludedEntities++;
@@ -116,7 +118,7 @@ public class EntityRenderer {
 		}
 	}
 
-	protected <T extends Entity> void setupOcclusionCulling(T entity) {
+	protected <T extends Entity> void setCanBeOcclusionCulled(T entity, boolean canBeOcclusionCulled) {
 
 	}
 
