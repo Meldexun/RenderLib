@@ -18,6 +18,7 @@ public class GLShader {
 	private static final IntList PROGRAM_STACK = new IntArrayList();
 	private int program;
 	private final Object2IntMap<String> uniforms = new Object2IntOpenHashMap<>();
+	private final Object2IntMap<String> attributes = new Object2IntOpenHashMap<>();
 
 	public GLShader(int program) {
 		this.program = program;
@@ -30,7 +31,7 @@ public class GLShader {
 	public static void pop() {
 		use(PROGRAM_STACK.removeInt(PROGRAM_STACK.size() - 1));
 	}
-	
+
 	public static void use(int program) {
 		GL20.glUseProgram(program);
 	}
@@ -47,17 +48,27 @@ public class GLShader {
 		return uniforms.computeIfAbsent(uniform, k -> GL20.glGetUniformLocation(program, k));
 	}
 
+	public int getAttribute(String attribute) {
+		return attributes.computeIfAbsent(attribute, k -> GL20.glGetAttribLocation(program, k));
+	}
+
 	public void dispose() {
 		GL20.glDeleteProgram(program);
 		program = -1;
 	}
 
 	public static class Builder {
-	
+
 		private final Int2ObjectMap<Supplier<String>> shaderMap = new Int2ObjectOpenHashMap<>();
+		private final Object2IntMap<String> attributeMap = new Object2IntOpenHashMap<>();
 
 		public Builder addShader(int type, Supplier<String> source) {
 			shaderMap.put(type, source);
+			return this;
+		}
+
+		public Builder bindAttribute(String attribute, int index) {
+			attributeMap.put(attribute, index);
 			return this;
 		}
 
@@ -79,8 +90,10 @@ public class GLShader {
 
 				shaderList.add(shader);
 			}
-
 			shaderList.forEach(shader -> GL20.glAttachShader(program, shader));
+
+			attributeMap.forEach((attribute, index) -> GL20.glBindAttribLocation(program, index, attribute));
+
 			GL20.glLinkProgram(program);
 
 			int linkStatus = GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
@@ -103,7 +116,7 @@ public class GLShader {
 			pop();
 			return shader;
 		}
-		
+
 	}
 
 }
