@@ -44,6 +44,11 @@ public class GLUtil {
 		return new Vector4f(FLOAT_BUFFER.get(0), FLOAT_BUFFER.get(1), FLOAT_BUFFER.get(2), FLOAT_BUFFER.get(3));
 	}
 
+	public static FloatBuffer getFloat(int pname) {
+		GL11.glGetFloat(pname, FLOAT_BUFFER);
+		return FLOAT_BUFFER;
+	}
+
 	/**
 	 * {@link GL11#GL_PROJECTION_MATRIX},
 	 * {@link GL11#GL_MODELVIEW_MATRIX},
