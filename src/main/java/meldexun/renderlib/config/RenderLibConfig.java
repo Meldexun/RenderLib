@@ -18,4 +18,8 @@ public class RenderLibConfig {
 	@Config.Ignore
 	public static ResourceLocationMap<TileEntity, Boolean> tileEntityCachedBoundingBoxBlacklistImpl = new ResourceLocationMap<>(TileEntity.REGISTRY::getNameForObject, false, s -> true);
 
+	public static void onConfigChanged() {
+		tileEntityCachedBoundingBoxBlacklistImpl.load(tileEntityCachedBoundingBoxBlacklist);
+	}
+
 }

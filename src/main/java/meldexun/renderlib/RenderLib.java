@@ -3,6 +3,7 @@ package meldexun.renderlib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.GLUtil;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
@@ -26,6 +27,8 @@ public class RenderLib {
 	@EventHandler
 	public void onFMLConstructionEvent(FMLConstructionEvent event) {
 		GLUtil.init();
+
+		RenderLibConfig.onConfigChanged();
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -39,6 +42,7 @@ public class RenderLib {
 	public void onConfigChangedEvent(OnConfigChangedEvent event) {
 		if (event.getModID().equals(MODID)) {
 			ConfigManager.sync(MODID, Config.Type.INSTANCE);
+			RenderLibConfig.onConfigChanged();
 		}
 	}
 
