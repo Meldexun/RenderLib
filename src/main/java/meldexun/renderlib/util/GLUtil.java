@@ -1,5 +1,6 @@
 package meldexun.renderlib.util;
 
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -19,6 +20,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import meldexun.matrixutil.Matrix4f;
+import meldexun.renderlib.RenderLib;
 
 public class GLUtil {
 
@@ -27,6 +29,16 @@ public class GLUtil {
 
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
+
+		RenderLib.LOGGER.info("OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
+		try {
+			for (Field f : ContextCapabilities.class.getFields()) {
+				if (f.getType() == boolean.class)
+					RenderLib.LOGGER.info("{} {}", f.getName(), f.get(CAPS));
+			}
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static Vector2f getFloat2(int pname) {
