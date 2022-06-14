@@ -6,10 +6,12 @@ import java.util.Queue;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
+import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 public class TileEntityRenderer {
@@ -45,6 +47,9 @@ public class TileEntityRenderer {
 		if (!((ILoadable) tileEntity).isChunkLoaded()) {
 			return;
 		}
+		if (isOutsideOfRenderDist(tileEntity, partialTicks)) {
+			return;
+		}
 
 		this.totalTileEntities++;
 
@@ -65,6 +70,15 @@ public class TileEntityRenderer {
 			this.renderedTileEntities++;
 			this.render(tileEntity);
 		}
+	}
+
+	private <T extends TileEntity> boolean isOutsideOfRenderDist(T tileEntity, double partialTicks) {
+		double renderDist = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
+		double entityX = tileEntity.getPos().getX() >> 4;
+		double entityZ = tileEntity.getPos().getZ() >> 4;
+		double playerX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
+		double playerZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
+		return Math.abs(entityX - playerX) > renderDist || Math.abs(entityZ - playerZ) > renderDist;
 	}
 
 	protected <T extends TileEntity> void render(T tileEntity) {

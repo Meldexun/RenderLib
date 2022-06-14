@@ -9,6 +9,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
+import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -18,6 +19,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 public class EntityRenderer {
@@ -59,6 +61,9 @@ public class EntityRenderer {
 		if (!((ILoadable) entity).isChunkLoaded()) {
 			return;
 		}
+		if (isOutsideOfRenderDist(entity, partialTicks)) {
+			return;
+		}
 
 		this.totalEntities++;
 
@@ -92,6 +97,15 @@ public class EntityRenderer {
 				this.addToRenderLists(part, camera, camX, camY, camZ, partialTicks);
 			}
 		}
+	}
+
+	private <T extends Entity> boolean isOutsideOfRenderDist(T entity, double partialTicks) {
+		double renderDist = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
+		double entityX = MathHelper.floor(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks) >> 4;
+		double entityZ = MathHelper.floor(entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks) >> 4;
+		double playerX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
+		double playerZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
+		return Math.abs(entityX - playerX) > renderDist || Math.abs(entityZ - playerZ) > renderDist;
 	}
 
 	protected <T extends Entity> void render(T entity) {
