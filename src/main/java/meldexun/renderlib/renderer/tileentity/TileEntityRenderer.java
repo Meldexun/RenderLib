@@ -16,9 +16,9 @@ public class TileEntityRenderer {
 
 	protected final Queue<TileEntity> tileEntityListPass0 = new ArrayDeque<>();
 	protected final Queue<TileEntity> tileEntityListPass1 = new ArrayDeque<>();
-	public int renderedTileEntities;
-	public int occludedTileEntities;
-	public int totalTileEntities;
+	protected int renderedTileEntities;
+	protected int occludedTileEntities;
+	protected int totalTileEntities;
 
 	public void setup(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
 		this.renderedTileEntities = 0;
@@ -109,6 +109,18 @@ public class TileEntityRenderer {
 
 	protected void postRenderTileEntity() {
 
+	}
+
+	public int getRenderedTileEntities() {
+		return renderedTileEntities;
+	}
+
+	public int getOccludedTileEntities() {
+		return occludedTileEntities;
+	}
+
+	public int getTotalTileEntities() {
+		return totalTileEntities;
 	}
 
 }

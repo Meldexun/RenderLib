@@ -18,16 +18,16 @@ public final class EntityRenderManager {
 		entityRenderer.renderEntities(partialTicks);
 	}
 
-	public static int totalEntities() {
-		return entityRenderer.totalEntities;
-	}
-
 	public static int renderedEntities() {
-		return entityRenderer.renderedEntities;
+		return entityRenderer.getRenderedEntities();
 	}
 
 	public static int occludedEntities() {
-		return entityRenderer.occludedEntities;
+		return entityRenderer.getOccludedEntities();
+	}
+
+	public static int totalEntities() {
+		return entityRenderer.getTotalEntities();
 	}
 
 }

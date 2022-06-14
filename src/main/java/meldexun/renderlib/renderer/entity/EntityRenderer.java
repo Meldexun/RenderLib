@@ -27,9 +27,9 @@ public class EntityRenderer {
 	protected final Queue<Entity> entityListOutlinePass0 = new ArrayDeque<>();
 	protected final Queue<Entity> entityListStaticPass1 = new ArrayDeque<>();
 	protected final Queue<Entity> entityListMultipassPass1 = new ArrayDeque<>();
-	public int renderedEntities;
-	public int occludedEntities;
-	public int totalEntities;
+	protected int renderedEntities;
+	protected int occludedEntities;
+	protected int totalEntities;
 
 	public void setup(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
 		this.renderedEntities = 0;
@@ -231,6 +231,18 @@ public class EntityRenderer {
 	protected boolean isRenderEntityOutlines() {
 		Minecraft mc = Minecraft.getMinecraft();
 		return mc.renderGlobal.entityOutlineFramebuffer != null && mc.renderGlobal.entityOutlineShader != null;
+	}
+
+	public int getRenderedEntities() {
+		return renderedEntities;
+	}
+
+	public int getOccludedEntities() {
+		return occludedEntities;
+	}
+
+	public int getTotalEntities() {
+		return totalEntities;
 	}
 
 }
