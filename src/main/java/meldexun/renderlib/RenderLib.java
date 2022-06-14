@@ -27,7 +27,6 @@ public class RenderLib {
 	public void onFMLConstructionEvent(FMLConstructionEvent event) {
 		GLUtil.init();
 		MinecraftForge.EVENT_BUS.register(this);
-		ConfigManager.sync(MODID, Config.Type.INSTANCE);
 	}
 
 	@EventHandler
