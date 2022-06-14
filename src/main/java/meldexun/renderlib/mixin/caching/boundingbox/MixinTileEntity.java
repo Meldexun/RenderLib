@@ -12,6 +12,7 @@ import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.integration.ValkyrienSkies;
 import meldexun.renderlib.util.MutableAABB;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.Vec3d;
 
 @Mixin(TileEntity.class)
 public class MixinTileEntity implements IBoundingBoxCache {
@@ -32,6 +33,10 @@ public class MixinTileEntity implements IBoundingBoxCache {
 				|| RenderLibConfig.tileEntityCachedBoundingBoxUpdateInterval == 1
 				|| RAND.nextInt(RenderLibConfig.tileEntityCachedBoundingBoxUpdateInterval) == 0) {
 			cachedBoundingBox.set(RenderLib.isValkyrienSkiesInstalled ? ValkyrienSkies.getAABB((TileEntity) (Object) this) : ((TileEntity) (Object) this).getRenderBoundingBox());
+			Vec3d v = RenderLibConfig.tileEntityBoundingBoxGrowthListImpl.get((TileEntity) (Object) this);
+			if (v != null) {
+				cachedBoundingBox.grow(v);
+			}
 			initialized = true;
 		}
 	}

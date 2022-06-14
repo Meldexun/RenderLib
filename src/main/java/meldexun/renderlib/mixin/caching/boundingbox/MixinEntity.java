@@ -4,8 +4,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import meldexun.renderlib.api.IBoundingBoxCache;
+import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.MutableAABB;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
 
 @Mixin(Entity.class)
 public class MixinEntity implements IBoundingBoxCache {
@@ -22,6 +24,10 @@ public class MixinEntity implements IBoundingBoxCache {
 				-(((Entity) (Object) this).posX - ((Entity) (Object) this).lastTickPosX) * (1.0D - partialTicks),
 				-(((Entity) (Object) this).posY - ((Entity) (Object) this).lastTickPosY) * (1.0D - partialTicks),
 				-(((Entity) (Object) this).posZ - ((Entity) (Object) this).lastTickPosZ) * (1.0D - partialTicks));
+		Vec3d v = RenderLibConfig.entityBoundingBoxGrowthListImpl.get((Entity) (Object) this);
+		if (v != null) {
+			cachedBoundingBox.grow(v);
+		}
 	}
 
 	@Unique

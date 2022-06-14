@@ -2,7 +2,10 @@ package meldexun.renderlib.config;
 
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.util.ResourceLocationMap;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.config.Config;
 
 @Config(modid = RenderLib.MODID)
@@ -18,8 +21,30 @@ public class RenderLibConfig {
 	@Config.Ignore
 	public static ResourceLocationMap<TileEntity, Boolean> tileEntityCachedBoundingBoxBlacklistImpl = new ResourceLocationMap<>(TileEntity.REGISTRY::getNameForObject, false, s -> true);
 
+	@Config.Comment("Allows you to increase the render bounding boxes of entities (or all entities of a mod). Width increases the size on the X and Z axis. Top increases the size in the positive Y direction. Bottom increases the size in the negative Y direction. (Accepts 'modid=width,top,bottom' or 'modid:entity=width,top,bottom').")
+	public static String[] entityBoundingBoxGrowthList = new String[0];
+	@Config.Ignore
+	public static ResourceLocationMap<Entity, Vec3d> entityBoundingBoxGrowthListImpl = new ResourceLocationMap<>(EntityList::getKey, null, s -> {
+		double x = s.length >= 1 ? Double.parseDouble(s[0]) : 0.0D;
+		double y = s.length >= 2 ? Double.parseDouble(s[1]) : 0.0D;
+		double z = s.length >= 3 ? Double.parseDouble(s[2]) : 0.0D;
+		return x != 0.0D || y != 0.0D || z != 0.0D ? new Vec3d(x, y, z) : null;
+	});
+
+	@Config.Comment("Allows you to increase the render bounding boxes of tile entities (or all entities of a mod). Width increases the size on the X and Z axis. Top increases the size in the positive Y direction. Bottom increases the size in the negative Y direction. (Accepts 'modid=width,top,bottom' or 'modid:tileentity=width,top,bottom').")
+	public static String[] tileEntityBoundingBoxGrowthList = new String[0];
+	@Config.Ignore
+	public static ResourceLocationMap<TileEntity, Vec3d> tileEntityBoundingBoxGrowthListImpl = new ResourceLocationMap<>(TileEntity.REGISTRY::getNameForObject, null, s -> {
+		double x = s.length >= 1 ? Double.parseDouble(s[0]) : 0.0D;
+		double y = s.length >= 2 ? Double.parseDouble(s[1]) : 0.0D;
+		double z = s.length >= 3 ? Double.parseDouble(s[2]) : 0.0D;
+		return x != 0.0D || y != 0.0D || z != 0.0D ? new Vec3d(x, y, z) : null;
+	});
+
 	public static void onConfigChanged() {
 		tileEntityCachedBoundingBoxBlacklistImpl.load(tileEntityCachedBoundingBoxBlacklist);
+		entityBoundingBoxGrowthListImpl.load(entityBoundingBoxGrowthList);
+		tileEntityBoundingBoxGrowthListImpl.load(tileEntityBoundingBoxGrowthList);
 	}
 
 }
