@@ -13,17 +13,13 @@ public class TileEntityRendererOptifine extends TileEntityRenderer {
 	private boolean isShaders = false;
 
 	@Override
-	public void setup(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
+	public void renderTileEntities(ICamera camera, float partialTicks, double camX, double camY, double camZ) {
 		this.isShaders = IS_SHADERS.invoke(null);
-		super.setup(camera, camX, camY, camZ, partialTicks);
-	}
 
-	@Override
-	protected void fillTileEntityLists(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
 		int r = this.renderedTileEntities;
 		int o = this.occludedTileEntities;
 		int t = this.totalTileEntities;
-		super.fillTileEntityLists(camera, camX, camY, camZ, partialTicks);
+		super.renderTileEntities(camera, partialTicks, camX, camY, camZ);
 		if (IS_SHADOW_PASS.getBoolean(null)) {
 			this.renderedTileEntities = r;
 			this.occludedTileEntities = o;

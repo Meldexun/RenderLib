@@ -18,7 +18,6 @@
     "caching.renderer.MixinTileEntity",
     "caching.renderer.MixinTileEntityRendererDispatcher",
     "entity.MixinRender",
-    "entity.MixinRenderGlobal",
     "tileentity.MixinRenderGlobal",
     "tileentity.MixinTileEntityRendererDispatcher",
     "MixinChunk",

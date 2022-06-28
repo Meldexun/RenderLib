@@ -1,8 +1,5 @@
 package meldexun.renderlib.renderer.tileentity;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
@@ -16,78 +13,72 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 public class TileEntityRenderer {
 
-	protected final Queue<TileEntity> tileEntityListPass0 = new ArrayDeque<>();
-	protected final Queue<TileEntity> tileEntityListPass1 = new ArrayDeque<>();
 	protected int renderedTileEntities;
 	protected int occludedTileEntities;
 	protected int totalTileEntities;
+	private int camChunkX;
+	private int camChunkZ;
+	private int renderDist;
 
-	public void setup(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
+	public void renderTileEntities(ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
+		Minecraft mc = Minecraft.getMinecraft();
 		this.renderedTileEntities = 0;
 		this.occludedTileEntities = 0;
 		this.totalTileEntities = 0;
-		this.clearTileEntityLists();
-		this.fillTileEntityLists(camera, camX, camY, camZ, partialTicks);
+		this.camChunkX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
+		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
+		this.renderDist = mc.gameSettings.renderDistanceChunks;
+
+		for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
+			if (!shouldRender(tileEntity, frustum, partialTicks, camX, camY, camZ)) {
+				continue;
+			}
+			if (isOcclusionCulled(tileEntity)) {
+				this.occludedTileEntities++;
+			} else {
+				this.renderedTileEntities++;
+				this.preRenderTileEntity(tileEntity);
+				TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
+				this.postRenderTileEntity();
+			}
+		}
 	}
 
-	protected void clearTileEntityLists() {
-		this.tileEntityListPass0.clear();
-		this.tileEntityListPass1.clear();
-	}
-
-	protected void fillTileEntityLists(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
-		Minecraft mc = Minecraft.getMinecraft();
-		mc.world.loadedTileEntityList.forEach(tileEntity -> this.addToRenderLists(tileEntity, camera, camX, camY, camZ, partialTicks));
-	}
-
-	protected <T extends TileEntity> void addToRenderLists(T tileEntity, ICamera camera, double camX, double camY, double camZ, double partialTicks) {
+	private boolean shouldRender(TileEntity tileEntity, ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
 		if (!((ITileEntityRendererCache) tileEntity).hasRenderer()) {
-			return;
+			return false;
 		}
 		if (!((ILoadable) tileEntity).isChunkLoaded()) {
-			return;
+			return false;
 		}
-		if (isOutsideOfRenderDist(tileEntity, partialTicks)) {
-			return;
+		if (!tileEntity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())) {
+			return false;
+		}
+		if (isOutsideOfRenderDist(tileEntity)) {
+			return false;
 		}
 
 		this.totalTileEntities++;
 
-		if (!((IBoundingBoxCache) tileEntity).getCachedBoundingBox().isVisible(camera)) {
+		if (!((IBoundingBoxCache) tileEntity).getCachedBoundingBox().isVisible(frustum)) {
 			this.setCanBeOcclusionCulled(tileEntity, false);
-			return;
+			return false;
 		}
 		if (tileEntity.getDistanceSq(camX, camY, camZ) >= tileEntity.getMaxRenderDistanceSquared()) {
 			this.setCanBeOcclusionCulled(tileEntity, false);
-			return;
+			return false;
 		}
 
 		this.setCanBeOcclusionCulled(tileEntity, true);
-
-		if (this.isOcclusionCulled(tileEntity)) {
-			this.occludedTileEntities++;
-		} else {
-			this.renderedTileEntities++;
-			this.render(tileEntity);
-		}
+		return true;
 	}
 
-	private <T extends TileEntity> boolean isOutsideOfRenderDist(T tileEntity, double partialTicks) {
-		double renderDist = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
-		double entityX = tileEntity.getPos().getX() >> 4;
-		double entityZ = tileEntity.getPos().getZ() >> 4;
-		double playerX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
-		double playerZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
-		return Math.abs(entityX - playerX) > renderDist || Math.abs(entityZ - playerZ) > renderDist;
-	}
-
-	protected <T extends TileEntity> void render(T tileEntity) {
-		if (tileEntity.shouldRenderInPass(0)) {
-			this.tileEntityListPass0.add(tileEntity);
-		}
-		if (tileEntity.shouldRenderInPass(1)) {
-			this.tileEntityListPass1.add(tileEntity);
-		}
+	private boolean isOutsideOfRenderDist(TileEntity tileEntity) {
+		int tileEntityX = tileEntity.getPos().getX() >> 4;
+		if (Math.abs(tileEntityX - camChunkX) > renderDist)
+			return true;
+		int tileEntityZ = tileEntity.getPos().getZ() >> 4;
+		return Math.abs(tileEntityZ - camChunkZ) > renderDist;
 	}
 
 	protected <T extends TileEntity> void setCanBeOcclusionCulled(T tileEntity, boolean canBeOcclusionCulled) {
@@ -98,27 +89,8 @@ public class TileEntityRenderer {
 		return false;
 	}
 
-	public void renderTileEntities(float partialTicks) {
-		int pass = MinecraftForgeClient.getRenderPass();
-
-		if (pass == 0) {
-			this.tileEntityListPass0.forEach(tileEntity -> {
-				this.preRenderTileEntity(tileEntity);
-				TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
-				this.postRenderTileEntity();
-			});
-		} else if (pass == 1) {
-			this.tileEntityListPass1.forEach(tileEntity -> {
-				this.preRenderTileEntity(tileEntity);
-				TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
-				this.postRenderTileEntity();
-			});
-		}
-	}
-
 	protected void preRenderTileEntity(TileEntity tileEntity) {
-		// workaround for stupid mods
-		tileEntity.shouldRenderInPass(MinecraftForgeClient.getRenderPass());
+
 	}
 
 	protected void postRenderTileEntity() {

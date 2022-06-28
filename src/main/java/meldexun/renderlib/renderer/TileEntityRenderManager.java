@@ -10,12 +10,8 @@ public final class TileEntityRenderManager {
 
 	private static TileEntityRenderer tileEntityRenderer = RenderLibClassTransformer.OPTIFINE_DETECTED ? new TileEntityRendererOptifine() : new TileEntityRenderer();
 
-	public static void setup(double partialTicks, ICamera frustum) {
-		tileEntityRenderer.setup(frustum, RenderUtil.getCameraEntityX(), RenderUtil.getCameraEntityY(), RenderUtil.getCameraEntityZ(), partialTicks);
-	}
-
-	public static void renderTileEntities(float partialTicks) {
-		tileEntityRenderer.renderTileEntities(partialTicks);
+	public static void renderTileEntities(ICamera frustum, float partialTicks) {
+		tileEntityRenderer.renderTileEntities(frustum, partialTicks, RenderUtil.getCameraEntityX(), RenderUtil.getCameraEntityY(), RenderUtil.getCameraEntityZ());
 	}
 
 	public static int renderedTileEntities() {

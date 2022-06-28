@@ -1,8 +1,6 @@
 package meldexun.renderlib.renderer.entity;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Queue;
+import java.util.List;
 
 import meldexun.reflectionutil.ReflectionField;
 import meldexun.reflectionutil.ReflectionMethod;
@@ -12,7 +10,6 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 public class EntityRendererOptifine extends EntityRenderer {
 
@@ -24,49 +21,23 @@ public class EntityRendererOptifine extends EntityRenderer {
 	private static final ReflectionMethod<Boolean> IS_ANTIALIASING = new ReflectionMethod<>("Config", "isAntialiasing", "isAntialiasing");
 	private static final ReflectionMethod<Void> BEGIN_ENTITIES_GLOWING = new ReflectionMethod<>("net.optifine.shaders.Shaders", "beginEntitiesGlowing", "beginEntitiesGlowing");
 	private static final ReflectionMethod<Void> END_ENTITIES_GLOWING = new ReflectionMethod<>("net.optifine.shaders.Shaders", "endEntitiesGlowing", "endEntitiesGlowing");
-	protected final Queue<Entity> entityListOutlinePass1 = new ArrayDeque<>();
 	private boolean isShaders = false;
 
 	@Override
-	public void setup(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
+	public void renderEntities(ICamera camera, float partialTicks, double camX, double camY, double camZ, List<Entity> multipassEntities, List<Entity> outlineEntities) {
 		this.isShaders = IS_SHADERS.invoke(null);
-		super.setup(camera, camX, camY, camZ, partialTicks);
-	}
 
-	@Override
-	protected void clearEntityLists() {
-		super.clearEntityLists();
-		this.entityListOutlinePass1.clear();
-	}
-
-	@Override
-	protected void fillEntityLists(ICamera camera, double camX, double camY, double camZ, double partialTicks) {
 		int r = this.renderedEntities;
 		int o = this.occludedEntities;
 		int t = this.totalEntities;
-		super.fillEntityLists(camera, camX, camY, camZ, partialTicks);
+		super.renderEntities(camera, partialTicks, camX, camY, camZ, multipassEntities, outlineEntities);
 		if (IS_SHADOW_PASS.getBoolean(null)) {
 			this.renderedEntities = r;
 			this.occludedEntities = o;
 			this.totalEntities = t;
 		}
-	}
-
-	@Override
-	protected <T extends Entity> void renderOutline(T entity) {
-		super.renderOutline(entity);
-
-		if (entity.shouldRenderInPass(1)) {
-			this.entityListOutlinePass1.add(entity);
-		}
-	}
-
-	@Override
-	public void renderEntities(float partialTicks) {
-		super.renderEntities(partialTicks);
 
 		Minecraft mc = Minecraft.getMinecraft();
-		Collection<Entity> outlineEntities = MinecraftForgeClient.getRenderPass() == 0 ? this.entityListOutlinePass0 : this.entityListOutlinePass1;
 		if (!this.isRenderEntityOutlines() && (!outlineEntities.isEmpty() || mc.renderGlobal.entityOutlinesRendered)) {
 			mc.world.profiler.endStartSection("entityOutlines");
 			mc.renderGlobal.entityOutlinesRendered = !outlineEntities.isEmpty();

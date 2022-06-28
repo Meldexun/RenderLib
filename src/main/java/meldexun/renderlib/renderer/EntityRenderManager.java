@@ -10,12 +10,8 @@ public final class EntityRenderManager {
 
 	private static EntityRenderer entityRenderer = RenderLibClassTransformer.OPTIFINE_DETECTED ? new EntityRendererOptifine() : new EntityRenderer();
 
-	public static void setup(double partialTicks, ICamera frustum) {
-		entityRenderer.setup(frustum, RenderUtil.getCameraEntityX(), RenderUtil.getCameraEntityY(), RenderUtil.getCameraEntityZ(), partialTicks);
-	}
-
-	public static void renderEntities(float partialTicks) {
-		entityRenderer.renderEntities(partialTicks);
+	public static void renderEntities(ICamera frustum, float partialTicks) {
+		entityRenderer.renderEntities(frustum, partialTicks, RenderUtil.getCameraEntityX(), RenderUtil.getCameraEntityY(), RenderUtil.getCameraEntityZ());
 	}
 
 	public static int renderedEntities() {
