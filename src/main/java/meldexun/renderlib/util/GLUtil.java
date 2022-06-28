@@ -30,7 +30,10 @@ public class GLUtil {
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
 
+		RenderLib.LOGGER.info("OpenGL Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));
+		RenderLib.LOGGER.info("OpenGL Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
 		RenderLib.LOGGER.info("OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
+		RenderLib.LOGGER.info("OpenGL Extensions: {}", GL11.glGetString(GL11.GL_EXTENSIONS));
 		try {
 			for (Field f : ContextCapabilities.class.getFields()) {
 				if (f.getType() == boolean.class)
