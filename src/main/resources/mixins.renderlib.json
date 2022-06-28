@@ -21,6 +21,7 @@
     "entity.MixinRenderGlobal",
     "tileentity.MixinRenderGlobal",
     "tileentity.MixinTileEntityRendererDispatcher",
+    "MixinChunk",
     "MixinClippingHelper",
     "MixinMinecraft",
     "MixinRenderGlobal"
