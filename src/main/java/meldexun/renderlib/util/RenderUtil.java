@@ -14,6 +14,7 @@ public class RenderUtil {
 	private static double partialTick;
 	private static double partialTickDelta;
 
+	private static int recursive;
 	private static Matrix4f projectionMatrix;
 	private static Matrix4f modelViewMatrix;
 	private static Matrix4f projectionModelViewMatrix;
@@ -34,12 +35,14 @@ public class RenderUtil {
 		if (partialTickDelta < 0.0D)
 			partialTickDelta += 1.0D;
 		partialTick = partialTickIn;
+		recursive = 0;
 	}
 
 	public static void updateCamera() {
 		Minecraft mc = Minecraft.getMinecraft();
 		Entity cameraEntity = mc.getRenderViewEntity();
 		Vec3d cameraOffset = ActiveRenderInfo.getCameraPosition();
+		recursive++;
 		projectionMatrix = GLUtil.getMatrix(GL11.GL_PROJECTION_MATRIX);
 		modelViewMatrix = GLUtil.getMatrix(GL11.GL_MODELVIEW_MATRIX);
 		projectionModelViewMatrix = projectionMatrix.copy();
@@ -66,6 +69,10 @@ public class RenderUtil {
 
 	public static double getPartialTickDelta() {
 		return partialTickDelta;
+	}
+
+	public static boolean isRecursive() {
+		return recursive > 1;
 	}
 
 	public static Matrix4f getProjectionMatrix() {
