@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.Timer;
-import net.minecraft.util.math.MathHelper;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
@@ -46,11 +45,7 @@ public class MixinMinecraft {
 
 	@Inject(method = "getLimitFramerate", cancellable = true, at = @At("HEAD"))
 	public void getLimitFramerate(CallbackInfoReturnable<Integer> info) {
-		if (world == null) {
-			info.setReturnValue(MathHelper.clamp(gameSettings.limitFramerate, 30, 240));
-		} else {
-			info.setReturnValue(gameSettings.limitFramerate);
-		}
+		info.setReturnValue(world != null ? gameSettings.limitFramerate : 60);
 	}
 
 }
