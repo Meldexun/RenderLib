@@ -9,6 +9,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
+import meldexun.renderlib.util.EntityUtil;
 import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -42,7 +43,7 @@ public class EntityRenderer {
 		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
 
-		for (Entity entity : mc.world.loadedEntityList) {
+		for (Entity entity : EntityUtil.entityIterable(mc.world.loadedEntityList)) {
 			if (!shouldRender(entity, frustum, partialTicks, camX, camY, camZ)) {
 				continue;
 			}

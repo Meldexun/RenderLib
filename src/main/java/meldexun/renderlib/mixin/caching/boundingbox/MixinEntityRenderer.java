@@ -9,6 +9,7 @@ import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
+import meldexun.renderlib.util.EntityUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -25,7 +26,7 @@ public class MixinEntityRenderer {
 		if (mc.world == null)
 			return;
 
-		for (Entity e : mc.world.loadedEntityList) {
+		for (Entity e : EntityUtil.entityIterable(mc.world.loadedEntityList)) {
 			if (((IEntityRendererCache) e).hasRenderer() && ((ILoadable) e).isChunkLoaded())
 				((IBoundingBoxCache) e).updateCachedBoundingBox(partialTicks);
 		}
