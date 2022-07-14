@@ -4,6 +4,7 @@ import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
 import meldexun.renderlib.util.RenderUtil;
+import meldexun.renderlib.util.TileEntityUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -29,19 +30,21 @@ public class TileEntityRenderer {
 		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
 
-		for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
-			if (!shouldRender(tileEntity, frustum, partialTicks, camX, camY, camZ)) {
-				continue;
+		TileEntityUtil.processTileEntities(mc.world, tileEntities -> {
+			for (TileEntity tileEntity : tileEntities) {
+				if (!shouldRender(tileEntity, frustum, partialTicks, camX, camY, camZ)) {
+					continue;
+				}
+				if (isOcclusionCulled(tileEntity)) {
+					this.occludedTileEntities++;
+				} else {
+					this.renderedTileEntities++;
+					this.preRenderTileEntity(tileEntity);
+					TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
+					this.postRenderTileEntity();
+				}
 			}
-			if (isOcclusionCulled(tileEntity)) {
-				this.occludedTileEntities++;
-			} else {
-				this.renderedTileEntities++;
-				this.preRenderTileEntity(tileEntity);
-				TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
-				this.postRenderTileEntity();
-			}
-		}
+		});
 	}
 
 	private boolean shouldRender(TileEntity tileEntity, ICamera frustum, float partialTicks, double camX, double camY, double camZ) {

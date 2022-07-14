@@ -10,6 +10,7 @@ import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
 import meldexun.renderlib.util.EntityUtil;
+import meldexun.renderlib.util.TileEntityUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
@@ -31,10 +32,12 @@ public class MixinEntityRenderer {
 				((IBoundingBoxCache) e).updateCachedBoundingBox(partialTicks);
 		}
 
-		for (TileEntity te : mc.world.loadedTileEntityList) {
-			if (((ITileEntityRendererCache) te).hasRenderer() && ((ILoadable) te).isChunkLoaded())
-				((IBoundingBoxCache) te).updateCachedBoundingBox(partialTicks);
-		}
+		TileEntityUtil.processTileEntities(mc.world, tileEntities -> {
+			for (TileEntity te : tileEntities) {
+				if (((ITileEntityRendererCache) te).hasRenderer() && ((ILoadable) te).isChunkLoaded())
+					((IBoundingBoxCache) te).updateCachedBoundingBox(partialTicks);
+			}
+		});
 	}
 
 }
