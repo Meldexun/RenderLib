@@ -17,10 +17,22 @@ public class GLBuffer {
 	private FloatBuffer floatBuffer;
 	private IntBuffer intBuffer;
 
+	/**
+	 * @param size
+	 * @param flags Used when glBufferStorage is supported
+	 * @param usage Used when glBufferData is supported
+	 */
 	public GLBuffer(long size, int flags, int usage) {
 		this(size, flags, usage, false, 0);
 	}
 
+	/**
+	 * @param size
+	 * @param flags Used when glBufferStorage is supported
+	 * @param usage Used when glBufferData is supported
+	 * @param persistent
+	 * @param persistentAccess
+	 */
 	public GLBuffer(long size, int flags, int usage, boolean persistent, int persistentAccess) {
 		if (persistent && GLUtil.CAPS.OpenGL44) {
 			this.buffer = GLUtil.createBuffer(size, flags | GL44.GL_MAP_PERSISTENT_BIT, usage);
@@ -43,10 +55,19 @@ public class GLBuffer {
 		return size;
 	}
 
+	/**
+	 * @param rangeAccess Used when glMapBufferRange is supported
+	 * @param access Used when glMapBuffer is supported
+	 */
 	public void map(int rangeAccess, int access) {
 		map(size, rangeAccess, access);
 	}
 
+	/**
+	 * @param length
+	 * @param rangeAccess Used when glMapBufferRange is supported
+	 * @param access Used when glMapBuffer is supported
+	 */
 	public void map(long length, int rangeAccess, int access) {
 		if (!persistent && !mapped) {
 			byteBuffer = GLUtil.map(buffer, length, rangeAccess, access, byteBuffer);
