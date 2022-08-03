@@ -10,6 +10,7 @@ import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
 import meldexun.renderlib.util.EntityUtil;
+import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,9 +37,11 @@ public class EntityRenderer {
 
 	protected void renderEntities(ICamera frustum, float partialTicks, double camX, double camY, double camZ, List<Entity> multipassEntities, List<Entity> outlineEntities) {
 		Minecraft mc = Minecraft.getMinecraft();
-		this.renderedEntities = 0;
-		this.occludedEntities = 0;
-		this.totalEntities = 0;
+		if (MinecraftForgeClient.getRenderPass() == 0) {
+			this.renderedEntities = 0;
+			this.occludedEntities = 0;
+			this.totalEntities = mc.world.loadedEntityList.size();
+		}
 		this.camChunkX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
 		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
@@ -48,9 +51,13 @@ public class EntityRenderer {
 				continue;
 			}
 			if (isOcclusionCulled(entity)) {
-				this.occludedEntities++;
+				if (((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
+					this.occludedEntities++;
+				}
 			} else {
-				this.renderedEntities++;
+				if (((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
+					this.renderedEntities++;
+				}
 				this.preRenderEntity(entity);
 				mc.getRenderManager().renderEntityStatic(entity, partialTicks, false);
 				this.postRenderEntity();
@@ -116,8 +123,6 @@ public class EntityRenderer {
 		if (isOutsideOfRenderDist(entity, partialTicks)) {
 			return false;
 		}
-
-		this.totalEntities++;
 
 		if (!((IEntityRendererCache) entity).getRenderer().shouldRender(entity, frustum, camX, camY, camZ) && !entity.isRidingOrBeingRiddenBy(Minecraft.getMinecraft().player)
 				&& (!RenderLib.isFairyLightsInstalled || !FairyLights.isFairyLightEntity(entity))) {

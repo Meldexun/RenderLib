@@ -22,7 +22,9 @@
     "tileentity.MixinTileEntityRendererDispatcher",
     "MixinChunk",
     "MixinClippingHelper",
+    "MixinGuiOverlayDebug",
     "MixinMinecraft",
+    "MixinRenderable",
     "MixinRenderGlobal"
   ],
   "injectors": {

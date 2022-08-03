@@ -3,6 +3,7 @@ package meldexun.renderlib.renderer.tileentity;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
+import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
 import meldexun.renderlib.util.TileEntityUtil;
 import net.minecraft.client.Minecraft;
@@ -23,9 +24,11 @@ public class TileEntityRenderer {
 
 	public void renderTileEntities(ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
 		Minecraft mc = Minecraft.getMinecraft();
-		this.renderedTileEntities = 0;
-		this.occludedTileEntities = 0;
-		this.totalTileEntities = 0;
+		if (MinecraftForgeClient.getRenderPass() == 0) {
+			this.renderedTileEntities = 0;
+			this.occludedTileEntities = 0;
+			this.totalTileEntities = mc.world.loadedTileEntityList.size();
+		}
 		this.camChunkX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
 		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
@@ -36,9 +39,13 @@ public class TileEntityRenderer {
 					continue;
 				}
 				if (isOcclusionCulled(tileEntity)) {
-					this.occludedTileEntities++;
+					if (((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
+						this.occludedTileEntities++;
+					}
 				} else {
-					this.renderedTileEntities++;
+					if (((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
+						this.renderedTileEntities++;
+					}
 					this.preRenderTileEntity(tileEntity);
 					TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
 					this.postRenderTileEntity();
@@ -60,8 +67,6 @@ public class TileEntityRenderer {
 		if (isOutsideOfRenderDist(tileEntity)) {
 			return false;
 		}
-
-		this.totalTileEntities++;
 
 		if (!((IBoundingBoxCache) tileEntity).getCachedBoundingBox().isVisible(frustum)) {
 			this.setCanBeOcclusionCulled(tileEntity, false);
