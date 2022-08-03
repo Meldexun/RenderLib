@@ -43,9 +43,13 @@ public class GLBuffer {
 		return size;
 	}
 
-	public void map(int accessRange, int access) {
+	public void map(int rangeAccess, int access) {
+		map(size, rangeAccess, access);
+	}
+
+	public void map(long length, int rangeAccess, int access) {
 		if (!persistent && !mapped) {
-			byteBuffer = GLUtil.map(buffer, size, accessRange, access, byteBuffer);
+			byteBuffer = GLUtil.map(buffer, length, rangeAccess, access, byteBuffer);
 			mapped = true;
 		}
 	}
