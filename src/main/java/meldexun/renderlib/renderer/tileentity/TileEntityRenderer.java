@@ -1,8 +1,10 @@
 package meldexun.renderlib.renderer.tileentity;
 
+import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
+import meldexun.renderlib.integration.ValkyrienSkies;
 import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
 import meldexun.renderlib.util.TileEntityUtil;
@@ -10,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
 
@@ -82,11 +85,8 @@ public class TileEntityRenderer {
 	}
 
 	private boolean isOutsideOfRenderDist(TileEntity tileEntity) {
-		int tileEntityX = tileEntity.getPos().getX() >> 4;
-		if (Math.abs(tileEntityX - camChunkX) > renderDist)
-			return true;
-		int tileEntityZ = tileEntity.getPos().getZ() >> 4;
-		return Math.abs(tileEntityZ - camChunkZ) > renderDist;
+		BlockPos pos = RenderLib.isValkyrienSkiesInstalled ? ValkyrienSkies.getPos(tileEntity) : tileEntity.getPos();
+		return Math.abs((pos.getX() >> 4) - camChunkX) > renderDist || Math.abs((pos.getZ() >> 4) - camChunkZ) > renderDist;
 	}
 
 	protected <T extends TileEntity> void setCanBeOcclusionCulled(T tileEntity, boolean canBeOcclusionCulled) {
