@@ -12,15 +12,18 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GL44;
 import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.KHRDebugCallback;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
+import meldexun.renderlib.config.RenderLibConfig;
 
 public class GLUtil {
 
@@ -41,6 +44,74 @@ public class GLUtil {
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
+		}
+
+		if (CAPS.OpenGL43 && RenderLibConfig.enableGLDebug) {
+			GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
+			GL11.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			GL43.glDebugMessageCallback(new KHRDebugCallback((source, type, id, severity, message) -> {
+				if (type == GL43.GL_DEBUG_TYPE_ERROR) {
+					throw new GLException(String.format("OpenGL Error: %s %s %s %s %s", getSource(source), getType(type), getSeverity(severity), id, message));
+				} else {
+					RenderLib.LOGGER.info("OpenGL Debug: {} {} {} {} {}", getSource(source), getType(type), getSeverity(severity), id, message);
+				}
+			}));
+			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, true);
+		}
+	}
+
+	private static String getSource(int source) {
+		switch (source) {
+		case GL43.GL_DEBUG_SOURCE_API:
+			return "API";
+		case GL43.GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+			return "WINDOW SYSTEM";
+		case GL43.GL_DEBUG_SOURCE_SHADER_COMPILER:
+			return "SHADER COMPILER";
+		case GL43.GL_DEBUG_SOURCE_THIRD_PARTY:
+			return "THIRD PARTY";
+		case GL43.GL_DEBUG_SOURCE_APPLICATION:
+			return "APPLICATION";
+		case GL43.GL_DEBUG_SOURCE_OTHER:
+			return "OTHER";
+		default:
+			return "?";
+		}
+	}
+
+	private static String getType(int type) {
+		switch (type) {
+		case GL43.GL_DEBUG_TYPE_ERROR:
+			return "ERROR";
+		case GL43.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			return "DEPRECATED BEHAVIOR";
+		case GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+			return "UNDEFINED BEHAVIOR";
+		case GL43.GL_DEBUG_TYPE_PORTABILITY:
+			return "PORTABILITY";
+		case GL43.GL_DEBUG_TYPE_PERFORMANCE:
+			return "PERFORMANCE";
+		case GL43.GL_DEBUG_TYPE_OTHER:
+			return "OTHER";
+		case GL43.GL_DEBUG_TYPE_MARKER:
+			return "MARKER";
+		default:
+			return "?";
+		}
+	}
+
+	private static String getSeverity(int severity) {
+		switch (severity) {
+		case GL43.GL_DEBUG_SEVERITY_HIGH:
+			return "HIGH";
+		case GL43.GL_DEBUG_SEVERITY_MEDIUM:
+			return "MEDIUM";
+		case GL43.GL_DEBUG_SEVERITY_LOW:
+			return "LOW";
+		case GL43.GL_DEBUG_SEVERITY_NOTIFICATION:
+			return "NOTIFICATION";
+		default:
+			return "?";
 		}
 	}
 
