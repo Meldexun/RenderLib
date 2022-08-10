@@ -28,8 +28,8 @@ public class GLBuffer {
 
 	/**
 	 * @param size
-	 * @param flags Used when glBufferStorage is supported
-	 * @param usage Used when glBufferData is supported
+	 * @param flags            Used when glBufferStorage is supported
+	 * @param usage            Used when glBufferData is supported
 	 * @param persistent
 	 * @param persistentAccess
 	 */
@@ -57,7 +57,7 @@ public class GLBuffer {
 
 	/**
 	 * @param rangeAccess Used when glMapBufferRange is supported
-	 * @param access Used when glMapBuffer is supported
+	 * @param access      Used when glMapBuffer is supported
 	 */
 	public void map(int rangeAccess, int access) {
 		map(size, rangeAccess, access);
@@ -66,7 +66,7 @@ public class GLBuffer {
 	/**
 	 * @param length
 	 * @param rangeAccess Used when glMapBufferRange is supported
-	 * @param access Used when glMapBuffer is supported
+	 * @param access      Used when glMapBuffer is supported
 	 */
 	public void map(long length, int rangeAccess, int access) {
 		if (!persistent && !mapped) {
@@ -76,7 +76,13 @@ public class GLBuffer {
 	}
 
 	public void unmap() {
-		if (!persistent && mapped) {
+		if (!persistent) {
+			forceUnmap();
+		}
+	}
+
+	private void forceUnmap() {
+		if (mapped) {
 			GLUtil.unmap(buffer);
 			mapped = false;
 			byteBuffer = null;
@@ -104,9 +110,7 @@ public class GLBuffer {
 	}
 
 	public void dispose() {
-		if (mapped) {
-			GLUtil.unmap(buffer);
-		}
+		forceUnmap();
 		GL15.glDeleteBuffers(buffer);
 	}
 
