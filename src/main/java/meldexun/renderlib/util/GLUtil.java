@@ -46,6 +46,7 @@ public class GLUtil {
 			e.printStackTrace();
 		}
 
+		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", CAPS.OpenGL43, RenderLibConfig.enableGLDebug);
 		if (CAPS.OpenGL43 && RenderLibConfig.enableGLDebug) {
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
