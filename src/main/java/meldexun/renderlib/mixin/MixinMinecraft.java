@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import meldexun.renderlib.util.GLUtil;
 import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -46,6 +47,11 @@ public class MixinMinecraft {
 	@Inject(method = "getLimitFramerate", cancellable = true, at = @At("HEAD"))
 	public void getLimitFramerate(CallbackInfoReturnable<Integer> info) {
 		info.setReturnValue(world != null ? gameSettings.limitFramerate : 60);
+	}
+
+	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/client/FMLClientHandler;finishMinecraftLoading()V"))
+	public void init(CallbackInfo info) {
+		GLUtil.updateDebugOutput();
 	}
 
 }
