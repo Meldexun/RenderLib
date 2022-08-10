@@ -11,9 +11,7 @@ import net.minecraftforge.common.config.Config;
 @Config(modid = RenderLib.MODID)
 public class RenderLibConfig {
 
-	@Config.RequiresMcRestart
-	@Config.Comment("Requires support for OpenGL 4.3")
-	public static boolean enableGLDebug = false;
+	public static OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
 
 	@Config.Comment("Most tile entities have static bounding boxes and thus they can be cached. Tile entities whose bounding boxes are likely to change every frame or so should be added to the blacklist. Tile entities whose bounding only change every once in a while should be covered by cache updates (update speed adjustable through tileEntityCachedBoundingBoxUpdateInterval)")
 	public static boolean tileEntityCachedBoundingBoxEnabled = true;
@@ -44,6 +42,21 @@ public class RenderLibConfig {
 		double z = s.length >= 3 ? Double.parseDouble(s[2]) : 0.0D;
 		return x != 0.0D || y != 0.0D || z != 0.0D ? new Vec3d(x, y, z) : null;
 	});
+
+	public static class OpenGLDebugOutput {
+
+		@Config.Comment("Better debugging of OpenGL errors. (Requires OpenGL 4.3!)")
+		public boolean enabled = false;
+		@Config.Comment("Enable/Disable logging of high severity non-error messages. (You probably never want to enable this as a normal user)")
+		public boolean logHighSeverity = false;
+		@Config.Comment("Enable/Disable logging of medium severity non-error messages. (You probably never want to enable this as a normal user)")
+		public boolean logMediumSeverity = false;
+		@Config.Comment("Enable/Disable logging of low severity non-error messages. (You probably never want to enable this as a normal user)")
+		public boolean logLowSeverity = false;
+		@Config.Comment("Enable/Disable logging of notification severity non-error messages. (You probably never want to enable this as a normal user)")
+		public boolean logNotificationSeverity = false;
+
+	}
 
 	public static void onConfigChanged() {
 		tileEntityCachedBoundingBoxBlacklistImpl.load(tileEntityCachedBoundingBoxBlacklist);

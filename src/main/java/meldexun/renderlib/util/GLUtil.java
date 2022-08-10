@@ -48,10 +48,14 @@ public class GLUtil {
 	}
 
 	public static void updateDebugOutput() {
-		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", CAPS.OpenGL43, RenderLibConfig.enableGLDebug);
-		if (CAPS.OpenGL43 && RenderLibConfig.enableGLDebug) {
+		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", CAPS.OpenGL43, RenderLibConfig.openGLDebugOutput.enabled);
+
+		if (!CAPS.OpenGL43)
+			return;
+		if (RenderLibConfig.openGLDebugOutput.enabled) {
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
 			GL43.glDebugMessageCallback(new KHRDebugCallback((source, type, id, severity, message) -> {
 				if (type == GL43.GL_DEBUG_TYPE_ERROR) {
 					throw new GLException(String.format("OpenGL Error: %s %s %s %s %s", getSource(source), getType(type), getSeverity(severity), id, message));
@@ -59,7 +63,20 @@ public class GLUtil {
 					RenderLib.LOGGER.info("OpenGL Debug: {} {} {} {} {}", getSource(source), getType(type), getSeverity(severity), id, message);
 				}
 			}));
-			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, true);
+
+			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, false);
+			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL43.GL_DEBUG_TYPE_ERROR, GL11.GL_DONT_CARE, null, true);
+			if (RenderLibConfig.openGLDebugOutput.logHighSeverity)
+				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_HIGH, null, true);
+			if (RenderLibConfig.openGLDebugOutput.logMediumSeverity)
+				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_MEDIUM, null, true);
+			if (RenderLibConfig.openGLDebugOutput.logLowSeverity)
+				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_LOW, null, true);
+			if (RenderLibConfig.openGLDebugOutput.logNotificationSeverity)
+				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_NOTIFICATION, null, true);
+		} else {
+			GL11.glDisable(GL43.GL_DEBUG_OUTPUT);
+			GL11.glDisable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		}
 	}
 

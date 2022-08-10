@@ -43,6 +43,7 @@ public class RenderLib {
 		if (event.getModID().equals(MODID)) {
 			ConfigManager.sync(MODID, Config.Type.INSTANCE);
 			RenderLibConfig.onConfigChanged();
+			GLUtil.updateDebugOutput();
 		}
 	}
 
