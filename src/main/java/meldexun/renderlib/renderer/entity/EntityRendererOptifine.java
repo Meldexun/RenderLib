@@ -2,36 +2,26 @@ package meldexun.renderlib.renderer.entity;
 
 import java.util.List;
 
-import meldexun.reflectionutil.ReflectionField;
-import meldexun.reflectionutil.ReflectionMethod;
+import meldexun.renderlib.integration.Optifine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 
 public class EntityRendererOptifine extends EntityRenderer {
 
-	private static final ReflectionMethod<Boolean> IS_SHADERS = new ReflectionMethod<>("Config", "isShaders", "isShaders");
-	private static final ReflectionField<Boolean> IS_SHADOW_PASS = new ReflectionField<>("net.optifine.shaders.Shaders", "isShadowPass", "isShadowPass");
-	private static final ReflectionMethod<Boolean> NEXT_ENTITY = new ReflectionMethod<>("net.optifine.shaders.Shaders", "nextEntity", "nextEntity", Entity.class);
-	private static final ReflectionField<Entity> RENDERED_ENTITY = new ReflectionField<>(RenderGlobal.class, "renderedEntity", "renderedEntity");
-	private static final ReflectionMethod<Boolean> IS_FAST_RENDER = new ReflectionMethod<>("Config", "isFastRender", "isFastRender");
-	private static final ReflectionMethod<Boolean> IS_ANTIALIASING = new ReflectionMethod<>("Config", "isAntialiasing", "isAntialiasing");
-	private static final ReflectionMethod<Void> BEGIN_ENTITIES_GLOWING = new ReflectionMethod<>("net.optifine.shaders.Shaders", "beginEntitiesGlowing", "beginEntitiesGlowing");
-	private static final ReflectionMethod<Void> END_ENTITIES_GLOWING = new ReflectionMethod<>("net.optifine.shaders.Shaders", "endEntitiesGlowing", "endEntitiesGlowing");
 	private boolean isShaders = false;
 
 	@Override
 	public void renderEntities(ICamera camera, float partialTicks, double camX, double camY, double camZ, List<Entity> multipassEntities, List<Entity> outlineEntities) {
-		this.isShaders = IS_SHADERS.invoke(null);
+		this.isShaders = Optifine.isShaders();
 
 		int r = this.renderedEntities;
 		int o = this.occludedEntities;
 		int t = this.totalEntities;
 		super.renderEntities(camera, partialTicks, camX, camY, camZ, multipassEntities, outlineEntities);
-		if (IS_SHADOW_PASS.getBoolean(null)) {
+		if (Optifine.isShadowPass()) {
 			this.renderedEntities = r;
 			this.occludedEntities = o;
 			this.totalEntities = t;
@@ -44,7 +34,7 @@ public class EntityRendererOptifine extends EntityRenderer {
 
 			if (!outlineEntities.isEmpty()) {
 				if (this.isShaders) {
-					BEGIN_ENTITIES_GLOWING.invoke(null);
+					Optifine.beginEntitiesGlowing();
 				}
 				GlStateManager.disableFog();
 				GlStateManager.disableDepth();
@@ -54,7 +44,7 @@ public class EntityRendererOptifine extends EntityRenderer {
 
 				for (Entity entity : outlineEntities) {
 					if (this.isShaders) {
-						NEXT_ENTITY.invoke(null, entity);
+						Optifine.nextEntity(entity);
 					}
 					mc.getRenderManager().renderEntityStatic(entity, mc.getRenderPartialTicks(), false);
 				}
@@ -65,7 +55,7 @@ public class EntityRendererOptifine extends EntityRenderer {
 				GlStateManager.enableDepth();
 				GlStateManager.enableFog();
 				if (this.isShaders) {
-					END_ENTITIES_GLOWING.invoke(null);
+					Optifine.endEntitiesGlowing();
 				}
 			}
 		}
@@ -74,27 +64,27 @@ public class EntityRendererOptifine extends EntityRenderer {
 	@Override
 	protected void preRenderEntity(Entity entity) {
 		if (this.isShaders) {
-			NEXT_ENTITY.invoke(null, entity);
+			Optifine.nextEntity(entity);
 		}
-		RENDERED_ENTITY.set(Minecraft.getMinecraft().renderGlobal, entity);
+		Optifine.setRenderedEntity(entity);
 		super.preRenderEntity(entity);
 	}
 
 	@Override
 	protected void postRenderEntity() {
 		super.postRenderEntity();
-		RENDERED_ENTITY.set(Minecraft.getMinecraft().renderGlobal, null);
+		Optifine.setRenderedEntity(null);
 	}
 
 	@Override
 	protected boolean isRenderEntityOutlines() {
-		if (IS_FAST_RENDER.invoke(null)) {
+		if (Optifine.isFastRender()) {
 			return false;
 		}
-		if (IS_SHADERS.invoke(null)) {
+		if (Optifine.isShaders()) {
 			return false;
 		}
-		if (IS_ANTIALIASING.invoke(null)) {
+		if (Optifine.isAntialiasing()) {
 			return false;
 		}
 		return super.isRenderEntityOutlines();
