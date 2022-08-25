@@ -4,6 +4,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
+import meldexun.renderlib.integration.Optifine;
 import meldexun.renderlib.integration.ValkyrienSkies;
 import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
@@ -42,11 +43,11 @@ public class TileEntityRenderer {
 					continue;
 				}
 				if (isOcclusionCulled(tileEntity)) {
-					if (((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
+					if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
 						this.occludedTileEntities++;
 					}
 				} else {
-					if (((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
+					if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
 						this.renderedTileEntities++;
 					}
 					this.preRenderTileEntity(tileEntity);

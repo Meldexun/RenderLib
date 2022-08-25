@@ -9,6 +9,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
+import meldexun.renderlib.integration.Optifine;
 import meldexun.renderlib.util.EntityUtil;
 import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
@@ -51,11 +52,11 @@ public class EntityRenderer {
 				continue;
 			}
 			if (isOcclusionCulled(entity)) {
-				if (((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
+				if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
 					this.occludedEntities++;
 				}
 			} else {
-				if (((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
+				if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
 					this.renderedEntities++;
 				}
 				this.preRenderEntity(entity);
