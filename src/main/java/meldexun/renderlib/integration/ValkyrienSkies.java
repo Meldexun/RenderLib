@@ -20,7 +20,7 @@ public class ValkyrienSkies {
 				.map(PhysicsObject::getShipTransformationManager)
 				.map(ShipTransformationManager::getCurrentTickTransform)
 				.map(shipTransform -> shipTransform.transform(tileEntity.getPos(), TransformType.SUBSPACE_TO_GLOBAL))
-				.orElse(null);
+				.orElseGet(tileEntity::getPos);
 	}
 
 }
