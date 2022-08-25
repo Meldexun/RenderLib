@@ -3,6 +3,7 @@ package meldexun.renderlib.util;
 import org.lwjgl.opengl.GL11;
 
 import meldexun.matrixutil.Matrix4f;
+import meldexun.renderlib.integration.Optifine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
@@ -42,7 +43,9 @@ public class RenderUtil {
 		Minecraft mc = Minecraft.getMinecraft();
 		Entity cameraEntity = mc.getRenderViewEntity();
 		Vec3d cameraOffset = ActiveRenderInfo.getCameraPosition();
-		recursive++;
+		if (!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) {
+			recursive++;
+		}
 		projectionMatrix = GLUtil.getMatrix(GL11.GL_PROJECTION_MATRIX);
 		modelViewMatrix = GLUtil.getMatrix(GL11.GL_MODELVIEW_MATRIX);
 		projectionModelViewMatrix = projectionMatrix.copy();
