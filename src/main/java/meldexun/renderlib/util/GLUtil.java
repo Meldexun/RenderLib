@@ -48,6 +48,8 @@ public class GLUtil {
 	}
 
 	public static void updateDebugOutput() {
+		if (CAPS == null)
+			return;
 		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", CAPS.OpenGL43, RenderLibConfig.openGLDebugOutput.enabled);
 
 		if (!CAPS.OpenGL43)
