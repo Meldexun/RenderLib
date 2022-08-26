@@ -60,13 +60,25 @@ public class TimerEventHandler {
 		if (timer == null) {
 			return;
 		}
-		drawLeftAligned(font, timer.getName(), x - 80, y);
-		drawLeftAligned(font, timer.avgString(), x - 40, y);
-		drawLeftAligned(font, timer.maxString(), x, y);
+
+		int nameWidth = font.getStringWidth(timer.getName());
+		int avgWidth = font.getStringWidth(timer.avgString());
+		int maxWidth = font.getStringWidth(timer.maxString());
+
+		int avgOffset = Math.max(maxWidth + 4, 40);
+		int nameOffset = Math.max(avgOffset + avgWidth + 4, 80);
+
+		draw(font, timer.getName(), x - nameWidth - nameOffset, y);
+		draw(font, timer.avgString(), x - avgWidth - avgOffset, y);
+		draw(font, timer.maxString(), x - maxWidth, y);
 	}
 
 	private static void drawLeftAligned(FontRenderer font, String string, int x, int y) {
-		font.drawStringWithShadow(string, x - font.getStringWidth(string), y, 0xFFFFFFFF);
+		draw(font, string, x - font.getStringWidth(string), y);
+	}
+
+	private static void draw(FontRenderer font, String string, int x, int y) {
+		font.drawStringWithShadow(string, x, y, 0xFFFFFFFF);
 	}
 
 	@SubscribeEvent
