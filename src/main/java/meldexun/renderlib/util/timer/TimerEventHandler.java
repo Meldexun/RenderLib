@@ -57,6 +57,9 @@ public class TimerEventHandler {
 	}
 
 	private static void drawDebug(FontRenderer font, ITimer timer, int x, int y) {
+		if (timer == null) {
+			return;
+		}
 		drawLeftAligned(font, timer.getName(), x - 80, y);
 		drawLeftAligned(font, timer.avgString(), x - 40, y);
 		drawLeftAligned(font, timer.maxString(), x, y);
