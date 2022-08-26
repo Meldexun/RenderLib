@@ -1,6 +1,5 @@
 package meldexun.renderlib.util.timer;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -10,13 +9,13 @@ public class CPUTimer extends Timer {
 	private long start;
 
 	public CPUTimer(String name, int maxResultCount) {
-		super(name);
+		super(name, maxResultCount);
 		this.results = new long[maxResultCount];
 	}
 
 	@Override
 	protected void updateInternal() {
-		this.results[this.frame % this.results.length] = 0;
+		this.results[this.frame] = 0;
 	}
 
 	@Override
@@ -26,13 +25,13 @@ public class CPUTimer extends Timer {
 
 	@Override
 	protected void stopInternal() {
-		this.results[this.frame % this.results.length] += System.nanoTime() - this.start;
+		this.results[this.frame] += System.nanoTime() - this.start;
 	}
 
 	@Override
 	public LongStream results() {
 		return IntStream.range(0, this.results.length)
-				.filter(i -> i != this.frame % this.results.length)
+				.filter(i -> i != this.frame)
 				.mapToLong(i -> this.results[i]);
 	}
 

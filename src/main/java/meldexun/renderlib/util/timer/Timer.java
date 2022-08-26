@@ -5,11 +5,13 @@ import meldexun.renderlib.config.RenderLibConfig;
 public abstract class Timer implements ITimer {
 
 	protected final String name;
+	protected final int maxResultCount;
 	protected int frame;
 	protected boolean active;
 
-	public Timer(String name) {
+	public Timer(String name, int maxResultCount) {
 		this.name = name;
+		this.maxResultCount = maxResultCount;
 	}
 
 	@Override
@@ -20,7 +22,7 @@ public abstract class Timer implements ITimer {
 	@Override
 	public void update() {
 		if (RenderLibConfig.showFrameTimes) {
-			this.frame++;
+			this.frame = (this.frame + 1) % this.maxResultCount;
 			this.updateInternal();
 		}
 	}

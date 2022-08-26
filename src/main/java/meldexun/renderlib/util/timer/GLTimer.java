@@ -1,11 +1,9 @@
 package meldexun.renderlib.util.timer;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL33;
@@ -19,13 +17,15 @@ public class GLTimer extends Timer {
 	private GLQueryResult start;
 
 	public GLTimer(String name, int maxResultCount) {
-		super(name);
-		this.results = IntStream.range(0, maxResultCount).mapToObj(i -> new Frame()).toArray(Frame[]::new);
+		super(name, maxResultCount);
+		this.results = IntStream.range(0, maxResultCount)
+				.mapToObj(i -> new Frame())
+				.toArray(Frame[]::new);
 	}
 
 	@Override
 	protected void updateInternal() {
-		this.results[this.frame % this.results.length].reset();
+		this.results[this.frame].reset();
 	}
 
 	@Override
@@ -35,13 +35,13 @@ public class GLTimer extends Timer {
 
 	@Override
 	protected void stopInternal() {
-		this.results[this.frame % this.results.length].addPending(this.start, timestamp());
+		this.results[this.frame].addPending(this.start, timestamp());
 	}
 
 	@Override
 	public LongStream results() {
 		return IntStream.range(0, this.results.length)
-				.filter(i -> i != this.frame % this.results.length)
+				.filter(i -> i != this.frame)
 				.mapToObj(i -> this.results[i])
 				.filter(Frame::ready)
 				.mapToLong(Frame::result);
