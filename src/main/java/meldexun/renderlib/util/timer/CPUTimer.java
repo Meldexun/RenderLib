@@ -15,7 +15,7 @@ public class CPUTimer extends Timer {
 	}
 
 	@Override
-	public void updateInternal() {
+	protected void updateInternal() {
 		this.results[this.frame % this.results.length] = 0;
 	}
 
