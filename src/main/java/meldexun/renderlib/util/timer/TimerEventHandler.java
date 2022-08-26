@@ -32,7 +32,7 @@ public class TimerEventHandler {
 
 	public static ITimer tryCreateGLTimer(String name, int maxResultCount) {
 		if (!GLUtil.CAPS.OpenGL33 && !GLUtil.CAPS.GL_ARB_timer_query) {
-			return new DummyTimer(name);
+			return new DummyTimer(name, "?");
 		}
 		return new GLTimer(name, maxResultCount);
 	}

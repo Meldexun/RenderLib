@@ -5,9 +5,11 @@ import java.util.stream.LongStream;
 public class DummyTimer implements ITimer {
 
 	private final String name;
+	private final String value;
 
-	public DummyTimer(String name) {
+	public DummyTimer(String name, String value) {
 		this.name = name;
+		this.value = value;
 	}
 
 	@Override
@@ -37,17 +39,17 @@ public class DummyTimer implements ITimer {
 
 	@Override
 	public String avgString() {
-		return "?";
+		return this.value;
 	}
 
 	@Override
 	public String minString() {
-		return "?";
+		return this.value;
 	}
 
 	@Override
 	public String maxString() {
-		return "?";
+		return this.value;
 	}
 
 }
