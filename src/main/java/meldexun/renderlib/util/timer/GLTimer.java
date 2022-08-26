@@ -40,14 +40,11 @@ public class GLTimer extends Timer {
 
 	@Override
 	public LongStream results() {
-		Stream<Frame> s;
-		if (this.active) {
-			int j = this.frame % this.results.length;
-			s = IntStream.range(0, this.results.length).filter(i -> i != j).mapToObj(i -> this.results[i]);
-		} else {
-			s = Arrays.stream(this.results);
-		}
-		return s.filter(Frame::ready).mapToLong(Frame::result);
+		return IntStream.range(0, this.results.length)
+				.filter(i -> i != this.frame % this.results.length)
+				.mapToObj(i -> this.results[i])
+				.filter(Frame::ready)
+				.mapToLong(Frame::result);
 	}
 
 	private static GLQueryResult timestamp() {

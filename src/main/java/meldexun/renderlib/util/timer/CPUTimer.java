@@ -31,11 +31,9 @@ public class CPUTimer extends Timer {
 
 	@Override
 	public LongStream results() {
-		if (this.active) {
-			int j = this.frame % this.results.length;
-			return IntStream.range(0, this.results.length).filter(i -> i != j).mapToLong(i -> this.results[i]);
-		}
-		return Arrays.stream(this.results);
+		return IntStream.range(0, this.results.length)
+				.filter(i -> i != this.frame % this.results.length)
+				.mapToLong(i -> this.results[i]);
 	}
 
 }
