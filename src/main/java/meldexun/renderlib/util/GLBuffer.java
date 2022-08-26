@@ -75,6 +75,10 @@ public class GLBuffer {
 		}
 	}
 
+	public boolean isMapped() {
+		return mapped;
+	}
+
 	public void unmap() {
 		if (!persistent) {
 			forceUnmap();
