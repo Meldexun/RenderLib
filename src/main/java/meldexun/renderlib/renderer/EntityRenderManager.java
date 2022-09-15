@@ -10,8 +10,16 @@ public final class EntityRenderManager {
 
 	private static EntityRenderer entityRenderer = Optifine.isOptifineDetected() ? new EntityRendererOptifine() : new EntityRenderer();
 
-	public static void renderEntities(ICamera frustum, float partialTicks) {
-		entityRenderer.renderEntities(frustum, partialTicks, RenderUtil.getCameraEntityX(), RenderUtil.getCameraEntityY(), RenderUtil.getCameraEntityZ());
+	public static void setup(ICamera frustum, float partialTicks) {
+		entityRenderer.setup(frustum, partialTicks, RenderUtil.getCameraEntityX(), RenderUtil.getCameraEntityY(), RenderUtil.getCameraEntityZ());
+	}
+
+	public static void reset() {
+		entityRenderer.reset();
+	}
+
+	public static void renderEntities(float partialTicks) {
+		entityRenderer.renderEntities(partialTicks);
 	}
 
 	public static int renderedEntities() {

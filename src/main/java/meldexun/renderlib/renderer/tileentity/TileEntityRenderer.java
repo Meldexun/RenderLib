@@ -1,12 +1,13 @@
 package meldexun.renderlib.renderer.tileentity;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.api.ITileEntityRendererCache;
-import meldexun.renderlib.integration.Optifine;
 import meldexun.renderlib.integration.ValkyrienSkies;
-import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
 import meldexun.renderlib.util.TileEntityUtil;
 import net.minecraft.client.Minecraft;
@@ -25,37 +26,48 @@ public class TileEntityRenderer {
 	private int camChunkX;
 	private int camChunkZ;
 	private int renderDist;
+	private final Deque<TileEntityRenderList> tileEntityListQueue = new ArrayDeque<>();
 
-	public void renderTileEntities(ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
+	public void setup(ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if (MinecraftForgeClient.getRenderPass() == 0) {
-			this.renderedTileEntities = 0;
-			this.occludedTileEntities = 0;
-			this.totalTileEntities = mc.world.loadedTileEntityList.size();
-		}
+		this.renderedTileEntities = 0;
+		this.occludedTileEntities = 0;
+		this.totalTileEntities = mc.world.loadedTileEntityList.size();
 		this.camChunkX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
 		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
 
-		TileEntityUtil.processTileEntities(mc.world, tileEntities -> {
-			for (TileEntity tileEntity : tileEntities) {
-				if (!shouldRender(tileEntity, frustum, partialTicks, camX, camY, camZ)) {
-					continue;
-				}
-				if (isOcclusionCulled(tileEntity)) {
-					if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
-						this.occludedTileEntities++;
-					}
-				} else {
-					if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) tileEntity).setLastTimeRendered(RenderUtil.getFrame())) {
-						this.renderedTileEntities++;
-					}
-					this.preRenderTileEntity(tileEntity);
-					TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
-					this.postRenderTileEntity();
-				}
+		TileEntityRenderList tileEntityList = new TileEntityRenderList();
+		TileEntityUtil.processTileEntities(mc.world, tileEntities -> tileEntities.forEach(tileEntity -> {
+			if (!this.shouldRender(tileEntity, frustum, partialTicks, camX, camY, camZ)) {
+				return;
 			}
-		});
+
+			if (this.isOcclusionCulled(tileEntity)) {
+				this.occludedTileEntities++;
+			} else {
+				this.renderedTileEntities++;
+
+				tileEntityList.addTileEntity(tileEntity);
+			}
+		}));
+		this.tileEntityListQueue.addLast(tileEntityList);
+	}
+
+	public void reset() {
+		this.tileEntityListQueue.removeLast();
+	}
+
+	public void renderTileEntities(float partialTicks) {
+		this.renderTileEntities(partialTicks, this.tileEntityListQueue.getLast());
+	}
+
+	protected void renderTileEntities(float partialTicks, TileEntityRenderList tileEntityList) {
+		for (TileEntity tileEntity : tileEntityList.getTileEntities()) {
+			this.preRenderTileEntity(tileEntity);
+			TileEntityRendererDispatcher.instance.render(tileEntity, partialTicks, -1);
+			this.postRenderTileEntity();
+		}
 	}
 
 	private boolean shouldRender(TileEntity tileEntity, ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
@@ -65,10 +77,10 @@ public class TileEntityRenderer {
 		if (!((ILoadable) tileEntity).isChunkLoaded()) {
 			return false;
 		}
-		if (!tileEntity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())) {
+		if (!tileEntity.shouldRenderInPass(0) && !tileEntity.shouldRenderInPass(1)) {
 			return false;
 		}
-		if (isOutsideOfRenderDist(tileEntity)) {
+		if (this.isOutsideOfRenderDist(tileEntity)) {
 			return false;
 		}
 
@@ -87,7 +99,7 @@ public class TileEntityRenderer {
 
 	private boolean isOutsideOfRenderDist(TileEntity tileEntity) {
 		BlockPos pos = RenderLib.isValkyrienSkiesInstalled ? ValkyrienSkies.getPos(tileEntity) : tileEntity.getPos();
-		return Math.abs((pos.getX() >> 4) - camChunkX) > renderDist || Math.abs((pos.getZ() >> 4) - camChunkZ) > renderDist;
+		return Math.abs((pos.getX() >> 4) - this.camChunkX) > this.renderDist || Math.abs((pos.getZ() >> 4) - this.camChunkZ) > this.renderDist;
 	}
 
 	protected <T extends TileEntity> void setCanBeOcclusionCulled(T tileEntity, boolean canBeOcclusionCulled) {
@@ -99,7 +111,7 @@ public class TileEntityRenderer {
 	}
 
 	protected void preRenderTileEntity(TileEntity tileEntity) {
-
+		tileEntity.shouldRenderInPass(MinecraftForgeClient.getRenderPass());
 	}
 
 	protected void postRenderTileEntity() {
@@ -107,15 +119,15 @@ public class TileEntityRenderer {
 	}
 
 	public int getRenderedTileEntities() {
-		return renderedTileEntities;
+		return this.renderedTileEntities;
 	}
 
 	public int getOccludedTileEntities() {
-		return occludedTileEntities;
+		return this.occludedTileEntities;
 	}
 
 	public int getTotalTileEntities() {
-		return totalTileEntities;
+		return this.totalTileEntities;
 	}
 
 }

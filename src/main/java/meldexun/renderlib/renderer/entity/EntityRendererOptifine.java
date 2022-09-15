@@ -1,39 +1,24 @@
 package meldexun.renderlib.renderer.entity;
 
-import java.util.List;
-
 import meldexun.renderlib.integration.Optifine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
 
 public class EntityRendererOptifine extends EntityRenderer {
 
-	private boolean isShaders = false;
-
 	@Override
-	public void renderEntities(ICamera camera, float partialTicks, double camX, double camY, double camZ, List<Entity> multipassEntities, List<Entity> outlineEntities) {
-		this.isShaders = Optifine.isShaders();
-
-		int r = this.renderedEntities;
-		int o = this.occludedEntities;
-		int t = this.totalEntities;
-		super.renderEntities(camera, partialTicks, camX, camY, camZ, multipassEntities, outlineEntities);
-		if (Optifine.isShadowPass()) {
-			this.renderedEntities = r;
-			this.occludedEntities = o;
-			this.totalEntities = t;
-		}
+	protected void renderEntities(float partialTicks, EntityRenderList entityList) {
+		super.renderEntities(partialTicks, entityList);
 
 		Minecraft mc = Minecraft.getMinecraft();
-		if (!this.isRenderEntityOutlines() && (!outlineEntities.isEmpty() || mc.renderGlobal.entityOutlinesRendered)) {
+		if (!this.isRenderEntityOutlines() && (!entityList.getOutlineEntities().isEmpty() || mc.renderGlobal.entityOutlinesRendered)) {
 			mc.world.profiler.endStartSection("entityOutlines");
-			mc.renderGlobal.entityOutlinesRendered = !outlineEntities.isEmpty();
+			mc.renderGlobal.entityOutlinesRendered = !entityList.getOutlineEntities().isEmpty();
 
-			if (!outlineEntities.isEmpty()) {
-				if (this.isShaders) {
+			if (!entityList.getOutlineEntities().isEmpty()) {
+				if (Optifine.isShaders()) {
 					Optifine.beginEntitiesGlowing();
 				}
 				GlStateManager.disableFog();
@@ -42,8 +27,8 @@ public class EntityRendererOptifine extends EntityRenderer {
 				RenderHelper.disableStandardItemLighting();
 				mc.getRenderManager().setRenderOutlines(true);
 
-				for (Entity entity : outlineEntities) {
-					if (this.isShaders) {
+				for (Entity entity : entityList.getOutlineEntities()) {
+					if (Optifine.isShaders()) {
 						Optifine.nextEntity(entity);
 					}
 					mc.getRenderManager().renderEntityStatic(entity, mc.getRenderPartialTicks(), false);
@@ -54,7 +39,7 @@ public class EntityRendererOptifine extends EntityRenderer {
 				mc.entityRenderer.enableLightmap();
 				GlStateManager.enableDepth();
 				GlStateManager.enableFog();
-				if (this.isShaders) {
+				if (Optifine.isShaders()) {
 					Optifine.endEntitiesGlowing();
 				}
 			}
@@ -63,7 +48,7 @@ public class EntityRendererOptifine extends EntityRenderer {
 
 	@Override
 	protected void preRenderEntity(Entity entity) {
-		if (this.isShaders) {
+		if (Optifine.isShaders()) {
 			Optifine.nextEntity(entity);
 		}
 		Optifine.setRenderedEntity(entity);

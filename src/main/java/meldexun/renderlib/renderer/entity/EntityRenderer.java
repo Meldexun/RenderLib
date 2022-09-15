@@ -1,7 +1,7 @@
 package meldexun.renderlib.renderer.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.lwjgl.opengl.GL11;
 
@@ -9,9 +9,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
-import meldexun.renderlib.integration.Optifine;
 import meldexun.renderlib.util.EntityUtil;
-import meldexun.renderlib.util.IRenderable;
 import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -31,63 +29,76 @@ public class EntityRenderer {
 	private int camChunkX;
 	private int camChunkZ;
 	private int renderDist;
+	private final Deque<EntityRenderList> entityListQueue = new ArrayDeque<>();
 
-	public void renderEntities(ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
-		this.renderEntities(frustum, partialTicks, camX, camY, camZ, new ArrayList<>(), new ArrayList<>());
-	}
-
-	protected void renderEntities(ICamera frustum, float partialTicks, double camX, double camY, double camZ, List<Entity> multipassEntities, List<Entity> outlineEntities) {
+	public void setup(ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
 		Minecraft mc = Minecraft.getMinecraft();
-		if (MinecraftForgeClient.getRenderPass() == 0) {
-			this.renderedEntities = 0;
-			this.occludedEntities = 0;
-			this.totalEntities = mc.world.loadedEntityList.size();
-		}
+		this.renderedEntities = 0;
+		this.occludedEntities = 0;
+		this.totalEntities = mc.world.loadedEntityList.size();
 		this.camChunkX = MathHelper.floor(RenderUtil.getCameraEntityX()) >> 4;
 		this.camChunkZ = MathHelper.floor(RenderUtil.getCameraEntityZ()) >> 4;
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
 
+		EntityRenderList entityList = new EntityRenderList();
 		for (Entity entity : EntityUtil.entityIterable(mc.world.loadedEntityList)) {
-			if (!shouldRender(entity, frustum, partialTicks, camX, camY, camZ)) {
+			if (!this.shouldRender(entity, frustum, partialTicks, camX, camY, camZ)) {
 				continue;
 			}
-			if (isOcclusionCulled(entity)) {
-				if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
-					this.occludedEntities++;
-				}
+
+			if (this.isOcclusionCulled(entity)) {
+				this.occludedEntities++;
 			} else {
-				if ((!Optifine.isOptifineDetected() || !Optifine.isShadowPass()) && ((IRenderable) entity).setLastTimeRendered(RenderUtil.getFrame())) {
-					this.renderedEntities++;
-				}
-				this.preRenderEntity(entity);
-				mc.getRenderManager().renderEntityStatic(entity, partialTicks, false);
-				this.postRenderEntity();
+				this.renderedEntities++;
+
+				entityList.addEntity(entity);
+
 				if (((IEntityRendererCache) entity).getRenderer().isMultipass()) {
-					multipassEntities.add(entity);
+					entityList.addMultipassEntity(entity);
 				}
 			}
-			if (shouldRenderOutlines(entity)) {
-				outlineEntities.add(entity);
+
+			if (this.shouldRenderOutlines(entity)) {
+				entityList.addOutlineEntity(entity);
 			}
 		}
-		for (Entity entity : multipassEntities) {
+		this.entityListQueue.addLast(entityList);
+	}
+
+	public void reset() {
+		this.entityListQueue.removeLast();
+	}
+
+	public void renderEntities(float partialTicks) {
+		this.renderEntities(partialTicks, this.entityListQueue.getLast());
+	}
+
+	protected void renderEntities(float partialTicks, EntityRenderList entityList) {
+		Minecraft mc = Minecraft.getMinecraft();
+
+		for (Entity entity : entityList.getEntities()) {
+			this.preRenderEntity(entity);
+			mc.getRenderManager().renderEntityStatic(entity, partialTicks, false);
+			this.postRenderEntity();
+		}
+		for (Entity entity : entityList.getMultipassEntities()) {
 			this.preRenderEntity(entity);
 			mc.getRenderManager().renderMultipass(entity, partialTicks);
 			this.postRenderEntity();
 		}
-		if (MinecraftForgeClient.getRenderPass() == 0 && this.isRenderEntityOutlines() && (!outlineEntities.isEmpty() || mc.renderGlobal.entityOutlinesRendered)) {
+		if (MinecraftForgeClient.getRenderPass() == 0 && this.isRenderEntityOutlines() && (!entityList.getOutlineEntities().isEmpty() || mc.renderGlobal.entityOutlinesRendered)) {
 			mc.world.profiler.endStartSection("entityOutlines");
 			mc.renderGlobal.entityOutlineFramebuffer.framebufferClear();
-			mc.renderGlobal.entityOutlinesRendered = !outlineEntities.isEmpty();
+			mc.renderGlobal.entityOutlinesRendered = !entityList.getOutlineEntities().isEmpty();
 
-			if (!outlineEntities.isEmpty()) {
+			if (!entityList.getOutlineEntities().isEmpty()) {
 				GlStateManager.depthFunc(GL11.GL_ALWAYS);
 				GlStateManager.disableFog();
 				mc.renderGlobal.entityOutlineFramebuffer.bindFramebuffer(false);
 				RenderHelper.disableStandardItemLighting();
 				mc.getRenderManager().setRenderOutlines(true);
 
-				for (Entity entity : outlineEntities) {
+				for (Entity entity : entityList.getOutlineEntities()) {
 					this.preRenderEntity(entity);
 					mc.getRenderManager().renderEntityStatic(entity, partialTicks, false);
 					this.postRenderEntity();
@@ -118,15 +129,14 @@ public class EntityRenderer {
 		if (!((ILoadable) entity).isChunkLoaded()) {
 			return false;
 		}
-		if (!entity.shouldRenderInPass(MinecraftForgeClient.getRenderPass())) {
+		if (!entity.shouldRenderInPass(0) && !entity.shouldRenderInPass(1)) {
 			return false;
 		}
-		if (isOutsideOfRenderDist(entity, partialTicks)) {
+		if (this.isOutsideOfRenderDist(entity, partialTicks)) {
 			return false;
 		}
 
-		if (!((IEntityRendererCache) entity).getRenderer().shouldRender(entity, frustum, camX, camY, camZ) && !entity.isRidingOrBeingRiddenBy(Minecraft.getMinecraft().player)
-				&& (!RenderLib.isFairyLightsInstalled || !FairyLights.isFairyLightEntity(entity))) {
+		if (!((IEntityRendererCache) entity).getRenderer().shouldRender(entity, frustum, camX, camY, camZ) && !entity.isRidingOrBeingRiddenBy(Minecraft.getMinecraft().player) && (!RenderLib.isFairyLightsInstalled || !FairyLights.isFairyLightEntity(entity))) {
 			this.setCanBeOcclusionCulled(entity, false);
 			return false;
 		}
@@ -142,10 +152,11 @@ public class EntityRenderer {
 
 	private boolean isOutsideOfRenderDist(Entity entity, double partialTicks) {
 		int entityX = MathHelper.floor(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks) >> 4;
-		if (Math.abs(entityX - camChunkX) > renderDist)
+		if (Math.abs(entityX - this.camChunkX) > this.renderDist) {
 			return true;
+		}
 		int entityZ = MathHelper.floor(entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks) >> 4;
-		return Math.abs(entityZ - camChunkZ) > renderDist;
+		return Math.abs(entityZ - this.camChunkZ) > this.renderDist;
 	}
 
 	protected <T extends Entity> void setCanBeOcclusionCulled(T entity, boolean canBeOcclusionCulled) {
@@ -171,7 +182,7 @@ public class EntityRenderer {
 	}
 
 	protected void preRenderEntity(Entity entity) {
-
+		entity.shouldRenderInPass(MinecraftForgeClient.getRenderPass());
 	}
 
 	protected void postRenderEntity() {
@@ -184,15 +195,15 @@ public class EntityRenderer {
 	}
 
 	public int getRenderedEntities() {
-		return renderedEntities;
+		return this.renderedEntities;
 	}
 
 	public int getOccludedEntities() {
-		return occludedEntities;
+		return this.occludedEntities;
 	}
 
 	public int getTotalEntities() {
-		return totalEntities;
+		return this.totalEntities;
 	}
 
 }

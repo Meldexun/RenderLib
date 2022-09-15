@@ -53,16 +53,14 @@ public class RenderLibClassTransformer extends AbstractClassTransformer implemen
 			popNode2 = ASMUtil.findLastInsnByType(methodNode, AbstractInsnNode.LABEL, popNode2);
 
 			methodNode.instructions.insert(targetNode1, ASMUtil.listOf(
-				new VarInsnNode(Opcodes.ALOAD, 2),
 				new VarInsnNode(Opcodes.FLOAD, 3),
-				new MethodInsnNode(Opcodes.INVOKESTATIC, "meldexun/renderlib/renderer/EntityRenderManager", "renderEntities", "(Lnet/minecraft/client/renderer/culling/ICamera;F)V", false),
+				new MethodInsnNode(Opcodes.INVOKESTATIC, "meldexun/renderlib/renderer/EntityRenderManager", "renderEntities", "(F)V", false),
 				new JumpInsnNode(Opcodes.GOTO, (LabelNode) popNode1)
 			));
 
 			methodNode.instructions.insert(targetNode2, ASMUtil.listOf(
-				new VarInsnNode(Opcodes.ALOAD, 2),
 				new VarInsnNode(Opcodes.FLOAD, 3),
-				new MethodInsnNode(Opcodes.INVOKESTATIC, "meldexun/renderlib/renderer/TileEntityRenderManager", "renderTileEntities", "(Lnet/minecraft/client/renderer/culling/ICamera;F)V", false),
+				new MethodInsnNode(Opcodes.INVOKESTATIC, "meldexun/renderlib/renderer/TileEntityRenderManager", "renderTileEntities", "(F)V", false),
 				new JumpInsnNode(Opcodes.GOTO, (LabelNode) popNode2)
 			));
 		});
