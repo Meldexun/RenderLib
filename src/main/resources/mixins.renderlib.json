@@ -24,7 +24,6 @@
     "MixinClippingHelper",
     "MixinGuiOverlayDebug",
     "MixinMinecraft",
-    "MixinRenderable",
     "MixinRenderGlobal"
   ],
   "injectors": {
