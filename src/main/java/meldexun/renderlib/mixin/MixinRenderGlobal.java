@@ -11,6 +11,7 @@ import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 @Mixin(value = RenderGlobal.class)
 public class MixinRenderGlobal {
@@ -22,14 +23,18 @@ public class MixinRenderGlobal {
 
 	@Inject(method = "renderEntities", at = @At("HEAD"))
 	public void preEntities(Entity renderViewEntity, ICamera camera, float partialTicks, CallbackInfo info) {
-		EntityRenderManager.setup(camera, (float) partialTicks);
-		TileEntityRenderManager.setup(camera, (float) partialTicks);
+		if (MinecraftForgeClient.getRenderPass() == 0) {
+			EntityRenderManager.setup(camera, (float) partialTicks);
+			TileEntityRenderManager.setup(camera, (float) partialTicks);
+		}
 	}
 
 	@Inject(method = "renderEntities", at = @At("RETURN"))
 	public void postEntities(Entity renderViewEntity, ICamera camera, float partialTicks, CallbackInfo info) {
-		EntityRenderManager.reset();
-		TileEntityRenderManager.reset();
+		if (MinecraftForgeClient.getRenderPass() == 1) {
+			EntityRenderManager.reset();
+			TileEntityRenderManager.reset();
+		}
 	}
 
 }
