@@ -26,7 +26,7 @@ public class MixinEntity implements IBoundingBoxCache {
 				-(((Entity) (Object) this).posZ - ((Entity) (Object) this).lastTickPosZ) * (1.0D - partialTicks));
 		Vec3d v = RenderLibConfig.entityBoundingBoxGrowthListImpl.get((Entity) (Object) this);
 		if (v != null) {
-			cachedBoundingBox.grow(v);
+			cachedBoundingBox.grow(v.x, v.y, v.x, v.x, v.z, v.x);
 		}
 	}
 

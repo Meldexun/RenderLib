@@ -60,12 +60,16 @@ public class MutableAABB {
 	}
 
 	public MutableAABB grow(double x, double y, double z) {
-		this.minX -= x;
-		this.minY -= y;
-		this.minZ -= z;
-		this.maxX += x;
-		this.maxY += y;
-		this.maxZ += z;
+		return grow(x, y, z, x, y, z);
+	}
+
+	public MutableAABB grow(double x0, double y0, double z0, double x1, double y1, double z1) {
+		this.minX -= x0;
+		this.minY -= y0;
+		this.minZ -= z0;
+		this.maxX += x1;
+		this.maxY += y1;
+		this.maxZ += z1;
 		return this;
 	}
 

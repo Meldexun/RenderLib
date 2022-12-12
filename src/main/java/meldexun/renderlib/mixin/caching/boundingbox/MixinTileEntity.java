@@ -35,7 +35,7 @@ public class MixinTileEntity implements IBoundingBoxCache {
 			cachedBoundingBox.set(RenderLib.isValkyrienSkiesInstalled ? ValkyrienSkies.getAABB((TileEntity) (Object) this) : ((TileEntity) (Object) this).getRenderBoundingBox());
 			Vec3d v = RenderLibConfig.tileEntityBoundingBoxGrowthListImpl.get((TileEntity) (Object) this);
 			if (v != null) {
-				cachedBoundingBox.grow(v);
+				cachedBoundingBox.grow(v.x, v.y, v.x, v.x, v.z, v.x);
 			}
 			initialized = true;
 		}
