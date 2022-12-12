@@ -67,7 +67,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     includedDependencies 'meldexun:ASMUtil:1.0.0@jar'
-    includedDependencies 'meldexun:MatrixUtil:1.12.2-1.0.0@jar'
+    includedDependencies 'meldexun:MatrixUtil:1.12.2-1.1.0@jar'
     includedDependencies 'meldexun:RandomUtil:1.0.0@jar'
     includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
     buildDependencies 'curse.maven:FairyLights-233342:3068499'
