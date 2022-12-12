@@ -24,7 +24,17 @@
     "MixinClippingHelper",
     "MixinGuiOverlayDebug",
     "MixinMinecraft",
-    "MixinRenderGlobal"
+    "MixinRenderGlobal",
+    "MixinTileEntity",
+    "MixinTileEntityBanner",
+    "MixinTileEntityBeacon",
+    "MixinTileEntityChest",
+    "MixinTileEntityEnchantingTable",
+    "MixinTileEntityEnderChest",
+    "MixinTileEntityPiston",
+    "MixinTileEntityShulkerBox",
+    "MixinTileEntitySign",
+    "MixinTileEntitySkull"
   ],
   "injectors": {
     "defaultRequire": 1
