@@ -49,7 +49,7 @@ public class MixinMinecraft {
 		info.setReturnValue(world != null ? gameSettings.limitFramerate : 60);
 	}
 
-	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/client/FMLClientHandler;finishMinecraftLoading()V"))
+	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/client/FMLClientHandler;finishMinecraftLoading()V", remap = false))
 	public void init(CallbackInfo info) {
 		GLUtil.updateDebugOutput();
 	}
