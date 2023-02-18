@@ -3,8 +3,10 @@ package meldexun.renderlib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import meldexun.matrixutil.MathUtil;
 import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.GLUtil;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -26,6 +28,9 @@ public class RenderLib {
 
 	@EventHandler
 	public void onFMLConstructionEvent(FMLConstructionEvent event) {
+		MathUtil.setSinFunc(a -> MathHelper.sin((float) a));
+		MathUtil.setCosFunc(a -> MathHelper.cos((float) a));
+
 		GLUtil.init();
 
 		RenderLibConfig.onConfigChanged();
