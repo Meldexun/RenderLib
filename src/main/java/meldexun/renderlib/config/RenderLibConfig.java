@@ -13,6 +13,8 @@ public class RenderLibConfig {
 
 	public static OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
 
+	public static int mainMenuFPS = 60;
+
 	public static boolean showFrameTimes = false;
 
 	@Config.Comment("Most tile entities have static bounding boxes and thus they can be cached. Tile entities whose bounding boxes are likely to change every frame or so should be added to the blacklist. Tile entities whose bounding only change every once in a while should be covered by cache updates (update speed adjustable through tileEntityCachedBoundingBoxUpdateInterval)")
