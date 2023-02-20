@@ -7,6 +7,8 @@ import java.nio.IntBuffer;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL44;
 
+import meldexun.matrixutil.MemoryUtil;
+
 public class GLBuffer {
 
 	private final int buffer;
@@ -16,6 +18,7 @@ public class GLBuffer {
 	private ByteBuffer byteBuffer;
 	private FloatBuffer floatBuffer;
 	private IntBuffer intBuffer;
+	private long address;
 
 	/**
 	 * @param size
@@ -40,6 +43,7 @@ public class GLBuffer {
 			this.persistent = true;
 			this.mapped = true;
 			this.byteBuffer = GLUtil.map(this.buffer, size, persistentAccess | GL44.GL_MAP_PERSISTENT_BIT, 0, null);
+			this.address = MemoryUtil.getAddress(this.byteBuffer);
 		} else {
 			this.buffer = GLUtil.createBuffer(size, flags, usage);
 			this.size = size;
@@ -71,6 +75,7 @@ public class GLBuffer {
 	public void map(long length, int rangeAccess, int access) {
 		if (!persistent && !mapped) {
 			byteBuffer = GLUtil.map(buffer, length, rangeAccess, access, byteBuffer);
+			address = MemoryUtil.getAddress(byteBuffer);
 			mapped = true;
 		}
 	}
@@ -92,6 +97,7 @@ public class GLBuffer {
 			byteBuffer = null;
 			floatBuffer = null;
 			intBuffer = null;
+			address = 0L;
 		}
 	}
 
@@ -111,6 +117,10 @@ public class GLBuffer {
 			intBuffer = byteBuffer.asIntBuffer();
 		}
 		return intBuffer;
+	}
+
+	public long getAddress() {
+		return address;
 	}
 
 	public void dispose() {
