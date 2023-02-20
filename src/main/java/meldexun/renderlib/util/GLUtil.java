@@ -17,9 +17,6 @@ import org.lwjgl.opengl.GL44;
 import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.KHRDebugCallback;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
@@ -135,21 +132,6 @@ public class GLUtil {
 		default:
 			return "?";
 		}
-	}
-
-	public static Vector2f getFloat2(int pname) {
-		GL11.glGetFloat(pname, FLOAT_BUFFER);
-		return new Vector2f(FLOAT_BUFFER.get(0), FLOAT_BUFFER.get(1));
-	}
-
-	public static Vector3f getFloat3(int pname) {
-		GL11.glGetFloat(pname, FLOAT_BUFFER);
-		return new Vector3f(FLOAT_BUFFER.get(0), FLOAT_BUFFER.get(1), FLOAT_BUFFER.get(2));
-	}
-
-	public static Vector4f getFloat4(int pname) {
-		GL11.glGetFloat(pname, FLOAT_BUFFER);
-		return new Vector4f(FLOAT_BUFFER.get(0), FLOAT_BUFFER.get(1), FLOAT_BUFFER.get(2), FLOAT_BUFFER.get(3));
 	}
 
 	public static FloatBuffer getFloat(int pname) {
