@@ -27,6 +27,7 @@ public class GLUtil {
 	public static ContextCapabilities CAPS;
 	private static final FloatBuffer FLOAT_BUFFER = BufferUtil.allocateFloat(16);
 	private static final long FLOAT_BUFFER_ADDRESS = MemoryUtil.getAddress(FLOAT_BUFFER);
+	private static final MemoryAccess FLOAT_BUFFER_ACCESS = new MemoryAccess(FLOAT_BUFFER_ADDRESS);
 
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
@@ -135,9 +136,9 @@ public class GLUtil {
 		}
 	}
 
-	public static FloatBuffer getFloat(int pname) {
+	public static MemoryAccess getFloat(int pname) {
 		GL11.glGetFloat(pname, FLOAT_BUFFER);
-		return FLOAT_BUFFER;
+		return FLOAT_BUFFER_ACCESS;
 	}
 
 	/**
