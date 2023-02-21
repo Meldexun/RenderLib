@@ -2,7 +2,6 @@ package meldexun.renderlib.util;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.annotation.Nullable;
@@ -26,7 +25,7 @@ import meldexun.renderlib.config.RenderLibConfig;
 public class GLUtil {
 
 	public static ContextCapabilities CAPS;
-	private static final FloatBuffer FLOAT_BUFFER = ByteBuffer.allocateDirect(64).order(ByteOrder.nativeOrder()).asFloatBuffer();
+	private static final FloatBuffer FLOAT_BUFFER = BufferUtil.allocateFloat(16);
 	private static final long FLOAT_BUFFER_ADDRESS = MemoryUtil.getAddress(FLOAT_BUFFER);
 
 	public static void init() {
