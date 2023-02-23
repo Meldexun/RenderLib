@@ -1,8 +1,6 @@
 package meldexun.renderlib.util;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL44;
@@ -16,8 +14,6 @@ public class GLBuffer {
 	private final boolean persistent;
 	private boolean mapped;
 	private ByteBuffer byteBuffer;
-	private FloatBuffer floatBuffer;
-	private IntBuffer intBuffer;
 	private long address;
 
 	/**
@@ -95,28 +91,12 @@ public class GLBuffer {
 			GLUtil.unmap(buffer);
 			mapped = false;
 			byteBuffer = null;
-			floatBuffer = null;
-			intBuffer = null;
 			address = 0L;
 		}
 	}
 
 	public ByteBuffer getByteBuffer() {
 		return byteBuffer;
-	}
-
-	public FloatBuffer getFloatBuffer() {
-		if (floatBuffer == null) {
-			floatBuffer = byteBuffer.asFloatBuffer();
-		}
-		return floatBuffer;
-	}
-
-	public IntBuffer getIntBuffer() {
-		if (intBuffer == null) {
-			intBuffer = byteBuffer.asIntBuffer();
-		}
-		return intBuffer;
 	}
 
 	public long getAddress() {
