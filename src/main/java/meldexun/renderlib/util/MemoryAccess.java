@@ -1,88 +1,77 @@
 package meldexun.renderlib.util;
 
-import java.nio.Buffer;
-
-import meldexun.matrixutil.MemoryUtil;
 import meldexun.matrixutil.UnsafeUtil;
 
-public class MemoryAccess {
+public interface MemoryAccess {
 
-	private final long address;
+	long getAddress();
 
-	public MemoryAccess(long address) {
-		this.address = address;
+	default boolean getBoolean(long offset) {
+		return UnsafeUtil.UNSAFE.getBoolean(null, getAddress() + offset);
 	}
 
-	public MemoryAccess(Buffer buffer) {
-		this(MemoryUtil.getAddress(buffer));
+	default void putBoolean(long offset, boolean data) {
+		UnsafeUtil.UNSAFE.putBoolean(null, getAddress() + offset, data);
 	}
 
-	public long getAddress() {
-		return address;
+	default byte getByte(long offset) {
+		return UnsafeUtil.UNSAFE.getByte(getAddress() + offset);
 	}
 
-	public boolean getBoolean(long offset) {
-		return UnsafeUtil.UNSAFE.getBoolean(null, address + offset);
+	default void putByte(long offset, byte data) {
+		UnsafeUtil.UNSAFE.putByte(getAddress() + offset, data);
 	}
 
-	public void putBoolean(long offset, boolean data) {
-		UnsafeUtil.UNSAFE.putBoolean(null, address + offset, data);
+	default short getShort(long offset) {
+		return UnsafeUtil.UNSAFE.getShort(getAddress() + offset);
 	}
 
-	public byte getByte(long offset) {
-		return UnsafeUtil.UNSAFE.getByte(address + offset);
+	default void putShort(long offset, short data) {
+		UnsafeUtil.UNSAFE.putShort(getAddress() + offset, data);
 	}
 
-	public void putByte(long offset, byte data) {
-		UnsafeUtil.UNSAFE.putByte(address + offset, data);
+	default int getInt(long offset) {
+		return UnsafeUtil.UNSAFE.getInt(getAddress() + offset);
 	}
 
-	public short getShort(long offset) {
-		return UnsafeUtil.UNSAFE.getShort(address + offset);
+	default void putInt(long offset, int data) {
+		UnsafeUtil.UNSAFE.putInt(getAddress() + offset, data);
 	}
 
-	public void putShort(long offset, short data) {
-		UnsafeUtil.UNSAFE.putShort(address + offset, data);
+	default long getLong(long offset) {
+		return UnsafeUtil.UNSAFE.getLong(getAddress() + offset);
 	}
 
-	public int getInt(long offset) {
-		return UnsafeUtil.UNSAFE.getInt(address + offset);
+	default void putLong(long offset, long data) {
+		UnsafeUtil.UNSAFE.putLong(getAddress() + offset, data);
 	}
 
-	public void putInt(long offset, int data) {
-		UnsafeUtil.UNSAFE.putInt(address + offset, data);
+	default float getFloat(long offset) {
+		return UnsafeUtil.UNSAFE.getFloat(getAddress() + offset);
 	}
 
-	public long getLong(long offset) {
-		return UnsafeUtil.UNSAFE.getLong(address + offset);
+	default void putFloat(long offset, float data) {
+		UnsafeUtil.UNSAFE.putFloat(getAddress() + offset, data);
 	}
 
-	public void putLong(long offset, long data) {
-		UnsafeUtil.UNSAFE.putLong(address + offset, data);
+	default double getDouble(long offset) {
+		return UnsafeUtil.UNSAFE.getDouble(getAddress() + offset);
 	}
 
-	public float getFloat(long offset) {
-		return UnsafeUtil.UNSAFE.getFloat(address + offset);
+	default void putDouble(long offset, double data) {
+		UnsafeUtil.UNSAFE.putDouble(getAddress() + offset, data);
 	}
 
-	public void putFloat(long offset, float data) {
-		UnsafeUtil.UNSAFE.putFloat(address + offset, data);
+	default char getChar(long offset) {
+		return UnsafeUtil.UNSAFE.getChar(getAddress() + offset);
 	}
 
-	public double getDouble(long offset) {
-		return UnsafeUtil.UNSAFE.getDouble(address + offset);
+	default void putChar(long offset, char data) {
+		UnsafeUtil.UNSAFE.putChar(getAddress() + offset, data);
 	}
 
-	public void putDouble(long offset, double data) {
-		UnsafeUtil.UNSAFE.putDouble(address + offset, data);
-	}
-
-	public char getChar(long offset) {
-		return UnsafeUtil.UNSAFE.getChar(address + offset);
-	}
-
-	public void putChar(long offset, char data) {
-		UnsafeUtil.UNSAFE.putChar(address + offset, data);
+	static void copyMemory(MemoryAccess src, long srcOffset, MemoryAccess dest, long destOffset, long bytes) {
+		UnsafeUtil.UNSAFE.copyMemory(src.getAddress() + srcOffset, dest.getAddress() + destOffset, bytes);
 	}
 
 }
