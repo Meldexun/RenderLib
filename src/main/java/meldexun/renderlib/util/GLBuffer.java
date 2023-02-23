@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL44;
 
 import meldexun.matrixutil.MemoryUtil;
 
-public class GLBuffer {
+public class GLBuffer implements MemoryAccess {
 
 	private final int buffer;
 	private final long size;
@@ -99,6 +99,7 @@ public class GLBuffer {
 		return byteBuffer;
 	}
 
+	@Override
 	public long getAddress() {
 		return address;
 	}
