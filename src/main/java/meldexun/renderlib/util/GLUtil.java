@@ -18,16 +18,13 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.KHRDebugCallback;
 
 import meldexun.matrixutil.Matrix4f;
-import meldexun.matrixutil.MemoryUtil;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
 
 public class GLUtil {
 
 	public static ContextCapabilities CAPS;
-	private static final FloatBuffer FLOAT_BUFFER = BufferUtil.allocateFloat(16);
-	private static final long FLOAT_BUFFER_ADDRESS = MemoryUtil.getAddress(FLOAT_BUFFER);
-	private static final MemoryAccess FLOAT_BUFFER_ACCESS = new MemoryAccess(FLOAT_BUFFER_ADDRESS);
+	private static final UnsafeBuffer<FloatBuffer> FLOAT_BUFFER = new UnsafeBuffer<>(BufferUtil.allocateFloat(16));
 
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
@@ -137,8 +134,8 @@ public class GLUtil {
 	}
 
 	public static MemoryAccess getFloat(int pname) {
-		GL11.glGetFloat(pname, FLOAT_BUFFER);
-		return FLOAT_BUFFER_ACCESS;
+		GL11.glGetFloat(pname, FLOAT_BUFFER.getBuffer());
+		return FLOAT_BUFFER;
 	}
 
 	/**
@@ -147,15 +144,15 @@ public class GLUtil {
 	 * {@link GL11#GL_TEXTURE_MATRIX}
 	 */
 	public static Matrix4f getMatrix(int matrix) {
-		GL11.glGetFloat(matrix, FLOAT_BUFFER);
+		GL11.glGetFloat(matrix, FLOAT_BUFFER.getBuffer());
 		Matrix4f m = new Matrix4f();
-		m.load(FLOAT_BUFFER_ADDRESS);
+		m.load(FLOAT_BUFFER.getAddress());
 		return m;
 	}
 
 	public static void setMatrix(int uniform, Matrix4f matrix) {
-		matrix.store(FLOAT_BUFFER_ADDRESS);
-		GL20.glUniformMatrix4(uniform, false, FLOAT_BUFFER);
+		matrix.store(FLOAT_BUFFER.getAddress());
+		GL20.glUniformMatrix4(uniform, false, FLOAT_BUFFER.getBuffer());
 	}
 
 	public static int createBuffer(long size, int flags, int usage) {
