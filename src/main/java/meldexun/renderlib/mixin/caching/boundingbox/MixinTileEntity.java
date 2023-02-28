@@ -31,7 +31,8 @@ public class MixinTileEntity implements IBoundingBoxCache {
 				|| !RenderLibConfig.tileEntityCachedBoundingBoxEnabled
 				|| RenderLibConfig.tileEntityCachedBoundingBoxBlacklistImpl.get((TileEntity) (Object) this)
 				|| RenderLibConfig.tileEntityCachedBoundingBoxUpdateInterval == 1
-				|| RAND.nextInt(RenderLibConfig.tileEntityCachedBoundingBoxUpdateInterval) == 0) {
+				|| RAND.nextInt(RenderLibConfig.tileEntityCachedBoundingBoxUpdateInterval) == 0
+				|| RenderLib.isValkyrienSkiesInstalled && ValkyrienSkies.isOnShip((TileEntity) (Object) this)) {
 			cachedBoundingBox.set(RenderLib.isValkyrienSkiesInstalled ? ValkyrienSkies.getAABB((TileEntity) (Object) this) : ((TileEntity) (Object) this).getRenderBoundingBox());
 			Vec3d v = RenderLibConfig.tileEntityBoundingBoxGrowthListImpl.get((TileEntity) (Object) this);
 			if (v != null) {

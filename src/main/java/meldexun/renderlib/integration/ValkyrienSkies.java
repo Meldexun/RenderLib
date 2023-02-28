@@ -23,4 +23,8 @@ public class ValkyrienSkies {
 				.orElseGet(tileEntity::getPos);
 	}
 
+	public static boolean isOnShip(TileEntity tileEntity) {
+		return ValkyrienUtils.getPhysoManagingBlock(tileEntity.getWorld(), tileEntity.getPos()).isPresent();
+	}
+
 }
