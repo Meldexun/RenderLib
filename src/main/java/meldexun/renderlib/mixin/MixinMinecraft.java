@@ -62,7 +62,7 @@ public class MixinMinecraft {
 
 	@Redirect(method = "launchIntegratedServer", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;sleep(J)V"))
 	public void launchIntegratedServer_sleep(long millis) {
-		Display.sync(RenderLibConfig.mainMenuFPS);
+		Display.sync(20);
 	}
 
 	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/fml/client/FMLClientHandler;finishMinecraftLoading()V", remap = false, shift = Shift.AFTER))
