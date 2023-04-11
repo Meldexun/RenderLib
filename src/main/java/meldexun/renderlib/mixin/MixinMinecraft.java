@@ -4,10 +4,10 @@ import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.Timer;
+import net.minecraft.util.math.MathHelper;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
@@ -50,7 +51,15 @@ public class MixinMinecraft {
 
 	@Inject(method = "getLimitFramerate", cancellable = true, at = @At("HEAD"))
 	public void getLimitFramerate(CallbackInfoReturnable<Integer> info) {
-		info.setReturnValue(world != null ? gameSettings.limitFramerate : RenderLibConfig.mainMenuFPS);
+		if (world == null) {
+			if (RenderLibConfig.mainMenuFPSSynced) {
+				info.setReturnValue(MathHelper.clamp(gameSettings.limitFramerate, 30, 240));
+			} else {
+				info.setReturnValue(RenderLibConfig.mainMenuFPS);
+			}
+		} else {
+			info.setReturnValue(gameSettings.limitFramerate);
+		}
 	}
 
 	@Inject(method = "isFramerateLimitBelowMax", cancellable = true, at = @At("HEAD"))
