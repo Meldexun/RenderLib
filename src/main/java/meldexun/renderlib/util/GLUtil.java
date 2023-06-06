@@ -28,6 +28,9 @@ public class GLUtil {
 
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
+		
+		if (RenderLibConfig.openGLDebugOutput.enabled)
+			return;
 
 		RenderLib.LOGGER.info("OpenGL Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));
 		RenderLib.LOGGER.info("OpenGL Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
