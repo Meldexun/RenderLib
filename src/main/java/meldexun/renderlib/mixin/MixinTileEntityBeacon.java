@@ -24,7 +24,7 @@ public class MixinTileEntityBeacon extends TileEntity {
 		double y1 = pos.getY() + 1.0D;
 		double z1 = pos.getZ() + 1.0D;
 		if (this.isComplete) {
-			y1 = Double.POSITIVE_INFINITY;
+			y1 = 256.0D;
 		}
 		return new AxisAlignedBB(x0, y0, z0, x1, y1, z1);
 	}
