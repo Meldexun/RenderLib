@@ -34,7 +34,8 @@
     "MixinTileEntityPiston",
     "MixinTileEntityShulkerBox",
     "MixinTileEntitySign",
-    "MixinTileEntitySkull"
+    "MixinTileEntitySkull",
+    "MixinTileEntityStructure"
   ],
   "injectors": {
     "defaultRequire": 1
