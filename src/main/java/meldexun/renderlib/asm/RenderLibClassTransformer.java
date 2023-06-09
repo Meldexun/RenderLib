@@ -1,5 +1,6 @@
 package meldexun.renderlib.asm;
 
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -7,11 +8,12 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import meldexun.asmutil.ASMUtil;
-import meldexun.asmutil.transformer.clazz.AbstractClassTransformer;
+import meldexun.asmutil2.ASMUtil;
+import meldexun.asmutil2.HashMapClassNodeClassTransformer;
+import meldexun.asmutil2.IClassTransformerRegistry;
 import net.minecraft.launchwrapper.IClassTransformer;
 
-public class RenderLibClassTransformer extends AbstractClassTransformer implements IClassTransformer {
+public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer implements IClassTransformer {
 
 	public static final boolean OPTIFINE_DETECTED;
 	static {
@@ -26,31 +28,31 @@ public class RenderLibClassTransformer extends AbstractClassTransformer implemen
 	}
 
 	@Override
-	protected void registerTransformers() {
+	protected void registerTransformers(IClassTransformerRegistry registry) {
 		// @formatter:off
-		this.registerMethodTransformer("buy", "a", "(Lvg;Lbxy;F)V", "net/minecraft/client/renderer/RenderGlobal", "renderEntities", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;F)V", methodNode -> {
+		registry.add("net.minecraft.client.renderer.RenderGlobal", "renderEntities", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;F)V", "a", "(Lvg;Lbxy;F)V", ClassWriter.COMPUTE_FRAMES, methodNode -> {
 			ASMUtil.LOGGER.info("Transforming method: RenderGlobal#renderEntities(Entity, ICamera, float)");
 
-			AbstractInsnNode targetNode1 = ASMUtil.findFirstMethodCall(methodNode, Opcodes.INVOKESTATIC, "com/google/common/collect/Lists", "newArrayList", "()Ljava/util/ArrayList;", "com/google/common/collect/Lists", "newArrayList", "()Ljava/util/ArrayList;");
-			targetNode1 = ASMUtil.findLastInsnByType(methodNode, AbstractInsnNode.LABEL, targetNode1);
-			AbstractInsnNode popNode1 = ASMUtil.findFirstMethodCall(methodNode, Opcodes.INVOKEVIRTUAL, "bwx", "preDrawBatch", "()V", "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "preDrawBatch", "()V", targetNode1);
-			popNode1 = ASMUtil.findLastMethodCall(methodNode, Opcodes.INVOKEVIRTUAL, "rl", "c", "(Ljava/lang/String;)V", "net/minecraft/profiler/Profiler", "endStartSection", "(Ljava/lang/String;)V", popNode1);
+			AbstractInsnNode targetNode1 = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKESTATIC, "com/google/common/collect/Lists", "newArrayList", "()Ljava/util/ArrayList;").find();
+			targetNode1 = ASMUtil.prev(targetNode1).type(LabelNode.class).find();
+			AbstractInsnNode popNode1 = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "preDrawBatch", "()V", "bwx", "preDrawBatch", "()V").find();
+			popNode1 = ASMUtil.prev(popNode1).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/profiler/Profiler", "endStartSection", "(Ljava/lang/String;)V", "rl", "c", "(Ljava/lang/String;)V").find();
 			if (OPTIFINE_DETECTED) {
-				popNode1 = ASMUtil.findLastMethodCall(methodNode, Opcodes.INVOKESTATIC, "net/optifine/shaders/Shaders", "endEntities", "()V", "net/optifine/shaders/Shaders", "endEntities", "()V", popNode1);
-				popNode1 = ASMUtil.findLastInsnByType(methodNode, AbstractInsnNode.JUMP_INSN, popNode1);
+				popNode1 = ASMUtil.prev(popNode1).methodInsn(Opcodes.INVOKESTATIC, "net/optifine/shaders/Shaders", "endEntities", "()V").find();
+				popNode1 = ASMUtil.prev(popNode1).type(JumpInsnNode.class).find();
 			}
-			popNode1 = ASMUtil.findLastInsnByType(methodNode, AbstractInsnNode.LABEL, popNode1);
+			popNode1 = ASMUtil.prev(popNode1).type(LabelNode.class).find();
 
-			AbstractInsnNode targetNode2 = ASMUtil.findFirstMethodCall(methodNode, Opcodes.INVOKEVIRTUAL, "bwx", "preDrawBatch", "()V", "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "preDrawBatch", "()V", popNode1);
+			AbstractInsnNode targetNode2 = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "preDrawBatch", "()V", "bwx", "preDrawBatch", "()V").find();
 			if (OPTIFINE_DETECTED) {
-				targetNode2 = ASMUtil.findFirstMethodCall(methodNode, Opcodes.INVOKESTATIC, "bxf", "updateTextRenderDistance", "()V", "net/minecraft/client/renderer/tileentity/TileEntitySignRenderer", "updateTextRenderDistance", "()V", targetNode2);
+				targetNode2 = ASMUtil.next(targetNode2).methodInsn(Opcodes.INVOKESTATIC, "net/minecraft/client/renderer/tileentity/TileEntitySignRenderer", "updateTextRenderDistance", "()V", "bxf", "updateTextRenderDistance", "()V").find();
 			}
-			targetNode2 = ASMUtil.findFirstInsnByType(methodNode, AbstractInsnNode.LABEL, targetNode2);
-			AbstractInsnNode popNode2 = ASMUtil.findFirstMethodCall(methodNode, Opcodes.INVOKEVIRTUAL, "bwx", "drawBatch", "(I)V", "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "drawBatch", "(I)V", targetNode2);
+			targetNode2 = ASMUtil.next(targetNode2).type(LabelNode.class).find();
+			AbstractInsnNode popNode2 = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "drawBatch", "(I)V", "bwx", "drawBatch", "(I)V").find();
 			if (OPTIFINE_DETECTED) {
-				popNode2 = ASMUtil.findLastMethodCall(methodNode, Opcodes.INVOKEVIRTUAL, "net/optifine/reflect/ReflectorMethod", "exists", "()Z", "net/optifine/reflect/ReflectorMethod", "exists", "()Z", popNode2);
+				popNode2 = ASMUtil.prev(popNode2).methodInsn(Opcodes.INVOKEVIRTUAL, "net/optifine/reflect/ReflectorMethod", "exists", "()Z").find();
 			}
-			popNode2 = ASMUtil.findLastInsnByType(methodNode, AbstractInsnNode.LABEL, popNode2);
+			popNode2 = ASMUtil.prev(popNode2).type(LabelNode.class).find();
 
 			methodNode.instructions.insert(targetNode1, ASMUtil.listOf(
 				new VarInsnNode(Opcodes.FLOAD, 3),

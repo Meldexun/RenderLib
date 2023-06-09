@@ -66,7 +66,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    includedDependencies 'meldexun:ASMUtil:1.0.0@jar'
+    includedDependencies 'meldexun:ASMUtil:2.0.1@jar'
     includedDependencies 'meldexun:MatrixUtil:1.2.2@jar'
     includedDependencies 'meldexun:RandomUtil:1.0.0@jar'
     includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
@@ -97,7 +97,7 @@ jar {
     archiveClassifier = mod_stage
 
     from {
-        configurations.includedDependencies.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.includedDependencies.collect { it.isDirectory() ? it : zipTree(it).matching { exclude 'LICENSE' } }
     }
 
     manifest {
