@@ -11,6 +11,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import meldexun.asmutil2.ASMUtil;
 import meldexun.asmutil2.HashMapClassNodeClassTransformer;
 import meldexun.asmutil2.IClassTransformerRegistry;
+import meldexun.renderlib.asm.caching.renderer.CachedRendererPatches;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer implements IClassTransformer {
@@ -67,6 +68,8 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 			));
 		});
 		// @formatter:on
+
+		CachedRendererPatches.registerTransformers(registry);
 	}
 
 }

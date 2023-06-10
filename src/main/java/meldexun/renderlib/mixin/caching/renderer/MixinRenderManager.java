@@ -25,12 +25,6 @@ public abstract class MixinRenderManager {
 		return ((IEntityRendererCache) entityIn).getRenderer();
 	}
 
-	/** {@link RenderManager#renderEntity(Entity, double, double, double, float, float, boolean)} */
-	@Redirect(method = "renderEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/RenderManager;getEntityRenderObject(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/Render;"))
-	public Render<Entity> renderEntity_getEntityRenderObject(RenderManager renderManager, Entity entityIn) {
-		return ((IEntityRendererCache) entityIn).getRenderer();
-	}
-
 	/** {@link RenderManager#renderMultipass(Entity, float)} */
 	@Redirect(method = "renderMultipass", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/RenderManager;getEntityRenderObject(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/Render;"))
 	public Render<Entity> renderMultipass_getEntityRenderObject(RenderManager renderManager, Entity entityIn) {
