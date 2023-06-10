@@ -3,6 +3,7 @@ package meldexun.renderlib.asm;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -58,13 +59,15 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 			methodNode.instructions.insert(targetNode1, ASMUtil.listOf(
 				new VarInsnNode(Opcodes.FLOAD, 3),
 				new MethodInsnNode(Opcodes.INVOKESTATIC, "meldexun/renderlib/renderer/EntityRenderManager", "renderEntities", "(F)V", false),
-				new JumpInsnNode(Opcodes.GOTO, (LabelNode) popNode1)
+				new InsnNode(Opcodes.ICONST_0),
+				new JumpInsnNode(Opcodes.IFEQ, (LabelNode) popNode1)
 			));
 
 			methodNode.instructions.insert(targetNode2, ASMUtil.listOf(
 				new VarInsnNode(Opcodes.FLOAD, 3),
 				new MethodInsnNode(Opcodes.INVOKESTATIC, "meldexun/renderlib/renderer/TileEntityRenderManager", "renderTileEntities", "(F)V", false),
-				new JumpInsnNode(Opcodes.GOTO, (LabelNode) popNode2)
+				new InsnNode(Opcodes.ICONST_0),
+				new JumpInsnNode(Opcodes.IFEQ, (LabelNode) popNode2)
 			));
 		});
 		// @formatter:on
