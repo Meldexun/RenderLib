@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = RenderLib.MODID)
+@Mod(modid = RenderLib.MODID, acceptableRemoteVersions = "*")
 public class RenderLib {
 
 	public static final String MODID = "renderlib";
