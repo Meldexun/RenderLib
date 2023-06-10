@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
-@IFMLLoadingPlugin.TransformerExclusions("meldexun.renderlib.asm")
+@IFMLLoadingPlugin.TransformerExclusions({ "meldexun.renderlib.asm", "meldexun.asmutil2" })
 public class RenderLibPlugin implements IFMLLoadingPlugin {
 
 	@Override
