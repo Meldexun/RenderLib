@@ -1,8 +1,11 @@
 package meldexun.renderlib.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -32,15 +35,33 @@ public class GLUtil {
 		RenderLib.LOGGER.info("OpenGL Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));
 		RenderLib.LOGGER.info("OpenGL Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
 		RenderLib.LOGGER.info("OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
-		RenderLib.LOGGER.info("OpenGL Extensions: {}", GL11.glGetString(GL11.GL_EXTENSIONS));
-		try {
-			for (Field f : ContextCapabilities.class.getFields()) {
-				if (f.getType() == boolean.class)
-					RenderLib.LOGGER.info("{} {}", f.getName(), f.get(CAPS));
+
+		if (!RenderLibConfig.logOpenGLExtensions)
+			return;
+
+		RenderLib.LOGGER.info("OpenGL Extensions:");
+		int longestExtensionName = streamExtensionFields().map(Field::getName)
+				.mapToInt(String::length)
+				.max()
+				.orElse(0);
+		streamExtensionFields().forEach(field -> {
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append(field.getName());
+				while (sb.length() < longestExtensionName + 1)
+					sb.append(' ');
+				sb.append(field.getBoolean(CAPS));
+				RenderLib.LOGGER.info(sb);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				RenderLib.LOGGER.error("Failed logging OpenGL extension with name '{}'", field.getName(), e);
 			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		});
+	}
+
+	private static Stream<Field> streamExtensionFields() {
+		return Arrays.stream(ContextCapabilities.class.getFields())
+				.filter(field -> !Modifier.isStatic(field.getModifiers()))
+				.filter(field -> field.getType() == boolean.class);
 	}
 
 	public static void updateDebugOutput() {

@@ -11,6 +11,7 @@ import net.minecraftforge.common.config.Config;
 @Config(modid = RenderLib.MODID)
 public class RenderLibConfig {
 
+	public static boolean logOpenGLExtensions = false;
 	public static OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
 
 	public static int mainMenuFPS = 60;
