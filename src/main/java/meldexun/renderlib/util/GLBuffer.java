@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL44;
 
 import meldexun.matrixutil.MemoryUtil;
+import meldexun.renderlib.util.memory.MemoryAccess;
 
 public class GLBuffer implements MemoryAccess {
 

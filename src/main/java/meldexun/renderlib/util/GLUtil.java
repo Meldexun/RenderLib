@@ -3,7 +3,6 @@ package meldexun.renderlib.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -23,11 +22,14 @@ import org.lwjgl.opengl.KHRDebugCallback;
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
+import meldexun.renderlib.util.memory.BufferUtil;
+import meldexun.renderlib.util.memory.MemoryAccess;
+import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 
 public class GLUtil {
 
 	public static ContextCapabilities CAPS;
-	private static final UnsafeBuffer<FloatBuffer> FLOAT_BUFFER = new UnsafeBuffer<>(BufferUtil.allocateFloat(16));
+	private static final UnsafeFloatBuffer FLOAT_BUFFER = BufferUtil.allocateFloat(16);
 
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
