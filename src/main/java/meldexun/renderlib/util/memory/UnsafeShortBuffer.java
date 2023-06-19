@@ -14,7 +14,7 @@ public class UnsafeShortBuffer extends UnsafeBufferNIO<ShortBuffer> {
 
 	@Override
 	protected ShortBuffer createBuffer() {
-		return NIOBufferUtil.asShortBuffer(getAddress(), getShortCapacity());
+		return BufferUtil.asShortBuffer(getAddress(), getShortCapacity());
 	}
 
 }
