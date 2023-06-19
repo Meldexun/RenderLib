@@ -25,11 +25,26 @@ import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.memory.BufferUtil;
 import meldexun.renderlib.util.memory.MemoryAccess;
 import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class GLUtil {
 
 	public static ContextCapabilities CAPS;
 	private static final UnsafeFloatBuffer FLOAT_BUFFER = BufferUtil.allocateFloat(16);
+	private static boolean blend;
+	private static int blendSrcFactor;
+	private static int blendDstFactor;
+	private static int blendSrcFactorAlpha;
+	private static int blendDstFactorAlpha;
+	private static boolean depthTest;
+	private static int depthFunc;
+	private static boolean depthMask;
+	private static boolean cull;
+	private static int cullFace;
+	private static boolean colorMaskRed;
+	private static boolean colorMaskGreen;
+	private static boolean colorMaskBlue;
+	private static boolean colorMaskAlpha;
 
 	public static void init() {
 		CAPS = GLContext.getCapabilities();
@@ -225,6 +240,52 @@ public class GLUtil {
 			GL15.glUnmapBuffer(GL15.GL_ARRAY_BUFFER);
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		}
+	}
+
+	public static void saveShaderGLState() {
+		blend = GlStateManager.blendState.blend.currentState;
+		blendSrcFactor = GlStateManager.blendState.srcFactor;
+		blendDstFactor = GlStateManager.blendState.dstFactor;
+		blendSrcFactorAlpha = GlStateManager.blendState.srcFactorAlpha;
+		blendDstFactorAlpha = GlStateManager.blendState.dstFactorAlpha;
+
+		depthTest = GlStateManager.depthState.depthTest.currentState;
+		depthFunc = GlStateManager.depthState.depthFunc;
+		depthMask = GlStateManager.depthState.maskEnabled;
+
+		cull = GlStateManager.cullState.cullFace.currentState;
+		cullFace = GlStateManager.cullState.mode;
+
+		colorMaskRed = GlStateManager.colorMaskState.red;
+		colorMaskGreen = GlStateManager.colorMaskState.green;
+		colorMaskBlue = GlStateManager.colorMaskState.blue;
+		colorMaskAlpha = GlStateManager.colorMaskState.alpha;
+	}
+
+	public static void restoreShaderGLState() {
+		if (blend) {
+			GlStateManager.enableBlend();
+		} else {
+			GlStateManager.disableBlend();
+		}
+		GlStateManager.tryBlendFuncSeparate(blendSrcFactor, blendDstFactor, blendSrcFactorAlpha, blendDstFactorAlpha);
+
+		if (depthTest) {
+			GlStateManager.enableDepth();
+		} else {
+			GlStateManager.disableDepth();
+		}
+		GlStateManager.depthFunc(depthFunc);
+		GlStateManager.depthMask(depthMask);
+
+		if (cull) {
+			GlStateManager.enableCull();
+		} else {
+			GlStateManager.disableCull();
+		}
+		GlStateManager.cullFace(cullFace);
+
+		GlStateManager.colorMask(colorMaskRed, colorMaskGreen, colorMaskBlue, colorMaskAlpha);
 	}
 
 }
