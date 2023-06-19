@@ -53,7 +53,7 @@ public class GLUtil {
 		RenderLib.LOGGER.info("OpenGL Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
 		RenderLib.LOGGER.info("OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
 
-		if (!RenderLibConfig.logOpenGLExtensions)
+		if (!RenderLibConfig.openGLLogExtensions)
 			return;
 
 		RenderLib.LOGGER.info("OpenGL Extensions:");

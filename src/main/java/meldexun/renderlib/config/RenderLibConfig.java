@@ -11,12 +11,12 @@ import net.minecraftforge.common.config.Config;
 @Config(modid = RenderLib.MODID)
 public class RenderLibConfig {
 
-	public static boolean logOpenGLExtensions = false;
-	public static OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
-
 	public static int mainMenuFPS = 60;
 	@Config.Comment("If set to true the main menu FPS is synced to the in game FPS (but clamped between 30 and 240).")
 	public static boolean mainMenuFPSSynced = false;
+
+	public static OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
+	public static boolean openGLLogExtensions = false;
 
 	public static boolean showFrameTimes = false;
 
