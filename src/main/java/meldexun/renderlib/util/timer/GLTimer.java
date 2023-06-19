@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
+import org.lwjgl.opengl.ARBTimerQuery;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL33;
 
 import meldexun.renderlib.util.GLQueryResult;
+import meldexun.renderlib.util.GLUtil;
 import meldexun.renderlib.util.Pair;
 
 public class GLTimer extends Timer {
@@ -49,7 +51,13 @@ public class GLTimer extends Timer {
 
 	private static GLQueryResult timestamp() {
 		int q = GL15.glGenQueries();
-		GL33.glQueryCounter(q, GL33.GL_TIMESTAMP);
+		if (GLUtil.CAPS.OpenGL33) {
+			GL33.glQueryCounter(q, GL33.GL_TIMESTAMP);
+		} else if (GLUtil.CAPS.GL_ARB_timer_query) {
+			ARBTimerQuery.glQueryCounter(q, ARBTimerQuery.GL_TIMESTAMP);
+		} else {
+			throw new UnsupportedOperationException();
+		}
 		return new GLQueryResult(q);
 	}
 
