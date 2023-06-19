@@ -21,7 +21,7 @@ public class UnsafeBuffer implements MemoryAccess, AutoCloseable {
 
 	@Override
 	public void close() {
-		BufferUtil.freeMemory(address);
+		MemoryUtil.freeMemory(address);
 	}
 
 }

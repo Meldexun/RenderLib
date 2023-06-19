@@ -22,7 +22,7 @@ import org.lwjgl.opengl.KHRDebugCallback;
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
-import meldexun.renderlib.util.memory.BufferUtil;
+import meldexun.renderlib.util.memory.MemoryUtil;
 import meldexun.renderlib.util.memory.MemoryAccess;
 import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -30,7 +30,7 @@ import net.minecraft.client.renderer.GlStateManager;
 public class GLUtil {
 
 	public static ContextCapabilities CAPS;
-	private static final UnsafeFloatBuffer FLOAT_BUFFER = BufferUtil.allocateFloat(16);
+	private static final UnsafeFloatBuffer FLOAT_BUFFER = MemoryUtil.allocateFloat(16);
 	private static boolean blend;
 	private static int blendSrcFactor;
 	private static int blendDstFactor;

@@ -15,7 +15,7 @@ import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.ObjLongConsumer;
 
-public class BufferUtil {
+public class MemoryUtil {
 
 	public static long allocateMemory(long capacity) {
 		return UNSAFE.allocateMemory(capacity);
@@ -68,35 +68,35 @@ public class BufferUtil {
 	}
 
 	public static void tempBuffer(long capacity, Consumer<UnsafeBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocate, consumer);
+		tempBuffer(capacity, MemoryUtil::allocate, consumer);
 	}
 
 	public static void tempByteBuffer(long capacity, Consumer<UnsafeByteBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateByte, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateByte, consumer);
 	}
 
 	public static void tempShortBuffer(long capacity, Consumer<UnsafeShortBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateShort, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateShort, consumer);
 	}
 
 	public static void tempIntBuffer(long capacity, Consumer<UnsafeIntBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateInt, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateInt, consumer);
 	}
 
 	public static void tempLongBuffer(long capacity, Consumer<UnsafeLongBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateLong, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateLong, consumer);
 	}
 
 	public static void tempFloatBuffer(long capacity, Consumer<UnsafeFloatBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateFloat, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateFloat, consumer);
 	}
 
 	public static void tempDoubleBuffer(long capacity, Consumer<UnsafeDoubleBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateDouble, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateDouble, consumer);
 	}
 
 	public static void tempCharBuffer(long capacity, Consumer<UnsafeCharBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateChar, consumer);
+		tempBuffer(capacity, MemoryUtil::allocateChar, consumer);
 	}
 
 	private static <T extends UnsafeBuffer> void tempBuffer(long capacity, LongFunction<T> bufferFactory, Consumer<T> consumer) {
@@ -106,31 +106,31 @@ public class BufferUtil {
 	}
 
 	public static void tempByteBuffer(byte[] data, Consumer<UnsafeByteBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateByte, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempShortBuffer(short[] data, Consumer<UnsafeShortBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateShort, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateShort, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempIntBuffer(int[] data, Consumer<UnsafeIntBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateInt, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateInt, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempLongBuffer(long[] data, Consumer<UnsafeLongBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateLong, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateLong, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempFloatBuffer(float[] data, Consumer<UnsafeFloatBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateFloat, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateFloat, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempDoubleBuffer(double[] data, Consumer<UnsafeDoubleBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateDouble, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateDouble, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempCharBuffer(char[] data, Consumer<UnsafeCharBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateChar, BufferUtil::copyMemory, consumer);
+		tempBuffer(data, MemoryUtil::allocateChar, MemoryUtil::copyMemory, consumer);
 	}
 
 	private static <A, T extends UnsafeBuffer> void tempBuffer(A data, LongFunction<T> bufferFactory, ObjLongConsumer<A> copyFunction, Consumer<T> consumer) {
