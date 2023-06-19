@@ -5,8 +5,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import meldexun.renderlib.config.RenderLibConfig;
+import meldexun.renderlib.integration.Optifine;
 import meldexun.renderlib.renderer.EntityRenderManager;
 import meldexun.renderlib.renderer.TileEntityRenderManager;
+import meldexun.renderlib.util.BoundingBoxHelper;
 import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.culling.ICamera;
@@ -34,6 +37,12 @@ public class MixinRenderGlobal {
 		if (MinecraftForgeClient.getRenderPass() == 1) {
 			EntityRenderManager.reset();
 			TileEntityRenderManager.reset();
+		}
+
+		if (RenderLibConfig.debugRenderBoxes
+				&& MinecraftForgeClient.getRenderPass() == 1
+				&& (!Optifine.isOptifineDetected() || !Optifine.isShadowPass())) {
+			BoundingBoxHelper.getInstance().drawRenderBoxes(partialTicks);
 		}
 	}
 
