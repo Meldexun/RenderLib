@@ -24,6 +24,10 @@ public class GLShader {
 		this.program = program;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	public static void push() {
 		PROGRAM_STACK.add(GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM));
 	}
