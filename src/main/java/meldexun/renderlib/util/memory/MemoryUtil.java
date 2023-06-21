@@ -182,58 +182,58 @@ public class MemoryUtil {
 	}
 
 	public static void copyMemory(byte[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
 	public static void copyMemory(short[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
 	public static void copyMemory(int[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
 	public static void copyMemory(long[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
 	public static void copyMemory(float[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
 	public static void copyMemory(double[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
 	public static void copyMemory(char[] src, long destAddress) {
-		copyMemory(src, 0, src.length, null, destAddress);
+		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
-	public static void copyMemory(byte[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(byte[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_BYTE_BASE_OFFSET + srcOffset, destBase, destOffset, srcLength);
 	}
 
-	public static void copyMemory(short[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(short[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_SHORT_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, srcLength << 1);
 	}
 
-	public static void copyMemory(int[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(int[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_INT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, srcLength << 2);
 	}
 
-	public static void copyMemory(long[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(long[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_LONG_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, srcLength << 3);
 	}
 
-	public static void copyMemory(float[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(float[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_FLOAT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, srcLength << 2);
 	}
 
-	public static void copyMemory(double[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(double[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_DOUBLE_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, srcLength << 3);
 	}
 
-	public static void copyMemory(char[] src, int srcOffset, int srcLength, Object destBase, long destOffset) {
+	public static void copyMemory(char[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
 		copyMemory(src, ARRAY_CHAR_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, srcLength << 1);
 	}
 
