@@ -209,32 +209,32 @@ public class MemoryUtil {
 		copyMemory(src, 0, null, destAddress, src.length);
 	}
 
-	public static void copyMemory(byte[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_BYTE_BASE_OFFSET + srcOffset, destBase, destOffset, srcLength);
+	public static void copyMemory(byte[] src, int srcOffset, Object destBase, long destOffset, int bytes) {
+		copyMemory(src, ARRAY_BYTE_BASE_OFFSET + srcOffset, destBase, destOffset, bytes);
 	}
 
-	public static void copyMemory(short[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_SHORT_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, srcLength << 1);
+	public static void copyMemory(short[] src, int srcOffset, Object destBase, long destOffset, int shorts) {
+		copyMemory(src, ARRAY_SHORT_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, shorts << 1);
 	}
 
-	public static void copyMemory(int[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_INT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, srcLength << 2);
+	public static void copyMemory(int[] src, int srcOffset, Object destBase, long destOffset, int ints) {
+		copyMemory(src, ARRAY_INT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, ints << 2);
 	}
 
-	public static void copyMemory(long[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_LONG_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, srcLength << 3);
+	public static void copyMemory(long[] src, int srcOffset, Object destBase, long destOffset, int longs) {
+		copyMemory(src, ARRAY_LONG_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, longs << 3);
 	}
 
-	public static void copyMemory(float[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_FLOAT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, srcLength << 2);
+	public static void copyMemory(float[] src, int srcOffset, Object destBase, long destOffset, int floats) {
+		copyMemory(src, ARRAY_FLOAT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, floats << 2);
 	}
 
-	public static void copyMemory(double[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_DOUBLE_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, srcLength << 3);
+	public static void copyMemory(double[] src, int srcOffset, Object destBase, long destOffset, int doubles) {
+		copyMemory(src, ARRAY_DOUBLE_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, doubles << 3);
 	}
 
-	public static void copyMemory(char[] src, int srcOffset, Object destBase, long destOffset, int srcLength) {
-		copyMemory(src, ARRAY_CHAR_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, srcLength << 1);
+	public static void copyMemory(char[] src, int srcOffset, Object destBase, long destOffset, int chars) {
+		copyMemory(src, ARRAY_CHAR_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, chars << 1);
 	}
 
 	public static void copyMemory(long srcAddress, byte[] dest) {
@@ -265,32 +265,32 @@ public class MemoryUtil {
 		copyMemory(null, srcAddress, dest, 0, dest.length);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, byte[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_BYTE_BASE_OFFSET + destOffset, destLength);
+	public static void copyMemory(Object srcBase, long srcOffset, byte[] dest, int destOffset, int bytes) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_BYTE_BASE_OFFSET + destOffset, bytes);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, short[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_SHORT_BASE_OFFSET + (destOffset << 1), destLength << 1);
+	public static void copyMemory(Object srcBase, long srcOffset, short[] dest, int destOffset, int shorts) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_SHORT_BASE_OFFSET + (destOffset << 1), shorts << 1);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, int[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_INT_BASE_OFFSET + (destOffset << 2), destLength << 2);
+	public static void copyMemory(Object srcBase, long srcOffset, int[] dest, int destOffset, int ints) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_INT_BASE_OFFSET + (destOffset << 2), ints << 2);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, long[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_LONG_BASE_OFFSET + (destOffset << 3), destLength << 3);
+	public static void copyMemory(Object srcBase, long srcOffset, long[] dest, int destOffset, int longs) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_LONG_BASE_OFFSET + (destOffset << 3), longs << 3);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, float[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_FLOAT_BASE_OFFSET + (destOffset << 2), destLength << 2);
+	public static void copyMemory(Object srcBase, long srcOffset, float[] dest, int destOffset, int floats) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_FLOAT_BASE_OFFSET + (destOffset << 2), floats << 2);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, double[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_DOUBLE_BASE_OFFSET + (destOffset << 3), destLength << 3);
+	public static void copyMemory(Object srcBase, long srcOffset, double[] dest, int destOffset, int doubles) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_DOUBLE_BASE_OFFSET + (destOffset << 3), doubles << 3);
 	}
 
-	public static void copyMemory(Object srcBase, long srcOffset, char[] dest, int destOffset, int destLength) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_CHAR_BASE_OFFSET + (destOffset << 1), destLength << 1);
+	public static void copyMemory(Object srcBase, long srcOffset, char[] dest, int destOffset, int chars) {
+		copyMemory(srcBase, srcOffset, dest, ARRAY_CHAR_BASE_OFFSET + (destOffset << 1), chars << 1);
 	}
 
 }
