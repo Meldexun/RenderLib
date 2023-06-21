@@ -5,11 +5,11 @@ import java.nio.ShortBuffer;
 public class UnsafeShortBuffer extends UnsafeBufferNIO<ShortBuffer> {
 
 	public UnsafeShortBuffer(long address, long capacity) {
-		super(address, capacity << 1);
+		super(address, PrimitiveInfo.SHORT.toByte(capacity));
 	}
 
 	public long getShortCapacity() {
-		return getCapacity() >> 1;
+		return PrimitiveInfo.SHORT.fromByte(getCapacity());
 	}
 
 	@Override

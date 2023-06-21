@@ -64,31 +64,35 @@ public class BufferUtil {
 	}
 
 	public static ByteBuffer allocateByte(long capacity) {
-		return asByteBuffer(MemoryUtil.allocateMemory(capacity), capacity);
+		return allocate(capacity, PrimitiveInfo.BYTE, BufferUtil::asByteBuffer);
 	}
 
 	public static ShortBuffer allocateShort(long capacity) {
-		return asShortBuffer(MemoryUtil.allocateMemory(capacity << 1), capacity);
+		return allocate(capacity, PrimitiveInfo.SHORT, BufferUtil::asShortBuffer);
 	}
 
 	public static IntBuffer allocateInt(long capacity) {
-		return asIntBuffer(MemoryUtil.allocateMemory(capacity << 2), capacity);
+		return allocate(capacity, PrimitiveInfo.INT, BufferUtil::asIntBuffer);
 	}
 
 	public static LongBuffer allocateLong(long capacity) {
-		return asLongBuffer(MemoryUtil.allocateMemory(capacity << 3), capacity);
+		return allocate(capacity, PrimitiveInfo.LONG, BufferUtil::asLongBuffer);
 	}
 
 	public static FloatBuffer allocateFloat(long capacity) {
-		return asFloatBuffer(MemoryUtil.allocateMemory(capacity << 2), capacity);
+		return allocate(capacity, PrimitiveInfo.FLOAT, BufferUtil::asFloatBuffer);
 	}
 
 	public static DoubleBuffer allocateDouble(long capacity) {
-		return asDoubleBuffer(MemoryUtil.allocateMemory(capacity << 3), capacity);
+		return allocate(capacity, PrimitiveInfo.DOUBLE, BufferUtil::asDoubleBuffer);
 	}
 
 	public static CharBuffer allocateChar(long capacity) {
-		return asCharBuffer(MemoryUtil.allocateMemory(capacity << 1), capacity);
+		return allocate(capacity, PrimitiveInfo.CHAR, BufferUtil::asCharBuffer);
+	}
+
+	private static <T extends Buffer> T allocate(long capacity, PrimitiveInfo type, LongLongFunction<T> bufferFactory) {
+		return bufferFactory.apply(MemoryUtil.allocateMemory(type.toByte(capacity)), capacity);
 	}
 
 	public static ByteBuffer asByteBuffer(long address, long capacity) {
@@ -201,7 +205,11 @@ public class BufferUtil {
 	}
 
 	private static <A, T extends Buffer> void tempBuffer(A data, LongFunction<T> bufferFactory, ObjLongConsumer<A> copyFunction, Consumer<T> consumer) {
-		tempBuffer(Array.getLength(data), bufferFactory, ((Consumer<T>) buffer -> copyFunction.accept(data, getAddress(buffer))).andThen(consumer));
+		tempBuffer(data, PrimitiveInfo.BYTE, bufferFactory, copyFunction, consumer);
+	}
+
+	private static <A, T extends Buffer> void tempBuffer(A data, PrimitiveInfo type, LongFunction<T> bufferFactory, ObjLongConsumer<A> copyFunction, Consumer<T> consumer) {
+		tempBuffer(type.toByte(Array.getLength(data)), bufferFactory, ((Consumer<T>) buffer -> copyFunction.accept(data, getAddress(buffer))).andThen(consumer));
 	}
 
 }

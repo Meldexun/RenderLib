@@ -5,11 +5,11 @@ import java.nio.LongBuffer;
 public class UnsafeLongBuffer extends UnsafeBufferNIO<LongBuffer> {
 
 	public UnsafeLongBuffer(long address, long capacity) {
-		super(address, capacity << 3);
+		super(address, PrimitiveInfo.LONG.toByte(capacity));
 	}
 
 	public long getLongCapacity() {
-		return getCapacity() >> 3;
+		return PrimitiveInfo.LONG.fromByte(getCapacity());
 	}
 
 	@Override

@@ -5,11 +5,11 @@ import java.nio.FloatBuffer;
 public class UnsafeFloatBuffer extends UnsafeBufferNIO<FloatBuffer> {
 
 	public UnsafeFloatBuffer(long address, long capacity) {
-		super(address, capacity << 2);
+		super(address, PrimitiveInfo.FLOAT.toByte(capacity));
 	}
 
 	public long getFloatCapacity() {
-		return getCapacity() >> 2;
+		return PrimitiveInfo.FLOAT.fromByte(getCapacity());
 	}
 
 	@Override

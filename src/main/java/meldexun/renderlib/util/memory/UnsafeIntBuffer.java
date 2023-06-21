@@ -5,11 +5,11 @@ import java.nio.IntBuffer;
 public class UnsafeIntBuffer extends UnsafeBufferNIO<IntBuffer> {
 
 	public UnsafeIntBuffer(long address, long capacity) {
-		super(address, capacity << 2);
+		super(address, PrimitiveInfo.INT.toByte(capacity));
 	}
 
 	public long getIntCapacity() {
-		return getCapacity() >> 2;
+		return PrimitiveInfo.INT.fromByte(getCapacity());
 	}
 
 	@Override

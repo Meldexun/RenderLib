@@ -5,11 +5,11 @@ import java.nio.CharBuffer;
 public class UnsafeCharBuffer extends UnsafeBufferNIO<CharBuffer> {
 
 	public UnsafeCharBuffer(long address, long capacity) {
-		super(address, capacity << 1);
+		super(address, PrimitiveInfo.SHORT.toByte(capacity));
 	}
 
 	public long getCharCapacity() {
-		return getCapacity() >> 1;
+		return PrimitiveInfo.SHORT.fromByte(getCapacity());
 	}
 
 	@Override

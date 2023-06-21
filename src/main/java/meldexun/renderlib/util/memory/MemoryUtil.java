@@ -1,13 +1,6 @@
 package meldexun.renderlib.util.memory;
 
 import static meldexun.matrixutil.UnsafeUtil.UNSAFE;
-import static sun.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
-import static sun.misc.Unsafe.ARRAY_CHAR_BASE_OFFSET;
-import static sun.misc.Unsafe.ARRAY_DOUBLE_BASE_OFFSET;
-import static sun.misc.Unsafe.ARRAY_FLOAT_BASE_OFFSET;
-import static sun.misc.Unsafe.ARRAY_INT_BASE_OFFSET;
-import static sun.misc.Unsafe.ARRAY_LONG_BASE_OFFSET;
-import static sun.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET;
 
 import java.lang.reflect.Array;
 import java.util.function.Consumer;
@@ -26,35 +19,39 @@ public class MemoryUtil {
 	}
 
 	public static UnsafeBuffer allocate(long capacity) {
-		return new UnsafeBuffer(allocateMemory(capacity), capacity);
+		return allocate(capacity, PrimitiveInfo.BYTE, UnsafeBuffer::new);
 	}
 
 	public static UnsafeByteBuffer allocateByte(long capacity) {
-		return new UnsafeByteBuffer(allocateMemory(capacity), capacity);
+		return allocate(capacity, PrimitiveInfo.BYTE, UnsafeByteBuffer::new);
 	}
 
 	public static UnsafeShortBuffer allocateShort(long capacity) {
-		return new UnsafeShortBuffer(allocateMemory(capacity << 1), capacity);
+		return allocate(capacity, PrimitiveInfo.SHORT, UnsafeShortBuffer::new);
 	}
 
 	public static UnsafeIntBuffer allocateInt(long capacity) {
-		return new UnsafeIntBuffer(allocateMemory(capacity << 2), capacity);
+		return allocate(capacity, PrimitiveInfo.INT, UnsafeIntBuffer::new);
 	}
 
 	public static UnsafeLongBuffer allocateLong(long capacity) {
-		return new UnsafeLongBuffer(allocateMemory(capacity << 3), capacity);
+		return allocate(capacity, PrimitiveInfo.LONG, UnsafeLongBuffer::new);
 	}
 
 	public static UnsafeFloatBuffer allocateFloat(long capacity) {
-		return new UnsafeFloatBuffer(allocateMemory(capacity << 2), capacity);
+		return allocate(capacity, PrimitiveInfo.FLOAT, UnsafeFloatBuffer::new);
 	}
 
 	public static UnsafeDoubleBuffer allocateDouble(long capacity) {
-		return new UnsafeDoubleBuffer(allocateMemory(capacity << 3), capacity);
+		return allocate(capacity, PrimitiveInfo.DOUBLE, UnsafeDoubleBuffer::new);
 	}
 
 	public static UnsafeCharBuffer allocateChar(long capacity) {
-		return new UnsafeCharBuffer(allocateMemory(capacity << 1), capacity);
+		return allocate(capacity, PrimitiveInfo.CHAR, UnsafeCharBuffer::new);
+	}
+
+	private static <T extends UnsafeBuffer> T allocate(long capacity, PrimitiveInfo type, LongLongFunction<T> bufferFactory) {
+		return bufferFactory.apply(allocateMemory(type.toByte(capacity)), capacity);
 	}
 
 	public static void tempBuffer(long capacity, LongConsumer consumer) {
@@ -210,31 +207,35 @@ public class MemoryUtil {
 	}
 
 	public static void copyMemory(byte[] src, int srcOffset, Object destBase, long destOffset, int bytes) {
-		copyMemory(src, ARRAY_BYTE_BASE_OFFSET + srcOffset, destBase, destOffset, bytes);
+		copyMemory(src, srcOffset, destBase, destOffset, bytes, PrimitiveInfo.BYTE);
 	}
 
 	public static void copyMemory(short[] src, int srcOffset, Object destBase, long destOffset, int shorts) {
-		copyMemory(src, ARRAY_SHORT_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, shorts << 1);
+		copyMemory(src, srcOffset, destBase, destOffset, shorts, PrimitiveInfo.SHORT);
 	}
 
 	public static void copyMemory(int[] src, int srcOffset, Object destBase, long destOffset, int ints) {
-		copyMemory(src, ARRAY_INT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, ints << 2);
+		copyMemory(src, srcOffset, destBase, destOffset, ints, PrimitiveInfo.INT);
 	}
 
 	public static void copyMemory(long[] src, int srcOffset, Object destBase, long destOffset, int longs) {
-		copyMemory(src, ARRAY_LONG_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, longs << 3);
+		copyMemory(src, srcOffset, destBase, destOffset, longs, PrimitiveInfo.LONG);
 	}
 
 	public static void copyMemory(float[] src, int srcOffset, Object destBase, long destOffset, int floats) {
-		copyMemory(src, ARRAY_FLOAT_BASE_OFFSET + (srcOffset << 2), destBase, destOffset, floats << 2);
+		copyMemory(src, srcOffset, destBase, destOffset, floats, PrimitiveInfo.FLOAT);
 	}
 
 	public static void copyMemory(double[] src, int srcOffset, Object destBase, long destOffset, int doubles) {
-		copyMemory(src, ARRAY_DOUBLE_BASE_OFFSET + (srcOffset << 3), destBase, destOffset, doubles << 3);
+		copyMemory(src, srcOffset, destBase, destOffset, doubles, PrimitiveInfo.DOUBLE);
 	}
 
 	public static void copyMemory(char[] src, int srcOffset, Object destBase, long destOffset, int chars) {
-		copyMemory(src, ARRAY_CHAR_BASE_OFFSET + (srcOffset << 1), destBase, destOffset, chars << 1);
+		copyMemory(src, srcOffset, destBase, destOffset, chars, PrimitiveInfo.CHAR);
+	}
+
+	private static <A> void copyMemory(A src, int srcOffset, Object destBase, long destOffset, int srcLength, PrimitiveInfo type) {
+		copyMemory(src, type.arrayBaseOffset() + type.toByte(srcOffset), destBase, destOffset, type.toByte(srcLength));
 	}
 
 	public static void copyMemory(long srcAddress, byte[] dest) {
@@ -266,31 +267,35 @@ public class MemoryUtil {
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, byte[] dest, int destOffset, int bytes) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_BYTE_BASE_OFFSET + destOffset, bytes);
+		copyMemory(srcBase, srcOffset, dest, destOffset, bytes, PrimitiveInfo.BYTE);
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, short[] dest, int destOffset, int shorts) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_SHORT_BASE_OFFSET + (destOffset << 1), shorts << 1);
+		copyMemory(srcBase, srcOffset, dest, destOffset, shorts, PrimitiveInfo.SHORT);
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, int[] dest, int destOffset, int ints) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_INT_BASE_OFFSET + (destOffset << 2), ints << 2);
+		copyMemory(srcBase, srcOffset, dest, destOffset, ints, PrimitiveInfo.INT);
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, long[] dest, int destOffset, int longs) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_LONG_BASE_OFFSET + (destOffset << 3), longs << 3);
+		copyMemory(srcBase, srcOffset, dest, destOffset, longs, PrimitiveInfo.LONG);
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, float[] dest, int destOffset, int floats) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_FLOAT_BASE_OFFSET + (destOffset << 2), floats << 2);
+		copyMemory(srcBase, srcOffset, dest, destOffset, floats, PrimitiveInfo.FLOAT);
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, double[] dest, int destOffset, int doubles) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_DOUBLE_BASE_OFFSET + (destOffset << 3), doubles << 3);
+		copyMemory(srcBase, srcOffset, dest, destOffset, doubles, PrimitiveInfo.DOUBLE);
 	}
 
 	public static void copyMemory(Object srcBase, long srcOffset, char[] dest, int destOffset, int chars) {
-		copyMemory(srcBase, srcOffset, dest, ARRAY_CHAR_BASE_OFFSET + (destOffset << 1), chars << 1);
+		copyMemory(srcBase, srcOffset, dest, destOffset, chars, PrimitiveInfo.CHAR);
+	}
+
+	private static <A> void copyMemory(Object srcBase, long srcOffset, A dest, int destOffset, int destLength, PrimitiveInfo type) {
+		copyMemory(srcBase, srcOffset, dest, type.arrayBaseOffset() + type.toByte(destOffset), type.toByte(destLength));
 	}
 
 }

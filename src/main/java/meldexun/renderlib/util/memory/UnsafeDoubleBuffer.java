@@ -5,11 +5,11 @@ import java.nio.DoubleBuffer;
 public class UnsafeDoubleBuffer extends UnsafeBufferNIO<DoubleBuffer> {
 
 	public UnsafeDoubleBuffer(long address, long capacity) {
-		super(address, capacity << 3);
+		super(address, PrimitiveInfo.DOUBLE.toByte(capacity));
 	}
 
 	public long getDoubleCapacity() {
-		return getCapacity() >> 3;
+		return PrimitiveInfo.DOUBLE.fromByte(getCapacity());
 	}
 
 	@Override
