@@ -67,28 +67,28 @@ public class BufferUtil {
 		return allocate(capacity, PrimitiveInfo.BYTE, BufferUtil::asByteBuffer);
 	}
 
-	public static ShortBuffer allocateShort(long capacity) {
-		return allocate(capacity, PrimitiveInfo.SHORT, BufferUtil::asShortBuffer);
+	public static ShortBuffer allocateShort(long shortCapacity) {
+		return allocate(shortCapacity, PrimitiveInfo.SHORT, BufferUtil::asShortBuffer);
 	}
 
-	public static IntBuffer allocateInt(long capacity) {
-		return allocate(capacity, PrimitiveInfo.INT, BufferUtil::asIntBuffer);
+	public static IntBuffer allocateInt(long intCapacity) {
+		return allocate(intCapacity, PrimitiveInfo.INT, BufferUtil::asIntBuffer);
 	}
 
-	public static LongBuffer allocateLong(long capacity) {
-		return allocate(capacity, PrimitiveInfo.LONG, BufferUtil::asLongBuffer);
+	public static LongBuffer allocateLong(long longCapacity) {
+		return allocate(longCapacity, PrimitiveInfo.LONG, BufferUtil::asLongBuffer);
 	}
 
-	public static FloatBuffer allocateFloat(long capacity) {
-		return allocate(capacity, PrimitiveInfo.FLOAT, BufferUtil::asFloatBuffer);
+	public static FloatBuffer allocateFloat(long floatCapacity) {
+		return allocate(floatCapacity, PrimitiveInfo.FLOAT, BufferUtil::asFloatBuffer);
 	}
 
-	public static DoubleBuffer allocateDouble(long capacity) {
-		return allocate(capacity, PrimitiveInfo.DOUBLE, BufferUtil::asDoubleBuffer);
+	public static DoubleBuffer allocateDouble(long doubleCapacity) {
+		return allocate(doubleCapacity, PrimitiveInfo.DOUBLE, BufferUtil::asDoubleBuffer);
 	}
 
-	public static CharBuffer allocateChar(long capacity) {
-		return allocate(capacity, PrimitiveInfo.CHAR, BufferUtil::asCharBuffer);
+	public static CharBuffer allocateChar(long charCapacity) {
+		return allocate(charCapacity, PrimitiveInfo.CHAR, BufferUtil::asCharBuffer);
 	}
 
 	private static <T extends Buffer> T allocate(long capacity, PrimitiveInfo type, LongLongFunction<T> bufferFactory) {
@@ -99,28 +99,28 @@ public class BufferUtil {
 		return asBuffer(BYTE_BUFFER_CLASS, address, capacity).order(NATIVE_ORDER);
 	}
 
-	public static ShortBuffer asShortBuffer(long address, long capacity) {
-		return asBuffer(SHORT_BUFFER_CLASS, address, capacity);
+	public static ShortBuffer asShortBuffer(long address, long shortCapacity) {
+		return asBuffer(SHORT_BUFFER_CLASS, address, shortCapacity);
 	}
 
-	public static IntBuffer asIntBuffer(long address, long capacity) {
-		return asBuffer(INT_BUFFER_CLASS, address, capacity);
+	public static IntBuffer asIntBuffer(long address, long intCapacity) {
+		return asBuffer(INT_BUFFER_CLASS, address, intCapacity);
 	}
 
-	public static LongBuffer asLongBuffer(long address, long capacity) {
-		return asBuffer(LONG_BUFFER_CLASS, address, capacity);
+	public static LongBuffer asLongBuffer(long address, long longCapacity) {
+		return asBuffer(LONG_BUFFER_CLASS, address, longCapacity);
 	}
 
-	public static FloatBuffer asFloatBuffer(long address, long capacity) {
-		return asBuffer(FLOAT_BUFFER_CLASS, address, capacity);
+	public static FloatBuffer asFloatBuffer(long address, long floatCapacity) {
+		return asBuffer(FLOAT_BUFFER_CLASS, address, floatCapacity);
 	}
 
-	public static DoubleBuffer asDoubleBuffer(long address, long capacity) {
-		return asBuffer(DOUBLE_BUFFER_CLASS, address, capacity);
+	public static DoubleBuffer asDoubleBuffer(long address, long doubleCapacity) {
+		return asBuffer(DOUBLE_BUFFER_CLASS, address, doubleCapacity);
 	}
 
-	public static CharBuffer asCharBuffer(long address, long capacity) {
-		return asBuffer(CHAR_BUFFER_CLASS, address, capacity);
+	public static CharBuffer asCharBuffer(long address, long charCapacity) {
+		return asBuffer(CHAR_BUFFER_CLASS, address, charCapacity);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -142,28 +142,28 @@ public class BufferUtil {
 		tempBuffer(capacity, BufferUtil::allocateByte, consumer);
 	}
 
-	public static void tempShortBuffer(long capacity, Consumer<ShortBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateShort, consumer);
+	public static void tempShortBuffer(long shortCapacity, Consumer<ShortBuffer> consumer) {
+		tempBuffer(shortCapacity, BufferUtil::allocateShort, consumer);
 	}
 
-	public static void tempIntBuffer(long capacity, Consumer<IntBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateInt, consumer);
+	public static void tempIntBuffer(long intCapacity, Consumer<IntBuffer> consumer) {
+		tempBuffer(intCapacity, BufferUtil::allocateInt, consumer);
 	}
 
-	public static void tempLongBuffer(long capacity, Consumer<LongBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateLong, consumer);
+	public static void tempLongBuffer(long longCapacity, Consumer<LongBuffer> consumer) {
+		tempBuffer(longCapacity, BufferUtil::allocateLong, consumer);
 	}
 
-	public static void tempFloatBuffer(long capacity, Consumer<FloatBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateFloat, consumer);
+	public static void tempFloatBuffer(long floatCapacity, Consumer<FloatBuffer> consumer) {
+		tempBuffer(floatCapacity, BufferUtil::allocateFloat, consumer);
 	}
 
-	public static void tempDoubleBuffer(long capacity, Consumer<DoubleBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateDouble, consumer);
+	public static void tempDoubleBuffer(long doubleCapacity, Consumer<DoubleBuffer> consumer) {
+		tempBuffer(doubleCapacity, BufferUtil::allocateDouble, consumer);
 	}
 
-	public static void tempCharBuffer(long capacity, Consumer<CharBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateChar, consumer);
+	public static void tempCharBuffer(long charCapacity, Consumer<CharBuffer> consumer) {
+		tempBuffer(charCapacity, BufferUtil::allocateChar, consumer);
 	}
 
 	private static <T extends Buffer> void tempBuffer(long capacity, LongFunction<T> bufferFactory, Consumer<T> consumer) {

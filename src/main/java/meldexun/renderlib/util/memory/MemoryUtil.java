@@ -26,28 +26,28 @@ public class MemoryUtil {
 		return allocate(capacity, PrimitiveInfo.BYTE, UnsafeByteBuffer::new);
 	}
 
-	public static UnsafeShortBuffer allocateShort(long capacity) {
-		return allocate(capacity, PrimitiveInfo.SHORT, UnsafeShortBuffer::new);
+	public static UnsafeShortBuffer allocateShort(long shortCapacity) {
+		return allocate(shortCapacity, PrimitiveInfo.SHORT, UnsafeShortBuffer::new);
 	}
 
-	public static UnsafeIntBuffer allocateInt(long capacity) {
-		return allocate(capacity, PrimitiveInfo.INT, UnsafeIntBuffer::new);
+	public static UnsafeIntBuffer allocateInt(long intCapacity) {
+		return allocate(intCapacity, PrimitiveInfo.INT, UnsafeIntBuffer::new);
 	}
 
-	public static UnsafeLongBuffer allocateLong(long capacity) {
-		return allocate(capacity, PrimitiveInfo.LONG, UnsafeLongBuffer::new);
+	public static UnsafeLongBuffer allocateLong(long longCapacity) {
+		return allocate(longCapacity, PrimitiveInfo.LONG, UnsafeLongBuffer::new);
 	}
 
-	public static UnsafeFloatBuffer allocateFloat(long capacity) {
-		return allocate(capacity, PrimitiveInfo.FLOAT, UnsafeFloatBuffer::new);
+	public static UnsafeFloatBuffer allocateFloat(long floatCapacity) {
+		return allocate(floatCapacity, PrimitiveInfo.FLOAT, UnsafeFloatBuffer::new);
 	}
 
-	public static UnsafeDoubleBuffer allocateDouble(long capacity) {
-		return allocate(capacity, PrimitiveInfo.DOUBLE, UnsafeDoubleBuffer::new);
+	public static UnsafeDoubleBuffer allocateDouble(long doubleCapacity) {
+		return allocate(doubleCapacity, PrimitiveInfo.DOUBLE, UnsafeDoubleBuffer::new);
 	}
 
-	public static UnsafeCharBuffer allocateChar(long capacity) {
-		return allocate(capacity, PrimitiveInfo.CHAR, UnsafeCharBuffer::new);
+	public static UnsafeCharBuffer allocateChar(long charCapacity) {
+		return allocate(charCapacity, PrimitiveInfo.CHAR, UnsafeCharBuffer::new);
 	}
 
 	private static <T extends UnsafeBuffer> T allocate(long capacity, PrimitiveInfo type, LongLongFunction<T> bufferFactory) {
@@ -72,28 +72,28 @@ public class MemoryUtil {
 		tempBuffer(capacity, MemoryUtil::allocateByte, consumer);
 	}
 
-	public static void tempShortBuffer(long capacity, Consumer<UnsafeShortBuffer> consumer) {
-		tempBuffer(capacity, MemoryUtil::allocateShort, consumer);
+	public static void tempShortBuffer(long shortCapacity, Consumer<UnsafeShortBuffer> consumer) {
+		tempBuffer(shortCapacity, MemoryUtil::allocateShort, consumer);
 	}
 
-	public static void tempIntBuffer(long capacity, Consumer<UnsafeIntBuffer> consumer) {
-		tempBuffer(capacity, MemoryUtil::allocateInt, consumer);
+	public static void tempIntBuffer(long intCapacity, Consumer<UnsafeIntBuffer> consumer) {
+		tempBuffer(intCapacity, MemoryUtil::allocateInt, consumer);
 	}
 
-	public static void tempLongBuffer(long capacity, Consumer<UnsafeLongBuffer> consumer) {
-		tempBuffer(capacity, MemoryUtil::allocateLong, consumer);
+	public static void tempLongBuffer(long longCapacity, Consumer<UnsafeLongBuffer> consumer) {
+		tempBuffer(longCapacity, MemoryUtil::allocateLong, consumer);
 	}
 
-	public static void tempFloatBuffer(long capacity, Consumer<UnsafeFloatBuffer> consumer) {
-		tempBuffer(capacity, MemoryUtil::allocateFloat, consumer);
+	public static void tempFloatBuffer(long floatCapacity, Consumer<UnsafeFloatBuffer> consumer) {
+		tempBuffer(floatCapacity, MemoryUtil::allocateFloat, consumer);
 	}
 
-	public static void tempDoubleBuffer(long capacity, Consumer<UnsafeDoubleBuffer> consumer) {
-		tempBuffer(capacity, MemoryUtil::allocateDouble, consumer);
+	public static void tempDoubleBuffer(long doubelCapacity, Consumer<UnsafeDoubleBuffer> consumer) {
+		tempBuffer(doubelCapacity, MemoryUtil::allocateDouble, consumer);
 	}
 
-	public static void tempCharBuffer(long capacity, Consumer<UnsafeCharBuffer> consumer) {
-		tempBuffer(capacity, MemoryUtil::allocateChar, consumer);
+	public static void tempCharBuffer(long charCapacity, Consumer<UnsafeCharBuffer> consumer) {
+		tempBuffer(charCapacity, MemoryUtil::allocateChar, consumer);
 	}
 
 	private static <T extends UnsafeBuffer> void tempBuffer(long capacity, LongFunction<T> bufferFactory, Consumer<T> consumer) {
