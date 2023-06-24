@@ -23,7 +23,6 @@ import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.memory.MemoryUtil;
-import meldexun.renderlib.util.memory.MemoryAccess;
 import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -171,7 +170,7 @@ public class GLUtil {
 		}
 	}
 
-	public static MemoryAccess getFloat(int pname) {
+	public static UnsafeFloatBuffer getFloat(int pname) {
 		GL11.glGetFloat(pname, FLOAT_BUFFER.getBuffer());
 		return FLOAT_BUFFER;
 	}
