@@ -4,6 +4,10 @@ import static meldexun.matrixutil.UnsafeUtil.UNSAFE;
 
 public interface MemoryAccess {
 
+	static MemoryAccess of(long address) {
+		return () -> address;
+	}
+
 	long getAddress();
 
 	default boolean getBoolean(long offset) {
