@@ -184,6 +184,30 @@ public class BufferUtil {
 		tempBuffer(data, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
+	public static void tempByteBuffer(short[] data, Consumer<ByteBuffer> consumer) {
+		tempBuffer(data, PrimitiveInfo.SHORT, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+	}
+
+	public static void tempByteBuffer(int[] data, Consumer<ByteBuffer> consumer) {
+		tempBuffer(data, PrimitiveInfo.INT, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+	}
+
+	public static void tempByteBuffer(long[] data, Consumer<ByteBuffer> consumer) {
+		tempBuffer(data, PrimitiveInfo.LONG, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+	}
+
+	public static void tempByteBuffer(float[] data, Consumer<ByteBuffer> consumer) {
+		tempBuffer(data, PrimitiveInfo.FLOAT, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+	}
+
+	public static void tempByteBuffer(double[] data, Consumer<ByteBuffer> consumer) {
+		tempBuffer(data, PrimitiveInfo.DOUBLE, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+	}
+
+	public static void tempByteBuffer(char[] data, Consumer<ByteBuffer> consumer) {
+		tempBuffer(data, PrimitiveInfo.CHAR, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+	}
+
 	public static void tempShortBuffer(short[] data, Consumer<ShortBuffer> consumer) {
 		tempBuffer(data, BufferUtil::allocateShort, MemoryUtil::copyMemory, consumer);
 	}
