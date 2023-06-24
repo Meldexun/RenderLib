@@ -95,6 +95,10 @@ public class BufferUtil {
 		return bufferFactory.apply(MemoryUtil.allocateMemory(type.toByte(capacity)), capacity);
 	}
 
+	public static MemoryAccess asMemoryAccess(Buffer buffer) {
+		return MemoryAccess.of(getAddress(buffer));
+	}
+
 	public static ByteBuffer asByteBuffer(long address, long capacity) {
 		return asBuffer(BYTE_BUFFER_CLASS, address, capacity).order(NATIVE_ORDER);
 	}
