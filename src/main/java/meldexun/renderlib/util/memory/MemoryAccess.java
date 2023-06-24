@@ -70,28 +70,16 @@ public interface MemoryAccess {
 		UNSAFE.putChar(getAddress() + offset, data);
 	}
 
-	default void copyMemoryFrom(long srcAddress, long destOffset, long bytes) {
-		UNSAFE.copyMemory(null, srcAddress, null, this.getAddress() + destOffset, bytes);
+	static void copyMemory(Object srcBase, long srcOffset, MemoryAccess destBase, long destOffset, long bytes) {
+		MemoryUtil.copyMemory(srcBase, srcOffset, null, destBase.getAddress() + destOffset, bytes);
 	}
 
-	default void copyMemoryFrom(Object srcBase, long srcOffset, long destOffset, long bytes) {
-		UNSAFE.copyMemory(srcBase, srcOffset, null, this.getAddress() + destOffset, bytes);
+	static void copyMemory(MemoryAccess srcBase, long srcOffset, Object destBase, long destOffset, long bytes) {
+		MemoryUtil.copyMemory(null, srcBase.getAddress() + srcOffset, destBase, destOffset, bytes);
 	}
 
-	default void copyMemoryFrom(MemoryAccess srcBase, long srcOffset, long destOffset, long bytes) {
-		UNSAFE.copyMemory(null, srcBase.getAddress() + srcOffset, null, this.getAddress() + destOffset, bytes);
-	}
-
-	default void copyMemoryInto(long srcOffset, long destAddress, long bytes) {
-		UNSAFE.copyMemory(null, this.getAddress() + srcOffset, null, destAddress, bytes);
-	}
-
-	default void copyMemoryInto(long srcOffset, Object destBase, long destOffset, long bytes) {
-		UNSAFE.copyMemory(null, this.getAddress() + srcOffset, destBase, destOffset, bytes);
-	}
-
-	default void copyMemoryInto(long srcOffset, MemoryAccess destBase, long destOffset, long bytes) {
-		UNSAFE.copyMemory(null, this.getAddress() + srcOffset, null, destBase.getAddress() + destOffset, bytes);
+	static void copyMemory(MemoryAccess srcBase, long srcOffset, MemoryAccess destBase, long destOffset, long bytes) {
+		MemoryUtil.copyMemory(srcBase.getAddress() + srcOffset, destBase.getAddress() + destOffset, bytes);
 	}
 
 }
