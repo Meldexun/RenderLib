@@ -2,7 +2,7 @@ package meldexun.renderlib.util.memory;
 
 import java.nio.FloatBuffer;
 
-public class UnsafeFloatBuffer extends UnsafeBufferNIO<FloatBuffer> {
+public class UnsafeFloatBuffer extends UnsafeNIOBuffer<FloatBuffer> {
 
 	public UnsafeFloatBuffer(long address, long capacity) {
 		super(address, PrimitiveInfo.FLOAT.toByte(capacity));

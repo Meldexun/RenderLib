@@ -2,7 +2,7 @@ package meldexun.renderlib.util.memory;
 
 import java.nio.ByteBuffer;
 
-public class UnsafeByteBuffer extends UnsafeBufferNIO<ByteBuffer> {
+public class UnsafeByteBuffer extends UnsafeNIOBuffer<ByteBuffer> {
 
 	public UnsafeByteBuffer(long address, long capacity) {
 		super(address, PrimitiveInfo.BYTE.toByte(capacity));
