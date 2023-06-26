@@ -14,7 +14,7 @@ public class UnsafeFloatBuffer extends UnsafeNIOBuffer<FloatBuffer> {
 
 	@Override
 	protected FloatBuffer createBuffer() {
-		return BufferUtil.asFloatBuffer(getAddress(), getFloatCapacity());
+		return NIOBufferUtil.asFloatBuffer(getAddress(), getFloatCapacity());
 	}
 
 }

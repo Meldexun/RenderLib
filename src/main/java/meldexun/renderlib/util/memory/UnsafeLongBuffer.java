@@ -14,7 +14,7 @@ public class UnsafeLongBuffer extends UnsafeNIOBuffer<LongBuffer> {
 
 	@Override
 	protected LongBuffer createBuffer() {
-		return BufferUtil.asLongBuffer(getAddress(), getLongCapacity());
+		return NIOBufferUtil.asLongBuffer(getAddress(), getLongCapacity());
 	}
 
 }

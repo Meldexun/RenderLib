@@ -14,7 +14,7 @@ public class UnsafeCharBuffer extends UnsafeNIOBuffer<CharBuffer> {
 
 	@Override
 	protected CharBuffer createBuffer() {
-		return BufferUtil.asCharBuffer(getAddress(), getCharCapacity());
+		return NIOBufferUtil.asCharBuffer(getAddress(), getCharCapacity());
 	}
 
 }

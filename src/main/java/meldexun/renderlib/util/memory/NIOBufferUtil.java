@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.LongFunction;
 import java.util.function.ObjLongConsumer;
 
-public class BufferUtil {
+public class NIOBufferUtil {
 
 	private static final ByteOrder NATIVE_ORDER = ByteOrder.nativeOrder();
 
@@ -64,31 +64,31 @@ public class BufferUtil {
 	}
 
 	public static ByteBuffer allocateByte(long capacity) {
-		return allocate(capacity, PrimitiveInfo.BYTE, BufferUtil::asByteBuffer);
+		return allocate(capacity, PrimitiveInfo.BYTE, NIOBufferUtil::asByteBuffer);
 	}
 
 	public static ShortBuffer allocateShort(long shortCapacity) {
-		return allocate(shortCapacity, PrimitiveInfo.SHORT, BufferUtil::asShortBuffer);
+		return allocate(shortCapacity, PrimitiveInfo.SHORT, NIOBufferUtil::asShortBuffer);
 	}
 
 	public static IntBuffer allocateInt(long intCapacity) {
-		return allocate(intCapacity, PrimitiveInfo.INT, BufferUtil::asIntBuffer);
+		return allocate(intCapacity, PrimitiveInfo.INT, NIOBufferUtil::asIntBuffer);
 	}
 
 	public static LongBuffer allocateLong(long longCapacity) {
-		return allocate(longCapacity, PrimitiveInfo.LONG, BufferUtil::asLongBuffer);
+		return allocate(longCapacity, PrimitiveInfo.LONG, NIOBufferUtil::asLongBuffer);
 	}
 
 	public static FloatBuffer allocateFloat(long floatCapacity) {
-		return allocate(floatCapacity, PrimitiveInfo.FLOAT, BufferUtil::asFloatBuffer);
+		return allocate(floatCapacity, PrimitiveInfo.FLOAT, NIOBufferUtil::asFloatBuffer);
 	}
 
 	public static DoubleBuffer allocateDouble(long doubleCapacity) {
-		return allocate(doubleCapacity, PrimitiveInfo.DOUBLE, BufferUtil::asDoubleBuffer);
+		return allocate(doubleCapacity, PrimitiveInfo.DOUBLE, NIOBufferUtil::asDoubleBuffer);
 	}
 
 	public static CharBuffer allocateChar(long charCapacity) {
-		return allocate(charCapacity, PrimitiveInfo.CHAR, BufferUtil::asCharBuffer);
+		return allocate(charCapacity, PrimitiveInfo.CHAR, NIOBufferUtil::asCharBuffer);
 	}
 
 	private static <T extends Buffer> T allocate(long capacity, PrimitiveInfo type, LongLongFunction<T> bufferFactory) {
@@ -143,31 +143,31 @@ public class BufferUtil {
 	}
 
 	public static void tempByteBuffer(long capacity, Consumer<ByteBuffer> consumer) {
-		tempBuffer(capacity, BufferUtil::allocateByte, consumer);
+		tempBuffer(capacity, NIOBufferUtil::allocateByte, consumer);
 	}
 
 	public static void tempShortBuffer(long shortCapacity, Consumer<ShortBuffer> consumer) {
-		tempBuffer(shortCapacity, BufferUtil::allocateShort, consumer);
+		tempBuffer(shortCapacity, NIOBufferUtil::allocateShort, consumer);
 	}
 
 	public static void tempIntBuffer(long intCapacity, Consumer<IntBuffer> consumer) {
-		tempBuffer(intCapacity, BufferUtil::allocateInt, consumer);
+		tempBuffer(intCapacity, NIOBufferUtil::allocateInt, consumer);
 	}
 
 	public static void tempLongBuffer(long longCapacity, Consumer<LongBuffer> consumer) {
-		tempBuffer(longCapacity, BufferUtil::allocateLong, consumer);
+		tempBuffer(longCapacity, NIOBufferUtil::allocateLong, consumer);
 	}
 
 	public static void tempFloatBuffer(long floatCapacity, Consumer<FloatBuffer> consumer) {
-		tempBuffer(floatCapacity, BufferUtil::allocateFloat, consumer);
+		tempBuffer(floatCapacity, NIOBufferUtil::allocateFloat, consumer);
 	}
 
 	public static void tempDoubleBuffer(long doubleCapacity, Consumer<DoubleBuffer> consumer) {
-		tempBuffer(doubleCapacity, BufferUtil::allocateDouble, consumer);
+		tempBuffer(doubleCapacity, NIOBufferUtil::allocateDouble, consumer);
 	}
 
 	public static void tempCharBuffer(long charCapacity, Consumer<CharBuffer> consumer) {
-		tempBuffer(charCapacity, BufferUtil::allocateChar, consumer);
+		tempBuffer(charCapacity, NIOBufferUtil::allocateChar, consumer);
 	}
 
 	private static <T extends Buffer> void tempBuffer(long capacity, LongFunction<T> bufferFactory, Consumer<T> consumer) {
@@ -181,55 +181,55 @@ public class BufferUtil {
 	}
 
 	public static void tempByteBuffer(byte[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempByteBuffer(short[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, PrimitiveInfo.SHORT, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, PrimitiveInfo.SHORT, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempByteBuffer(int[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, PrimitiveInfo.INT, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, PrimitiveInfo.INT, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempByteBuffer(long[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, PrimitiveInfo.LONG, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, PrimitiveInfo.LONG, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempByteBuffer(float[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, PrimitiveInfo.FLOAT, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, PrimitiveInfo.FLOAT, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempByteBuffer(double[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, PrimitiveInfo.DOUBLE, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, PrimitiveInfo.DOUBLE, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempByteBuffer(char[] data, Consumer<ByteBuffer> consumer) {
-		tempBuffer(data, PrimitiveInfo.CHAR, BufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, PrimitiveInfo.CHAR, NIOBufferUtil::allocateByte, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempShortBuffer(short[] data, Consumer<ShortBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateShort, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateShort, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempIntBuffer(int[] data, Consumer<IntBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateInt, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateInt, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempLongBuffer(long[] data, Consumer<LongBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateLong, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateLong, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempFloatBuffer(float[] data, Consumer<FloatBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateFloat, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateFloat, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempDoubleBuffer(double[] data, Consumer<DoubleBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateDouble, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateDouble, MemoryUtil::copyMemory, consumer);
 	}
 
 	public static void tempCharBuffer(char[] data, Consumer<CharBuffer> consumer) {
-		tempBuffer(data, BufferUtil::allocateChar, MemoryUtil::copyMemory, consumer);
+		tempBuffer(data, NIOBufferUtil::allocateChar, MemoryUtil::copyMemory, consumer);
 	}
 
 	private static <A, T extends Buffer> void tempBuffer(A data, LongFunction<T> bufferFactory, ObjLongConsumer<A> copyFunction, Consumer<T> consumer) {

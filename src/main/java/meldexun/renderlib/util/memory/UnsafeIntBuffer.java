@@ -14,7 +14,7 @@ public class UnsafeIntBuffer extends UnsafeNIOBuffer<IntBuffer> {
 
 	@Override
 	protected IntBuffer createBuffer() {
-		return BufferUtil.asIntBuffer(getAddress(), getIntCapacity());
+		return NIOBufferUtil.asIntBuffer(getAddress(), getIntCapacity());
 	}
 
 }

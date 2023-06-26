@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL20;
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IBoundingBoxCache;
-import meldexun.renderlib.util.memory.BufferUtil;
+import meldexun.renderlib.util.memory.NIOBufferUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -30,7 +30,7 @@ public class BoundingBoxHelper {
 	public BoundingBoxHelper() {
 		cubeVertexBuffer = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, cubeVertexBuffer);
-		BufferUtil.tempByteBuffer(new byte[] {
+		NIOBufferUtil.tempByteBuffer(new byte[] {
 				0, 0, 0,
 				0, 0, 1,
 				0, 1, 0,
@@ -44,7 +44,7 @@ public class BoundingBoxHelper {
 
 		quadsCubeIndexBuffer = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, quadsCubeIndexBuffer);
-		BufferUtil.tempByteBuffer(new byte[] {
+		NIOBufferUtil.tempByteBuffer(new byte[] {
 				0, 4, 5, 1,
 				3, 7, 6, 2,
 				4, 0, 2, 6,

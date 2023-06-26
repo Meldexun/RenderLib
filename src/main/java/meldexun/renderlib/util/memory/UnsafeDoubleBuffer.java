@@ -14,7 +14,7 @@ public class UnsafeDoubleBuffer extends UnsafeNIOBuffer<DoubleBuffer> {
 
 	@Override
 	protected DoubleBuffer createBuffer() {
-		return BufferUtil.asDoubleBuffer(getAddress(), getDoubleCapacity());
+		return NIOBufferUtil.asDoubleBuffer(getAddress(), getDoubleCapacity());
 	}
 
 }

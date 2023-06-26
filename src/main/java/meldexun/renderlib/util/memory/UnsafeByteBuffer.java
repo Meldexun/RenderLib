@@ -14,7 +14,7 @@ public class UnsafeByteBuffer extends UnsafeNIOBuffer<ByteBuffer> {
 
 	@Override
 	protected ByteBuffer createBuffer() {
-		return BufferUtil.asByteBuffer(getAddress(), getCapacity());
+		return NIOBufferUtil.asByteBuffer(getAddress(), getCapacity());
 	}
 
 }
