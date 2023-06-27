@@ -2,6 +2,7 @@ package meldexun.renderlib.util;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -17,8 +18,8 @@ public class GLShader {
 
 	private static final IntList PROGRAM_STACK = new IntArrayList();
 	private int program;
-	private final Object2IntMap<String> uniforms = new Object2IntOpenHashMap<>();
-	private final Object2IntMap<String> attributes = new Object2IntOpenHashMap<>();
+	private final FunctionalObject2IntMap<String> uniforms = new FunctionalObject2IntMap<>();
+	private final FunctionalObject2IntMap<String> attributes = new FunctionalObject2IntMap<>();
 
 	public GLShader(int program) {
 		this.program = program;
@@ -48,12 +49,21 @@ public class GLShader {
 		use(program);
 	}
 
+	public void bind() {
+		push();
+		use();
+	}
+
+	public void unbind() {
+		pop();
+	}
+
 	public int getUniform(String uniform) {
-		return uniforms.computeIfAbsent(uniform, k -> GL20.glGetUniformLocation(program, k));
+		return uniforms.computeIfAbsent(uniform, (ToIntFunction<String>) k -> GL20.glGetUniformLocation(program, k));
 	}
 
 	public int getAttribute(String attribute) {
-		return attributes.computeIfAbsent(attribute, k -> GL20.glGetAttribLocation(program, k));
+		return attributes.computeIfAbsent(attribute, (ToIntFunction<String>) k -> GL20.glGetAttribLocation(program, k));
 	}
 
 	public void dispose() {
