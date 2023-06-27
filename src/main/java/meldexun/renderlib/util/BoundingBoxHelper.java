@@ -16,6 +16,24 @@ import net.minecraft.util.ResourceLocation;
 
 public class BoundingBoxHelper {
 
+	private static final byte[] VERTEX_DATA = {
+			0, 0, 0,
+			0, 0, 1,
+			0, 1, 0,
+			0, 1, 1,
+			1, 0, 0,
+			1, 0, 1,
+			1, 1, 0,
+			1, 1, 1
+	};
+	private static final byte[] INDICES = {
+			0, 4, 5, 1,
+			3, 7, 6, 2,
+			4, 0, 2, 6,
+			1, 5, 7, 3,
+			0, 1, 3, 2,
+			5, 4, 6, 7
+	};
 	private static final String A_POS = "a_Pos";
 	private static final String U_MATRIX = "u_ModelViewProjectionMatrix";
 	private static BoundingBoxHelper instance;
@@ -30,28 +48,12 @@ public class BoundingBoxHelper {
 	public BoundingBoxHelper() {
 		cubeVertexBuffer = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, cubeVertexBuffer);
-		NIOBufferUtil.tempByteBuffer(new byte[] {
-				0, 0, 0,
-				0, 0, 1,
-				0, 1, 0,
-				0, 1, 1,
-				1, 0, 0,
-				1, 0, 1,
-				1, 1, 0,
-				1, 1, 1
-		}, buffer -> GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW));
+		NIOBufferUtil.tempByteBuffer(VERTEX_DATA, buffer -> GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW));
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
 		quadsCubeIndexBuffer = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, quadsCubeIndexBuffer);
-		NIOBufferUtil.tempByteBuffer(new byte[] {
-				0, 4, 5, 1,
-				3, 7, 6, 2,
-				4, 0, 2, 6,
-				1, 5, 7, 3,
-				0, 1, 3, 2,
-				5, 4, 6, 7
-		}, buffer -> GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW));
+		NIOBufferUtil.tempByteBuffer(INDICES, buffer -> GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW));
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 

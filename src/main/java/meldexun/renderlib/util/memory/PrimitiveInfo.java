@@ -8,125 +8,38 @@ import static sun.misc.Unsafe.ARRAY_INT_BASE_OFFSET;
 import static sun.misc.Unsafe.ARRAY_LONG_BASE_OFFSET;
 import static sun.misc.Unsafe.ARRAY_SHORT_BASE_OFFSET;
 
-enum PrimitiveInfo {
+public enum PrimitiveInfo {
 
-	BYTE {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_BYTE_BASE_OFFSET;
-		}
+	BYTE(ARRAY_BYTE_BASE_OFFSET, 0),
+	SHORT(ARRAY_SHORT_BASE_OFFSET, 1),
+	INT(ARRAY_INT_BASE_OFFSET, 2),
+	LONG(ARRAY_LONG_BASE_OFFSET, 3),
+	FLOAT(ARRAY_FLOAT_BASE_OFFSET, 2),
+	DOUBLE(ARRAY_DOUBLE_BASE_OFFSET, 3),
+	CHAR(ARRAY_CHAR_BASE_OFFSET, 1);
 
-		@Override
-		public long toByte(long x) {
-			return x;
-		}
+	private final long arrayBaseOffset;
+	private final long offset;
 
-		@Override
-		public long fromByte(long x) {
-			return x;
-		}
-	},
-	SHORT {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_SHORT_BASE_OFFSET;
-		}
+	private PrimitiveInfo(long arrayBaseOffset, long offset) {
+		this.arrayBaseOffset = arrayBaseOffset;
+		this.offset = offset;
+	}
 
-		@Override
-		public long toByte(long x) {
-			return x << 1;
-		}
+	public long arrayBaseOffset() {
+		return arrayBaseOffset;
+	}
 
-		@Override
-		public long fromByte(long x) {
-			return x >> 1;
-		}
-	},
-	INT {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_INT_BASE_OFFSET;
-		}
+	public long toByte(long x) {
+		return x << offset;
+	}
 
-		@Override
-		public long toByte(long x) {
-			return x << 2;
-		}
+	public long fromByte(long x) {
+		return x >> offset;
+	}
 
-		@Override
-		public long fromByte(long x) {
-			return x >> 2;
-		}
-	},
-	LONG {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_LONG_BASE_OFFSET;
-		}
-
-		@Override
-		public long toByte(long x) {
-			return x << 3;
-		}
-
-		@Override
-		public long fromByte(long x) {
-			return x >> 3;
-		}
-	},
-	FLOAT {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_FLOAT_BASE_OFFSET;
-		}
-
-		@Override
-		public long toByte(long x) {
-			return x << 2;
-		}
-
-		@Override
-		public long fromByte(long x) {
-			return x >> 2;
-		}
-	},
-	DOUBLE {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_DOUBLE_BASE_OFFSET;
-		}
-
-		@Override
-		public long toByte(long x) {
-			return x << 3;
-		}
-
-		@Override
-		public long fromByte(long x) {
-			return x >> 3;
-		}
-	},
-	CHAR {
-		@Override
-		public long arrayBaseOffset() {
-			return ARRAY_CHAR_BASE_OFFSET;
-		}
-
-		@Override
-		public long toByte(long x) {
-			return x << 1;
-		}
-
-		@Override
-		public long fromByte(long x) {
-			return x >> 1;
-		}
-	};
-
-	public abstract long arrayBaseOffset();
-
-	public abstract long toByte(long x);
-
-	public abstract long fromByte(long x);
+	public long convertTo(PrimitiveInfo type, long x) {
+		return (x << offset) >> type.offset;
+	}
 
 }

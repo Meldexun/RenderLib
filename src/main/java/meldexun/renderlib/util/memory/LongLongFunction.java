@@ -1,7 +1,7 @@
 package meldexun.renderlib.util.memory;
 
 @FunctionalInterface
-interface LongLongFunction<T> {
+public interface LongLongFunction<T> {
 
 	T apply(long x, long y);
 
