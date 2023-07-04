@@ -13,7 +13,7 @@ public class TileEntityUtil {
 	public static void processTileEntities(World world, Consumer<List<TileEntity>> processor) {
 		world.processingLoadedTiles = true;
 
-		processor.accept(world.loadedTileEntityList);
+		processor.accept(((ITileEntityHolder) world).getTileEntities());
 
 		world.processingLoadedTiles = false;
 
