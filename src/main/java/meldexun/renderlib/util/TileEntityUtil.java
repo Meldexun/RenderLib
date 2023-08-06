@@ -21,22 +21,24 @@ public class TileEntityUtil {
 
 		world.processingLoadedTiles = false;
 
-		for (TileEntity tileEntity : world.addedTileEntityList) {
-			if (tileEntity.isInvalid()) {
-				continue;
+		if (!world.addedTileEntityList.isEmpty()) {
+			for (TileEntity tileEntity : world.addedTileEntityList) {
+				if (tileEntity.isInvalid()) {
+					continue;
+				}
+	
+				if (!world.loadedTileEntityList.contains(tileEntity)) {
+					world.addTileEntity(tileEntity);
+				}
+				if (world.isBlockLoaded(tileEntity.getPos())) {
+					Chunk chunk = world.getChunk(tileEntity.getPos());
+					IBlockState iblockstate = chunk.getBlockState(tileEntity.getPos());
+					chunk.addTileEntity(tileEntity.getPos(), tileEntity);
+					world.notifyBlockUpdate(tileEntity.getPos(), iblockstate, iblockstate, 3);
+				}
 			}
-
-			if (!world.loadedTileEntityList.contains(tileEntity)) {
-				world.addTileEntity(tileEntity);
-			}
-			if (world.isBlockLoaded(tileEntity.getPos())) {
-				Chunk chunk = world.getChunk(tileEntity.getPos());
-				IBlockState iblockstate = chunk.getBlockState(tileEntity.getPos());
-				chunk.addTileEntity(tileEntity.getPos(), tileEntity);
-				world.notifyBlockUpdate(tileEntity.getPos(), iblockstate, iblockstate, 3);
-			}
+			world.addedTileEntityList.clear();
 		}
-		world.addedTileEntityList.clear();
 	}
 
 }
