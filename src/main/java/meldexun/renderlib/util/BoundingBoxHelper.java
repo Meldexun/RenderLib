@@ -10,8 +10,6 @@ import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.util.memory.NIOBufferUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class BoundingBoxHelper {
@@ -76,14 +74,14 @@ public class BoundingBoxHelper {
 		GL20.glEnableVertexAttribArray(shader.getAttribute(A_POS));
 
 		Minecraft mc = Minecraft.getMinecraft();
-		for (Entity e : mc.world.loadedEntityList) {
-			if (e == mc.getRenderViewEntity()) {
-				continue;
+		EntityUtil.entityIterable(mc.world.loadedEntityList).forEach(entity -> {
+			if (entity == mc.getRenderViewEntity()) {
+				return;
 			}
 
-			MutableAABB aabb = ((IBoundingBoxCache) e).getCachedBoundingBox();
+			MutableAABB aabb = ((IBoundingBoxCache) entity).getCachedBoundingBox();
 			if (!aabb.isVisible(RenderUtil.getFrustum())) {
-				continue;
+				return;
 			}
 
 			Matrix4f matrix = RenderUtil.getProjectionModelViewMatrix().copy();
@@ -98,12 +96,12 @@ public class BoundingBoxHelper {
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			GL11.glDrawElements(GL11.GL_QUADS, 24, GL11.GL_UNSIGNED_BYTE, 0);
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-		}
+		});
 
-		for (TileEntity te : mc.world.loadedTileEntityList) {
-			MutableAABB aabb = ((IBoundingBoxCache) te).getCachedBoundingBox();
+		TileEntityUtil.processTileEntities(mc.world, tileEntity -> {
+			MutableAABB aabb = ((IBoundingBoxCache) tileEntity).getCachedBoundingBox();
 			if (!aabb.isVisible(RenderUtil.getFrustum())) {
-				continue;
+				return;
 			}
 
 			Matrix4f matrix = RenderUtil.getProjectionModelViewMatrix().copy();
@@ -118,7 +116,7 @@ public class BoundingBoxHelper {
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 			GL11.glDrawElements(GL11.GL_QUADS, 24, GL11.GL_UNSIGNED_BYTE, 0);
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-		}
+		});
 
 		GL20.glDisableVertexAttribArray(shader.getAttribute(A_POS));
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
