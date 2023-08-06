@@ -38,7 +38,7 @@ public class TileEntityRenderer {
 		this.renderDist = mc.gameSettings.renderDistanceChunks;
 
 		TileEntityRenderList tileEntityList = new TileEntityRenderList();
-		TileEntityUtil.processTileEntities(mc.world, tileEntities -> tileEntities.forEach(tileEntity -> {
+		TileEntityUtil.processTileEntities(mc.world, tileEntity -> {
 			if (!this.shouldRender(tileEntity, frustum, partialTicks, camX, camY, camZ)) {
 				return;
 			}
@@ -50,7 +50,7 @@ public class TileEntityRenderer {
 
 				tileEntityList.addTileEntity(tileEntity);
 			}
-		}));
+		});
 		this.tileEntityListQueue.addLast(tileEntityList);
 	}
 

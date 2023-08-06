@@ -14,7 +14,6 @@ import meldexun.renderlib.util.TileEntityUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 
 @Mixin(EntityRenderer.class)
 public class MixinEntityRenderer {
@@ -32,11 +31,9 @@ public class MixinEntityRenderer {
 				((IBoundingBoxCache) e).updateCachedBoundingBox(partialTicks);
 		}
 
-		TileEntityUtil.processTileEntities(mc.world, tileEntities -> {
-			for (TileEntity te : tileEntities) {
-				if (((ITileEntityRendererCache) te).hasRenderer() && ((ILoadable) te).isChunkLoaded())
-					((IBoundingBoxCache) te).updateCachedBoundingBox(partialTicks);
-			}
+		TileEntityUtil.processTileEntities(mc.world, tileEntity -> {
+			if (((ITileEntityRendererCache) tileEntity).hasRenderer() && ((ILoadable) tileEntity).isChunkLoaded())
+				((IBoundingBoxCache) tileEntity).updateCachedBoundingBox(partialTicks);
 		});
 	}
 

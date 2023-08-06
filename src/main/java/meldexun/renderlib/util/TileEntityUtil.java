@@ -10,7 +10,11 @@ import net.minecraft.world.chunk.Chunk;
 
 public class TileEntityUtil {
 
-	public static void processTileEntities(World world, Consumer<List<TileEntity>> processor) {
+	public static void processTileEntities(World world, Consumer<TileEntity> processor) {
+		processTileEntityList(world, tileEntities -> tileEntities.forEach(processor));
+	}
+
+	public static void processTileEntityList(World world, Consumer<List<TileEntity>> processor) {
 		world.processingLoadedTiles = true;
 
 		processor.accept(((ITileEntityHolder) world).getTileEntities());
