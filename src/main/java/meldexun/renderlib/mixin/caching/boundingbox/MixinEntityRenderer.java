@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
-import meldexun.renderlib.api.ITileEntityRendererCache;
 import meldexun.renderlib.util.EntityUtil;
 import meldexun.renderlib.util.TileEntityUtil;
 import net.minecraft.client.Minecraft;
@@ -32,7 +31,7 @@ public class MixinEntityRenderer {
 		}
 
 		TileEntityUtil.processTileEntities(mc.world, tileEntity -> {
-			if (((ITileEntityRendererCache) tileEntity).hasRenderer() && ((ILoadable) tileEntity).isChunkLoaded())
+			if (((ILoadable) tileEntity).isChunkLoaded())
 				((IBoundingBoxCache) tileEntity).updateCachedBoundingBox(partialTicks);
 		});
 	}

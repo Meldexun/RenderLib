@@ -6,7 +6,6 @@ import java.util.Deque;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IBoundingBoxCache;
 import meldexun.renderlib.api.ILoadable;
-import meldexun.renderlib.api.ITileEntityRendererCache;
 import meldexun.renderlib.integration.ValkyrienSkies;
 import meldexun.renderlib.util.RenderUtil;
 import meldexun.renderlib.util.TileEntityUtil;
@@ -71,9 +70,6 @@ public class TileEntityRenderer {
 	}
 
 	private boolean shouldRender(TileEntity tileEntity, ICamera frustum, float partialTicks, double camX, double camY, double camZ) {
-		if (!((ITileEntityRendererCache) tileEntity).hasRenderer()) {
-			return false;
-		}
 		if (!((ILoadable) tileEntity).isChunkLoaded()) {
 			return false;
 		}
