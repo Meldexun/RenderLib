@@ -1,5 +1,6 @@
 package meldexun.renderlib.util;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
@@ -8,23 +9,27 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.ContextCapabilities;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GL44;
 import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.KHRDebugCallback;
+import org.lwjgl.opengl.PixelFormat;
 
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
+import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugOutput;
 import meldexun.renderlib.util.memory.UnsafeBufferUtil;
 import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.common.config.Configuration;
 
 public class GLUtil {
 
@@ -80,93 +85,71 @@ public class GLUtil {
 				.filter(field -> field.getType() == boolean.class);
 	}
 
-	public static void updateDebugOutput() {
-		if (CAPS == null)
-			return;
-		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", CAPS.OpenGL43, RenderLibConfig.openGLDebugOutput.enabled);
-
-		if (!CAPS.OpenGL43)
-			return;
-		if (RenderLibConfig.openGLDebugOutput.enabled) {
-			GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
-			GL11.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
-			GL43.glDebugMessageCallback(new KHRDebugCallback((source, type, id, severity, message) -> {
-				if (type == GL43.GL_DEBUG_TYPE_ERROR) {
-					throw new GLException(String.format("OpenGL Error: %s %s %s %s %s", getSource(source), getType(type), getSeverity(severity), id, message));
-				} else {
-					RenderLib.LOGGER.info("OpenGL Debug: {} {} {} {} {}", getSource(source), getType(type), getSeverity(severity), id, message);
-				}
-			}));
-
-			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, false);
-			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL43.GL_DEBUG_TYPE_ERROR, GL11.GL_DONT_CARE, null, true);
-			if (RenderLibConfig.openGLDebugOutput.logHighSeverity)
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_HIGH, null, true);
-			if (RenderLibConfig.openGLDebugOutput.logMediumSeverity)
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_MEDIUM, null, true);
-			if (RenderLibConfig.openGLDebugOutput.logLowSeverity)
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_LOW, null, true);
-			if (RenderLibConfig.openGLDebugOutput.logNotificationSeverity)
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_NOTIFICATION, null, true);
+	public static void createDisplay(PixelFormat format) throws LWJGLException {
+		if (isOpenGLDebugEnabled()) {
+			Display.create(format, new ContextAttribs(1, 0, 0, ContextAttribs.CONTEXT_DEBUG_BIT_ARB));
 		} else {
-			GL11.glDisable(GL43.GL_DEBUG_OUTPUT);
-			GL11.glDisable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			Display.create(format);
 		}
 	}
 
-	private static String getSource(int source) {
-		switch (source) {
-		case GL43.GL_DEBUG_SOURCE_API:
-			return "API";
-		case GL43.GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-			return "WINDOW SYSTEM";
-		case GL43.GL_DEBUG_SOURCE_SHADER_COMPILER:
-			return "SHADER COMPILER";
-		case GL43.GL_DEBUG_SOURCE_THIRD_PARTY:
-			return "THIRD PARTY";
-		case GL43.GL_DEBUG_SOURCE_APPLICATION:
-			return "APPLICATION";
-		case GL43.GL_DEBUG_SOURCE_OTHER:
-			return "OTHER";
-		default:
-			return "?";
+	private static boolean isOpenGLDebugEnabled() {
+		Configuration config = readConfiurationFromFile();
+		if (config == null) {
+			return false;
 		}
+		return config.getBoolean("enabled", "general.opengldebugoutput", false, null);
 	}
 
-	private static String getType(int type) {
-		switch (type) {
-		case GL43.GL_DEBUG_TYPE_ERROR:
-			return "ERROR";
-		case GL43.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			return "DEPRECATED BEHAVIOR";
-		case GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			return "UNDEFINED BEHAVIOR";
-		case GL43.GL_DEBUG_TYPE_PORTABILITY:
-			return "PORTABILITY";
-		case GL43.GL_DEBUG_TYPE_PERFORMANCE:
-			return "PERFORMANCE";
-		case GL43.GL_DEBUG_TYPE_OTHER:
-			return "OTHER";
-		case GL43.GL_DEBUG_TYPE_MARKER:
-			return "MARKER";
-		default:
-			return "?";
+	@Nullable
+	private static Configuration readConfiurationFromFile() {
+		File configFile = new File("config", RenderLib.MODID + ".cfg");
+		if (!configFile.exists()) {
+			return null;
 		}
+		if (!configFile.isFile()) {
+			return null;
+		}
+		return new Configuration(configFile);
 	}
 
-	private static String getSeverity(int severity) {
-		switch (severity) {
-		case GL43.GL_DEBUG_SEVERITY_HIGH:
-			return "HIGH";
-		case GL43.GL_DEBUG_SEVERITY_MEDIUM:
-			return "MEDIUM";
-		case GL43.GL_DEBUG_SEVERITY_LOW:
-			return "LOW";
-		case GL43.GL_DEBUG_SEVERITY_NOTIFICATION:
-			return "NOTIFICATION";
-		default:
-			return "?";
+	public static void setupDebugOutputFromFile() {
+		setupDebugOutput(readOpenGLDebugOutputConfigFromFile());
+	}
+
+	@Nullable
+	private static OpenGLDebugOutput readOpenGLDebugOutputConfigFromFile() {
+		Configuration config = readConfiurationFromFile();
+		if (config == null) {
+			return null;
+		}
+		OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
+		openGLDebugOutput.enabled = config.getBoolean("enabled", "general.opengldebugoutput", false, null);
+		openGLDebugOutput.logHighSeverity = config.getBoolean("logHighSeverity", "general.opengldebugoutput", false, null);
+		openGLDebugOutput.logLowSeverity = config.getBoolean("logLowSeverity", "general.opengldebugoutput", false, null);
+		openGLDebugOutput.logMediumSeverity = config.getBoolean("logMediumSeverity", "general.opengldebugoutput", false, null);
+		openGLDebugOutput.logNotificationSeverity = config.getBoolean("logNotificationSeverity", "general.opengldebugoutput", false, null);
+		return openGLDebugOutput;
+	}
+
+	public static void setupDebugOutputFromMemory() {
+		setupDebugOutput(RenderLibConfig.openGLDebugOutput);
+	}
+
+	private static void setupDebugOutput(OpenGLDebugOutput openGLDebugOutput) {
+		if (openGLDebugOutput == null) {
+			return;
+		}
+
+		OpenGLDebugMode debugMode = OpenGLDebugMode.getSupported();
+		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", debugMode, openGLDebugOutput.enabled);
+
+		if (debugMode != null) {
+			if (openGLDebugOutput.enabled) {
+				debugMode.enable(openGLDebugOutput);
+			} else {
+				debugMode.disable();
+			}
 		}
 	}
 
