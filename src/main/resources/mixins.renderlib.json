@@ -17,6 +17,7 @@
     "caching.renderer.MixinRenderManager",
     "caching.renderer.MixinTileEntity",
     "caching.renderer.MixinTileEntityRendererDispatcher",
+    "debug.MixinMinecraft",
     "entity.MixinRender",
     "tileentity.MixinRenderGlobal",
     "tileentity.MixinTileEntityRendererDispatcher",
