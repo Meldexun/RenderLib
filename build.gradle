@@ -63,6 +63,7 @@ dependencies {
     includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
     buildDependencies 'curse.maven:FairyLights-233342:3068499'
     buildDependencies 'curse.maven:ValkyrienSkies-258371:3286262'
+    buildDependencies 'curse.maven:Vampirism-233029:2890062'
 
     implementation "org.spongepowered:mixin:${mixin_version}"
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"

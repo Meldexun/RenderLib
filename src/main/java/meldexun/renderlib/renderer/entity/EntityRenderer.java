@@ -9,6 +9,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IEntityRendererCache;
 import meldexun.renderlib.api.ILoadable;
 import meldexun.renderlib.integration.FairyLights;
+import meldexun.renderlib.integration.Vampirism;
 import meldexun.renderlib.util.EntityUtil;
 import meldexun.renderlib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
@@ -48,6 +49,9 @@ public class EntityRenderer {
 
 			if (this.isOcclusionCulled(entity)) {
 				this.occludedEntities++;
+				if (RenderLib.isVampirismInstalled && entity instanceof EntityLivingBase) {
+					Vampirism.onRenderLivingPost((EntityLivingBase) entity);
+				}
 			} else {
 				this.renderedEntities++;
 

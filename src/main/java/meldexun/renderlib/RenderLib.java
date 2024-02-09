@@ -25,6 +25,7 @@ public class RenderLib {
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	public static boolean isFairyLightsInstalled;
 	public static boolean isValkyrienSkiesInstalled;
+	public static boolean isVampirismInstalled;
 
 	@EventHandler
 	public void onFMLConstructionEvent(FMLConstructionEvent event) {
@@ -41,6 +42,7 @@ public class RenderLib {
 	public void onFMLPostInitializationEvent(FMLPostInitializationEvent event) {
 		isFairyLightsInstalled = Loader.isModLoaded("fairylights");
 		isValkyrienSkiesInstalled = Loader.isModLoaded("valkyrienskies");
+		isVampirismInstalled = Loader.isModLoaded("vampirism");
 	}
 
 	@SubscribeEvent
