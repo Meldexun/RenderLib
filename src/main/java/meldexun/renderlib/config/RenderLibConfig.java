@@ -65,6 +65,9 @@ public class RenderLibConfig {
 		public boolean logLowSeverity = false;
 		@Config.Comment("Enable/Disable logging of notification severity non-error messages. (You probably never want to enable this as a normal user)")
 		public boolean logNotificationSeverity = false;
+		@Config.Comment("May be required by some systems to generate OpenGL debug output. (Enabling might have a negative impact on performance)")
+		@Config.RequiresMcRestart
+		public boolean setContextDebugBit = false;
 
 	}
 

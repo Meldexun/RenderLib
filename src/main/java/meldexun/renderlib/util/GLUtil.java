@@ -85,7 +85,7 @@ public class GLUtil {
 	}
 
 	public static void createDisplay(PixelFormat format) throws LWJGLException {
-		if (EarlyConfigLoader.loadConfigEarly(RenderLib.MODID, "general.opengldebugoutput", new OpenGLDebugConfiguration()).enabled) {
+		if (EarlyConfigLoader.loadConfigEarly(RenderLib.MODID, "general.opengldebugoutput", new OpenGLDebugConfiguration()).setContextDebugBit) {
 			Display.create(format, new ContextAttribs(1, 0, 0, ContextAttribs.CONTEXT_DEBUG_BIT_ARB));
 		} else {
 			Display.create(format);
