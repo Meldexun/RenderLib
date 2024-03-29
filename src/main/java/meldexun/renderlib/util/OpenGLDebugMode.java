@@ -2,6 +2,7 @@ package meldexun.renderlib.util;
 
 import javax.annotation.Nullable;
 
+import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL43;
@@ -11,31 +12,28 @@ import org.lwjgl.opengl.KHRDebugCallback;
 
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugConfiguration;
+import meldexun.renderlib.opengl.debug.GLDebugMessageFilter;
+import meldexun.renderlib.opengl.debug.Severity;
+import meldexun.renderlib.opengl.debug.Source;
+import meldexun.renderlib.opengl.debug.Type;
 
 public enum OpenGLDebugMode {
 
 	OpenGL43 {
 
 		@Override
-		public void enable(OpenGLDebugConfiguration openGLDebugConfig) {
+		public void enable(GLDebugMessageFilter[] messageFilters) {
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 			GL43.glDebugMessageCallback(new KHRDebugCallback(this::log));
 
 			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, false);
-			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL43.GL_DEBUG_TYPE_ERROR, GL11.GL_DONT_CARE, null, true);
-			if (openGLDebugConfig.logHighSeverity) {
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_HIGH, null, true);
-			}
-			if (openGLDebugConfig.logMediumSeverity) {
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_MEDIUM, null, true);
-			}
-			if (openGLDebugConfig.logLowSeverity) {
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_LOW, null, true);
-			}
-			if (openGLDebugConfig.logNotificationSeverity) {
-				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_NOTIFICATION, null, true);
+			for (GLDebugMessageFilter messageFilter : messageFilters) {
+				int source = this.getSource(messageFilter.source);
+				int type = this.getType(messageFilter.type);
+				int severity = this.getSeverity(messageFilter.severity);
+				GL43.glDebugMessageControl(source, type, severity, null, messageFilter.enabled);
 			}
 		}
 
@@ -50,69 +48,132 @@ public enum OpenGLDebugMode {
 		}
 
 		@Override
-		protected void log(int source, int type, int id, int severity, String message) {
-			if (type == GL43.GL_DEBUG_TYPE_ERROR) {
-				this.throwGLException(source, type, id, severity, message);
-			} else {
-				this.logDebugMessage(source, type, id, severity, message);
-			}
-		}
-
-		@Override
-		protected String getSource(int source) {
+		protected Source getSource(int source) {
 			switch (source) {
 			case GL43.GL_DEBUG_SOURCE_API:
-				return "API";
+				return Source.API;
 			case GL43.GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-				return "WINDOW SYSTEM";
+				return Source.WINDOW_SYSTEM;
 			case GL43.GL_DEBUG_SOURCE_SHADER_COMPILER:
-				return "SHADER COMPILER";
+				return Source.SHADER_COMPILER;
 			case GL43.GL_DEBUG_SOURCE_THIRD_PARTY:
-				return "THIRD PARTY";
+				return Source.THIRD_PARTY;
 			case GL43.GL_DEBUG_SOURCE_APPLICATION:
-				return "APPLICATION";
+				return Source.APPLICATION;
 			case GL43.GL_DEBUG_SOURCE_OTHER:
-				return "OTHER";
+				return Source.OTHER;
 			default:
-				return "?";
+				throw new IllegalArgumentException();
 			}
 		}
 
 		@Override
-		protected String getType(int type) {
+		protected int getSource(Source source) {
+			switch (source) {
+			case ANY:
+				return GL11.GL_DONT_CARE;
+			case API:
+				return GL43.GL_DEBUG_SOURCE_API;
+			case WINDOW_SYSTEM:
+				return GL43.GL_DEBUG_SOURCE_WINDOW_SYSTEM;
+			case SHADER_COMPILER:
+				return GL43.GL_DEBUG_SOURCE_SHADER_COMPILER;
+			case THIRD_PARTY:
+				return GL43.GL_DEBUG_SOURCE_THIRD_PARTY;
+			case APPLICATION:
+				return GL43.GL_DEBUG_SOURCE_APPLICATION;
+			case OTHER:
+				return GL43.GL_DEBUG_SOURCE_OTHER;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+
+		@Override
+		protected Type getType(int type) {
 			switch (type) {
 			case GL43.GL_DEBUG_TYPE_ERROR:
-				return "ERROR";
+				return Type.ERROR;
 			case GL43.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-				return "DEPRECATED BEHAVIOR";
+				return Type.DEPRECATED_BEHAVIOR;
 			case GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-				return "UNDEFINED BEHAVIOR";
+				return Type.UNDEFINED_BEHAVIOR;
 			case GL43.GL_DEBUG_TYPE_PORTABILITY:
-				return "PORTABILITY";
+				return Type.PORTABILITY;
 			case GL43.GL_DEBUG_TYPE_PERFORMANCE:
-				return "PERFORMANCE";
-			case GL43.GL_DEBUG_TYPE_OTHER:
-				return "OTHER";
+				return Type.PERFORMANCE;
 			case GL43.GL_DEBUG_TYPE_MARKER:
-				return "MARKER";
+				return Type.MARKER;
+			case GL43.GL_DEBUG_TYPE_PUSH_GROUP:
+				return Type.PUSH_GROUP;
+			case GL43.GL_DEBUG_TYPE_POP_GROUP:
+				return Type.POP_GROUP;
+			case GL43.GL_DEBUG_TYPE_OTHER:
+				return Type.OTHER;
 			default:
-				return "?";
+				throw new IllegalArgumentException();
 			}
 		}
 
 		@Override
-		protected String getSeverity(int severity) {
+		protected int getType(Type type) {
+			switch (type) {
+			case ANY:
+				return GL11.GL_DONT_CARE;
+			case ERROR:
+				return GL43.GL_DEBUG_TYPE_ERROR;
+			case DEPRECATED_BEHAVIOR:
+				return GL43.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR;
+			case UNDEFINED_BEHAVIOR:
+				return GL43.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR;
+			case PORTABILITY:
+				return GL43.GL_DEBUG_TYPE_PORTABILITY;
+			case PERFORMANCE:
+				return GL43.GL_DEBUG_TYPE_PERFORMANCE;
+			case MARKER:
+				return GL43.GL_DEBUG_TYPE_MARKER;
+			case PUSH_GROUP:
+				return GL43.GL_DEBUG_TYPE_PUSH_GROUP;
+			case POP_GROUP:
+				return GL43.GL_DEBUG_TYPE_POP_GROUP;
+			case OTHER:
+				return GL43.GL_DEBUG_TYPE_OTHER;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+
+		@Override
+		protected Severity getSeverity(int severity) {
 			switch (severity) {
 			case GL43.GL_DEBUG_SEVERITY_HIGH:
-				return "HIGH";
+				return Severity.HIGH;
 			case GL43.GL_DEBUG_SEVERITY_MEDIUM:
-				return "MEDIUM";
+				return Severity.MEDIUM;
 			case GL43.GL_DEBUG_SEVERITY_LOW:
-				return "LOW";
+				return Severity.LOW;
 			case GL43.GL_DEBUG_SEVERITY_NOTIFICATION:
-				return "NOTIFICATION";
+				return Severity.NOTIFICATION;
 			default:
-				return "?";
+				throw new IllegalArgumentException();
+			}
+		}
+
+		@Override
+		protected int getSeverity(Severity severity) {
+			switch (severity) {
+			case ANY:
+				return GL11.GL_DONT_CARE;
+			case HIGH:
+				return GL43.GL_DEBUG_SEVERITY_HIGH;
+			case MEDIUM:
+				return GL43.GL_DEBUG_SEVERITY_MEDIUM;
+			case LOW:
+				return GL43.GL_DEBUG_SEVERITY_LOW;
+			case NOTIFICATION:
+				return GL43.GL_DEBUG_SEVERITY_NOTIFICATION;
+			default:
+				throw new IllegalArgumentException();
 			}
 		}
 
@@ -120,25 +181,18 @@ public enum OpenGLDebugMode {
 	KHR {
 
 		@Override
-		public void enable(OpenGLDebugConfiguration openGLDebugConfig) {
+		public void enable(GLDebugMessageFilter[] messageFilters) {
 			GL11.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
 			GL11.glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 			KHRDebug.glDebugMessageCallback(new KHRDebugCallback(this::log));
 
 			KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, false);
-			KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_TYPE_ERROR, GL11.GL_DONT_CARE, null, true);
-			if (openGLDebugConfig.logHighSeverity) {
-				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_HIGH, null, true);
-			}
-			if (openGLDebugConfig.logMediumSeverity) {
-				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_MEDIUM, null, true);
-			}
-			if (openGLDebugConfig.logLowSeverity) {
-				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_LOW, null, true);
-			}
-			if (openGLDebugConfig.logNotificationSeverity) {
-				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION, null, true);
+			for (GLDebugMessageFilter messageFilter : messageFilters) {
+				int source = this.getSource(messageFilter.source);
+				int type = this.getType(messageFilter.type);
+				int severity = this.getSeverity(messageFilter.severity);
+				KHRDebug.glDebugMessageControl(source, type, severity, null, messageFilter.enabled);
 			}
 		}
 
@@ -153,73 +207,138 @@ public enum OpenGLDebugMode {
 		}
 
 		@Override
-		protected void log(int source, int type, int id, int severity, String message) {
-			if (type == KHRDebug.GL_DEBUG_TYPE_ERROR) {
-				this.throwGLException(source, type, id, severity, message);
-			} else {
-				this.logDebugMessage(source, type, id, severity, message);
-			}
-		}
-
-		@Override
-		protected String getSource(int source) {
+		protected Source getSource(int source) {
 			switch (source) {
 			case KHRDebug.GL_DEBUG_SOURCE_API:
-				return "API";
+				return Source.API;
 			case KHRDebug.GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-				return "WINDOW SYSTEM";
+				return Source.WINDOW_SYSTEM;
 			case KHRDebug.GL_DEBUG_SOURCE_SHADER_COMPILER:
-				return "SHADER COMPILER";
+				return Source.SHADER_COMPILER;
 			case KHRDebug.GL_DEBUG_SOURCE_THIRD_PARTY:
-				return "THIRD PARTY";
+				return Source.THIRD_PARTY;
 			case KHRDebug.GL_DEBUG_SOURCE_APPLICATION:
-				return "APPLICATION";
+				return Source.APPLICATION;
 			case KHRDebug.GL_DEBUG_SOURCE_OTHER:
-				return "OTHER";
+				return Source.OTHER;
 			default:
-				return "?";
+				throw new IllegalArgumentException();
 			}
 		}
 
 		@Override
-		protected String getType(int type) {
+		protected int getSource(Source source) {
+			switch (source) {
+			case ANY:
+				return GL11.GL_DONT_CARE;
+			case API:
+				return KHRDebug.GL_DEBUG_SOURCE_API;
+			case WINDOW_SYSTEM:
+				return KHRDebug.GL_DEBUG_SOURCE_WINDOW_SYSTEM;
+			case SHADER_COMPILER:
+				return KHRDebug.GL_DEBUG_SOURCE_SHADER_COMPILER;
+			case THIRD_PARTY:
+				return KHRDebug.GL_DEBUG_SOURCE_THIRD_PARTY;
+			case APPLICATION:
+				return KHRDebug.GL_DEBUG_SOURCE_APPLICATION;
+			case OTHER:
+				return KHRDebug.GL_DEBUG_SOURCE_OTHER;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+
+		@Override
+		protected Type getType(int type) {
 			switch (type) {
 			case KHRDebug.GL_DEBUG_TYPE_ERROR:
-				return "ERROR";
+				return Type.ERROR;
 			case KHRDebug.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-				return "DEPRECATED BEHAVIOR";
+				return Type.DEPRECATED_BEHAVIOR;
 			case KHRDebug.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-				return "UNDEFINED BEHAVIOR";
+				return Type.UNDEFINED_BEHAVIOR;
 			case KHRDebug.GL_DEBUG_TYPE_PORTABILITY:
-				return "PORTABILITY";
+				return Type.PORTABILITY;
 			case KHRDebug.GL_DEBUG_TYPE_PERFORMANCE:
-				return "PERFORMANCE";
-			case KHRDebug.GL_DEBUG_TYPE_OTHER:
-				return "OTHER";
+				return Type.PERFORMANCE;
 			case KHRDebug.GL_DEBUG_TYPE_MARKER:
-				return "MARKER";
+				return Type.MARKER;
+			case KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP:
+				return Type.PUSH_GROUP;
+			case KHRDebug.GL_DEBUG_TYPE_POP_GROUP:
+				return Type.POP_GROUP;
+			case KHRDebug.GL_DEBUG_TYPE_OTHER:
+				return Type.OTHER;
 			default:
-				return "?";
+				throw new IllegalArgumentException();
 			}
 		}
 
 		@Override
-		protected String getSeverity(int severity) {
+		protected int getType(Type type) {
+			switch (type) {
+			case ANY:
+				return GL11.GL_DONT_CARE;
+			case ERROR:
+				return KHRDebug.GL_DEBUG_TYPE_ERROR;
+			case DEPRECATED_BEHAVIOR:
+				return KHRDebug.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR;
+			case UNDEFINED_BEHAVIOR:
+				return KHRDebug.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR;
+			case PORTABILITY:
+				return KHRDebug.GL_DEBUG_TYPE_PORTABILITY;
+			case PERFORMANCE:
+				return KHRDebug.GL_DEBUG_TYPE_PERFORMANCE;
+			case MARKER:
+				return KHRDebug.GL_DEBUG_TYPE_MARKER;
+			case PUSH_GROUP:
+				return KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP;
+			case POP_GROUP:
+				return KHRDebug.GL_DEBUG_TYPE_POP_GROUP;
+			case OTHER:
+				return KHRDebug.GL_DEBUG_TYPE_OTHER;
+			default:
+				throw new IllegalArgumentException();
+			}
+		}
+
+		@Override
+		protected Severity getSeverity(int severity) {
 			switch (severity) {
 			case KHRDebug.GL_DEBUG_SEVERITY_HIGH:
-				return "HIGH";
+				return Severity.HIGH;
 			case KHRDebug.GL_DEBUG_SEVERITY_MEDIUM:
-				return "MEDIUM";
+				return Severity.MEDIUM;
 			case KHRDebug.GL_DEBUG_SEVERITY_LOW:
-				return "LOW";
+				return Severity.LOW;
 			case KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION:
-				return "NOTIFICATION";
+				return Severity.NOTIFICATION;
 			default:
-				return "?";
+				throw new IllegalArgumentException();
+			}
+		}
+
+		@Override
+		protected int getSeverity(Severity severity) {
+			switch (severity) {
+			case ANY:
+				return GL11.GL_DONT_CARE;
+			case HIGH:
+				return KHRDebug.GL_DEBUG_SEVERITY_HIGH;
+			case MEDIUM:
+				return KHRDebug.GL_DEBUG_SEVERITY_MEDIUM;
+			case LOW:
+				return KHRDebug.GL_DEBUG_SEVERITY_LOW;
+			case NOTIFICATION:
+				return KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION;
+			default:
+				throw new IllegalArgumentException();
 			}
 		}
 
 	};
+
+	private static OpenGLDebugConfiguration currentConfig;
 
 	public static void setupDebugOutput(OpenGLDebugConfiguration config) {
 		OpenGLDebugMode debugMode = OpenGLDebugMode.getSupported();
@@ -229,8 +348,9 @@ public enum OpenGLDebugMode {
 			return;
 		}
 
+		currentConfig = config;
 		if (config.enabled) {
-			debugMode.enable(config);
+			debugMode.enable(config.getMessageFilters());
 		} else {
 			debugMode.disable();
 		}
@@ -248,24 +368,64 @@ public enum OpenGLDebugMode {
 		return null;
 	}
 
-	public abstract void enable(OpenGLDebugConfiguration openGLDebugConfig);
+	public abstract void enable(GLDebugMessageFilter[] messageFilters);
 
 	public abstract void disable();
 
-	protected abstract void log(int source, int type, int id, int severity, String message);
-
-	protected void throwGLException(int source, int type, int id, int severity, String message) {
-		throw new GLException(String.format("OpenGL Error: %s %s %s %s %s", getSource(source), getType(type), getSeverity(severity), id, message));
+	protected void log(int source, int type, int id, int severity, String message) {
+		OpenGLDebugMode.log(this.getSource(source), this.getType(type), this.getSeverity(severity), id, message);
 	}
 
-	protected void logDebugMessage(int source, int type, int id, int severity, String message) {
-		RenderLib.LOGGER.info("OpenGL Debug: {} {} {} {} {}", getSource(source), getType(type), getSeverity(severity), id, message);
+	private static void log(Source source, Type type, Severity severity, int id, String message) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("OpenGL");
+		sb.append(' ');
+		sb.append(source);
+		sb.append(' ');
+		sb.append(type);
+		sb.append(' ');
+		sb.append(severity);
+		sb.append(' ');
+		sb.append(id);
+		sb.append(' ');
+		sb.append(message);
+
+		if (type == Type.ERROR && currentConfig.crashOnError) {
+			throw new GLException(sb.toString());
+		}
+
+		if (currentConfig.logStackTrace.shouldLogStackTrace(source, type, severity, id)) {
+			sb.append('\n');
+			for (StackTraceElement stackTraceElement : new Exception().getStackTrace()) {
+				sb.append('\t');
+				sb.append("at");
+				sb.append(' ');
+				sb.append(stackTraceElement.getClassName());
+				sb.append('.');
+				sb.append(stackTraceElement.getMethodName());
+				sb.append('(');
+				sb.append(stackTraceElement.getFileName());
+				sb.append(':');
+				sb.append(stackTraceElement.getLineNumber());
+				sb.append(')');
+				sb.append('\n');
+			}
+			sb.deleteCharAt(sb.length() - 1);
+		}
+
+		RenderLib.LOGGER.log(type == Type.ERROR ? Level.ERROR : Level.INFO, sb);
 	}
 
-	protected abstract String getSource(int source);
+	protected abstract Source getSource(int source);
 
-	protected abstract String getType(int source);
+	protected abstract int getSource(Source source);
 
-	protected abstract String getSeverity(int source);
+	protected abstract Type getType(int source);
+
+	protected abstract int getType(Type source);
+
+	protected abstract Severity getSeverity(int source);
+
+	protected abstract int getSeverity(Severity source);
 
 }

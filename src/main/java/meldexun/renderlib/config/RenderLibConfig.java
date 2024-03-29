@@ -1,6 +1,13 @@
 package meldexun.renderlib.config;
 
+import java.util.Arrays;
+
 import meldexun.renderlib.RenderLib;
+import meldexun.renderlib.opengl.debug.GLDebugMessageFilter;
+import meldexun.renderlib.opengl.debug.LogStackTraceMode;
+import meldexun.renderlib.opengl.debug.Severity;
+import meldexun.renderlib.opengl.debug.Source;
+import meldexun.renderlib.opengl.debug.Type;
 import meldexun.renderlib.util.ResourceLocationMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -54,19 +61,25 @@ public class RenderLibConfig {
 
 	public static class OpenGLDebugConfiguration {
 
+		@Config.Comment("Enable/Disable crashing when an OpenGL error occurs. If disabled OpenGL errors are likely to go unnoticed unless the log is checked manually.")
+		public boolean crashOnError = false;
 		@Config.Comment("Better debugging of OpenGL errors. Might not be supported by your hardware/driver.")
-		public boolean enabled = false;
-		@Config.Comment("Enable/Disable logging of high severity non-error messages. (You probably never want to enable this as a normal user)")
-		public boolean logHighSeverity = false;
-		@Config.Comment("Enable/Disable logging of medium severity non-error messages. (You probably never want to enable this as a normal user)")
-		public boolean logMediumSeverity = false;
-		@Config.Comment("Enable/Disable logging of low severity non-error messages. (You probably never want to enable this as a normal user)")
-		public boolean logLowSeverity = false;
-		@Config.Comment("Enable/Disable logging of notification severity non-error messages. (You probably never want to enable this as a normal user)")
-		public boolean logNotificationSeverity = false;
+		public boolean enabled = true;
+		@Config.Comment("Enable/Disable appending of the stack trace when logging a debug message.")
+		public LogStackTraceMode logStackTrace = LogStackTraceMode.ERRORS_ONLY;
+		@Config.Comment("Enable/Disable debug messages matching the specified filters."
+				+ "\n" + "Format: 'source, type, severity, enabled'"
+				+ "\n" + "Valid source values: [ ANY, API, WINDOW_SYSTEM, SHADER_COMPILER, THIRD_PARTY, APPLICATION, OTHER ]"
+				+ "\n" + "Valid type values: [ ANY, ERROR, DEPRECATED_BEHAVIOR, UNDEFINED_BEHAVIOR, PORTABILITY, PERFORMANCE, MARKER, PUSH_GROUP, POP_GROUP, OTHER ]"
+				+ "\n" + "Valid severity values: [ ANY, HIGH, MEDIUM, LOW, NOTIFICATION ]")
+		public String[] messageFilters = { new GLDebugMessageFilter(Source.ANY, Type.ERROR, Severity.ANY, true).toString() };
 		@Config.Comment("May be required by some systems to generate OpenGL debug output. (Enabling might have a negative impact on performance)")
 		@Config.RequiresMcRestart
 		public boolean setContextDebugBit = false;
+
+		public GLDebugMessageFilter[] getMessageFilters() {
+			return Arrays.stream(messageFilters).map(GLDebugMessageFilter::new).toArray(GLDebugMessageFilter[]::new);
+		}
 
 	}
 
