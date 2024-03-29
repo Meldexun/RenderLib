@@ -55,7 +55,6 @@ public class RenderLibConfig {
 	public static class OpenGLDebugConfiguration {
 
 		@Config.Comment("Better debugging of OpenGL errors. Might not be supported by your hardware/driver.")
-		@Config.RequiresMcRestart
 		public boolean enabled = false;
 		@Config.Comment("Enable/Disable logging of high severity non-error messages. (You probably never want to enable this as a normal user)")
 		public boolean logHighSeverity = false;
