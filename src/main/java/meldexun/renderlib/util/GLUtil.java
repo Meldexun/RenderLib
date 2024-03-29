@@ -1,6 +1,5 @@
 package meldexun.renderlib.util;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
@@ -24,12 +23,12 @@ import org.lwjgl.opengl.PixelFormat;
 
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
+import meldexun.renderlib.asm.config.EarlyConfigLoader;
 import meldexun.renderlib.config.RenderLibConfig;
-import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugOutput;
+import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugConfiguration;
 import meldexun.renderlib.util.memory.UnsafeBufferUtil;
 import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.common.config.Configuration;
 
 public class GLUtil {
 
@@ -86,70 +85,10 @@ public class GLUtil {
 	}
 
 	public static void createDisplay(PixelFormat format) throws LWJGLException {
-		if (isOpenGLDebugEnabled()) {
+		if (EarlyConfigLoader.loadConfigEarly(RenderLib.MODID, "general.opengldebugoutput", new OpenGLDebugConfiguration()).enabled) {
 			Display.create(format, new ContextAttribs(1, 0, 0, ContextAttribs.CONTEXT_DEBUG_BIT_ARB));
 		} else {
 			Display.create(format);
-		}
-	}
-
-	private static boolean isOpenGLDebugEnabled() {
-		Configuration config = readConfiurationFromFile();
-		if (config == null) {
-			return false;
-		}
-		return config.getBoolean("enabled", "general.opengldebugoutput", false, null);
-	}
-
-	@Nullable
-	private static Configuration readConfiurationFromFile() {
-		File configFile = new File("config", RenderLib.MODID + ".cfg");
-		if (!configFile.exists()) {
-			return null;
-		}
-		if (!configFile.isFile()) {
-			return null;
-		}
-		return new Configuration(configFile);
-	}
-
-	public static void setupDebugOutputFromFile() {
-		setupDebugOutput(readOpenGLDebugOutputConfigFromFile());
-	}
-
-	@Nullable
-	private static OpenGLDebugOutput readOpenGLDebugOutputConfigFromFile() {
-		Configuration config = readConfiurationFromFile();
-		if (config == null) {
-			return null;
-		}
-		OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
-		openGLDebugOutput.enabled = config.getBoolean("enabled", "general.opengldebugoutput", false, null);
-		openGLDebugOutput.logHighSeverity = config.getBoolean("logHighSeverity", "general.opengldebugoutput", false, null);
-		openGLDebugOutput.logLowSeverity = config.getBoolean("logLowSeverity", "general.opengldebugoutput", false, null);
-		openGLDebugOutput.logMediumSeverity = config.getBoolean("logMediumSeverity", "general.opengldebugoutput", false, null);
-		openGLDebugOutput.logNotificationSeverity = config.getBoolean("logNotificationSeverity", "general.opengldebugoutput", false, null);
-		return openGLDebugOutput;
-	}
-
-	public static void setupDebugOutputFromMemory() {
-		setupDebugOutput(RenderLibConfig.openGLDebugOutput);
-	}
-
-	private static void setupDebugOutput(OpenGLDebugOutput openGLDebugOutput) {
-		if (openGLDebugOutput == null) {
-			return;
-		}
-
-		OpenGLDebugMode debugMode = OpenGLDebugMode.getSupported();
-		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", debugMode, openGLDebugOutput.enabled);
-
-		if (debugMode != null) {
-			if (openGLDebugOutput.enabled) {
-				debugMode.enable(openGLDebugOutput);
-			} else {
-				debugMode.disable();
-			}
 		}
 	}
 

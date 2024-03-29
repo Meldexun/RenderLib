@@ -10,13 +10,14 @@ import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.opengl.KHRDebugCallback;
 
 import meldexun.renderlib.RenderLib;
-import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugOutput;
+import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugConfiguration;
 
 public enum OpenGLDebugMode {
 
 	OpenGL43 {
+
 		@Override
-		public void enable(OpenGLDebugOutput openGLDebugOutput) {
+		public void enable(OpenGLDebugConfiguration openGLDebugConfig) {
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
 			GL11.glEnable(GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
@@ -24,16 +25,16 @@ public enum OpenGLDebugMode {
 
 			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, false);
 			GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL43.GL_DEBUG_TYPE_ERROR, GL11.GL_DONT_CARE, null, true);
-			if (openGLDebugOutput.logHighSeverity) {
+			if (openGLDebugConfig.logHighSeverity) {
 				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_HIGH, null, true);
 			}
-			if (openGLDebugOutput.logMediumSeverity) {
+			if (openGLDebugConfig.logMediumSeverity) {
 				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_MEDIUM, null, true);
 			}
-			if (openGLDebugOutput.logLowSeverity) {
+			if (openGLDebugConfig.logLowSeverity) {
 				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_LOW, null, true);
 			}
-			if (openGLDebugOutput.logNotificationSeverity) {
+			if (openGLDebugConfig.logNotificationSeverity) {
 				GL43.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL43.GL_DEBUG_SEVERITY_NOTIFICATION, null, true);
 			}
 		}
@@ -117,8 +118,9 @@ public enum OpenGLDebugMode {
 
 	},
 	KHR {
+
 		@Override
-		public void enable(OpenGLDebugOutput openGLDebugOutput) {
+		public void enable(OpenGLDebugConfiguration openGLDebugConfig) {
 			GL11.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
 			GL11.glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
@@ -126,16 +128,16 @@ public enum OpenGLDebugMode {
 
 			KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, null, false);
 			KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_TYPE_ERROR, GL11.GL_DONT_CARE, null, true);
-			if (openGLDebugOutput.logHighSeverity) {
+			if (openGLDebugConfig.logHighSeverity) {
 				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_HIGH, null, true);
 			}
-			if (openGLDebugOutput.logMediumSeverity) {
+			if (openGLDebugConfig.logMediumSeverity) {
 				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_MEDIUM, null, true);
 			}
-			if (openGLDebugOutput.logLowSeverity) {
+			if (openGLDebugConfig.logLowSeverity) {
 				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_LOW, null, true);
 			}
-			if (openGLDebugOutput.logNotificationSeverity) {
+			if (openGLDebugConfig.logNotificationSeverity) {
 				KHRDebug.glDebugMessageControl(GL11.GL_DONT_CARE, GL11.GL_DONT_CARE, KHRDebug.GL_DEBUG_SEVERITY_NOTIFICATION, null, true);
 			}
 		}
@@ -219,6 +221,21 @@ public enum OpenGLDebugMode {
 
 	};
 
+	public static void setupDebugOutput(OpenGLDebugConfiguration config) {
+		OpenGLDebugMode debugMode = OpenGLDebugMode.getSupported();
+		RenderLib.LOGGER.info("OpenGL Debug: supported={}, enabled={}", debugMode, config.enabled);
+
+		if (debugMode == null) {
+			return;
+		}
+
+		if (config.enabled) {
+			debugMode.enable(config);
+		} else {
+			debugMode.disable();
+		}
+	}
+
 	@Nullable
 	public static OpenGLDebugMode getSupported() {
 		ContextCapabilities capabilities = GLContext.getCapabilities();
@@ -231,7 +248,7 @@ public enum OpenGLDebugMode {
 		return null;
 	}
 
-	public abstract void enable(OpenGLDebugOutput openGLDebugOutput);
+	public abstract void enable(OpenGLDebugConfiguration openGLDebugConfig);
 
 	public abstract void disable();
 

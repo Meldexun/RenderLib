@@ -17,7 +17,7 @@ public class RenderLibConfig {
 	@Config.Comment("If set to true the main menu FPS is synced to the in game FPS (but clamped between 30 and 240).")
 	public static boolean mainMenuFPSSynced = false;
 
-	public static OpenGLDebugOutput openGLDebugOutput = new OpenGLDebugOutput();
+	public static OpenGLDebugConfiguration openGLDebugOutput = new OpenGLDebugConfiguration();
 	public static boolean openGLLogExtensions = false;
 
 	public static boolean showFrameTimes = false;
@@ -52,7 +52,7 @@ public class RenderLibConfig {
 		return x != 0.0D || y != 0.0D || z != 0.0D ? new Vec3d(x, y, z) : null;
 	});
 
-	public static class OpenGLDebugOutput {
+	public static class OpenGLDebugConfiguration {
 
 		@Config.Comment("Better debugging of OpenGL errors. Might not be supported by your hardware/driver.")
 		@Config.RequiresMcRestart
