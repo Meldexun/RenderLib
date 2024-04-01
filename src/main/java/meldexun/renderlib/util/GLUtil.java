@@ -8,10 +8,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.ContextCapabilities;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -19,13 +16,10 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL44;
 import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.PixelFormat;
 
 import meldexun.matrixutil.Matrix4f;
 import meldexun.renderlib.RenderLib;
-import meldexun.renderlib.asm.config.EarlyConfigLoader;
 import meldexun.renderlib.config.RenderLibConfig;
-import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugConfiguration;
 import meldexun.renderlib.util.memory.UnsafeBufferUtil;
 import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -82,14 +76,6 @@ public class GLUtil {
 		return Arrays.stream(ContextCapabilities.class.getFields())
 				.filter(field -> !Modifier.isStatic(field.getModifiers()))
 				.filter(field -> field.getType() == boolean.class);
-	}
-
-	public static void createDisplay(PixelFormat format) throws LWJGLException {
-		if (EarlyConfigLoader.loadConfigEarly(RenderLib.MODID, "general.opengldebugoutput", new OpenGLDebugConfiguration()).setContextDebugBit) {
-			Display.create(format, new ContextAttribs(1, 0, 0, ContextAttribs.CONTEXT_DEBUG_BIT_ARB));
-		} else {
-			Display.create(format);
-		}
 	}
 
 	public static UnsafeFloatBuffer getFloat(int pname) {
