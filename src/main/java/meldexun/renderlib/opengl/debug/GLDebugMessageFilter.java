@@ -19,7 +19,7 @@ public class GLDebugMessageFilter {
 	}
 
 	public GLDebugMessageFilter(String s) {
-		String[] a = s.split(",");
+		String[] a = s.split(";");
 		if (a.length != 4) {
 			throw new IllegalArgumentException();
 		}
@@ -31,7 +31,7 @@ public class GLDebugMessageFilter {
 
 	@Override
 	public String toString() {
-		return String.format("%s, %s, %s, %b", source.name(), type.name(), severity.name(), enabled);
+		return String.format("%s;%s;%s;%b", source.name(), type.name(), severity.name(), enabled);
 	}
 
 }
