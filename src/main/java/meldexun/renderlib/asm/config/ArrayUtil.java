@@ -1,94 +1,165 @@
 package meldexun.renderlib.asm.config;
 
 import java.lang.reflect.Array;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
-class ArrayUtil {
+public class ArrayUtil {
 
-	static boolean[] toBooleanArray(List<String> list) {
-		boolean[] array = new boolean[list.size()];
+	public static boolean[] toBooleanArray(String[] stringArray) {
+		boolean[] array = new boolean[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Boolean.parseBoolean(list.get(i));
+			array[i] = Boolean.parseBoolean(stringArray[i]);
 		}
 		return array;
 	}
 
-	static byte[] toByteArray(List<String> list) {
-		byte[] array = new byte[list.size()];
+	public static String[] fromBooleanArray(boolean[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Boolean.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static byte[] toByteArray(String[] stringArray) {
+		byte[] array = new byte[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Byte.parseByte(list.get(i));
+			array[i] = Byte.parseByte(stringArray[i]);
 		}
 		return array;
 	}
 
-	static short[] toShortArray(List<String> list) {
-		short[] array = new short[list.size()];
+	public static String[] fromByteArray(byte[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Byte.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static short[] toShortArray(String[] stringArray) {
+		short[] array = new short[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Short.parseShort(list.get(i));
+			array[i] = Short.parseShort(stringArray[i]);
 		}
 		return array;
 	}
 
-	static int[] toIntegerArray(List<String> list) {
-		int[] array = new int[list.size()];
+	public static String[] fromShortArray(short[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Short.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static int[] toIntArray(String[] stringArray) {
+		int[] array = new int[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Integer.parseInt(list.get(i));
+			array[i] = Integer.parseInt(stringArray[i]);
 		}
 		return array;
 	}
 
-	static long[] toLongArray(List<String> list) {
-		long[] array = new long[list.size()];
+	public static String[] fromIntArray(int[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Integer.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static long[] toLongArray(String[] stringArray) {
+		long[] array = new long[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Long.parseLong(list.get(i));
+			array[i] = Long.parseLong(stringArray[i]);
 		}
 		return array;
 	}
 
-	static char[] toCharArray(List<String> list) {
-		char[] array = new char[list.size()];
+	public static String[] fromLongArray(long[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Long.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static char[] toCharArray(String[] stringArray) {
+		char[] array = new char[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = (char) Short.parseShort(list.get(i));
+			array[i] = (char) Short.parseShort(stringArray[i]);
 		}
 		return array;
 	}
 
-	static float[] toFloatArray(List<String> list) {
-		float[] array = new float[list.size()];
+	public static String[] fromCharArray(char[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Short.toString((short) array[i]);
+		}
+		return stringArray;
+	}
+
+	public static float[] toFloatArray(String[] stringArray) {
+		float[] array = new float[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Float.parseFloat(list.get(i));
+			array[i] = Float.parseFloat(stringArray[i]);
 		}
 		return array;
 	}
 
-	static double[] toDoubleArray(List<String> list) {
-		double[] array = new double[list.size()];
+	public static String[] fromFloatArray(float[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Float.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static double[] toDoubleArray(String[] stringArray) {
+		double[] array = new double[stringArray.length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = Double.parseDouble(list.get(i));
+			array[i] = Double.parseDouble(stringArray[i]);
 		}
 		return array;
 	}
 
-	static <T> T[] toArray(List<String> list, Function<String, T> parser, IntFunction<T[]> generator) {
-		T[] array = generator.apply(list.size());
-		for (int i = 0; i < array.length; i++) {
-			array[i] = parser.apply(list.get(i));
+	public static String[] fromDoubleArray(double[] array) {
+		String[] stringArray = new String[array.length];
+		for (int i = 0; i < stringArray.length; i++) {
+			stringArray[i] = Double.toString(array[i]);
+		}
+		return stringArray;
+	}
+
+	public static <T> String[] toStringArray(T[] t_array) {
+		return toStringArray(t_array, Object::toString);
+	}
+
+	public static <T> String[] toStringArray(T[] t_array, Function<T, String> mappingFunction) {
+		return mapArray(t_array, mappingFunction, String[]::new);
+	}
+
+	public static <T, R> R[] mapArray(T[] t_array, Function<T, R> mappingFunction, IntFunction<R[]> generator) {
+		R[] r_array = generator.apply(t_array.length);
+		for (int i = 0; i < r_array.length; i++) {
+			r_array[i] = mappingFunction.apply(t_array[i]);
+		}
+		return r_array;
+	}
+
+	public static Object toEnumArray(String[] stringArray, Class<?> componentType) {
+		Object array = Array.newInstance(componentType, stringArray.length);
+		for (int i = 0; i < stringArray.length; i++) {
+			Array.set(array, i, EnumUtil.valueOf(componentType, stringArray[i]));
 		}
 		return array;
 	}
 
-	static String[] toStringArray(List<String> list) {
-		return list.toArray(new String[list.size()]);
-	}
-
-	static Object toEnumArray(List<String> list, Class<?> componentType) {
-		Object array = Array.newInstance(componentType, list.size());
-		for (int i = 0; i < list.size(); i++) {
-			Array.set(array, i, EnumUtil.valueOf(componentType, list.get(i)));
-		}
-		return array;
+	public static String[] fromEnumArray(Enum<?>[] array) {
+		return mapArray(array, Enum::name, String[]::new);
 	}
 
 }

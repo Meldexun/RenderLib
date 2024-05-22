@@ -70,17 +70,17 @@ class ConfigFileLoader {
 			return false;
 		}
 		String name = line.substring(prefixLength, line.length() - 1).trim();
-		List<String> value = readList(reader);
+		String[] value = readList(reader);
 		config.putEntry(name, new ConfigListEntry(type, value));
 		return true;
 	}
 
-	private static List<String> readList(ConfigReader reader) {
+	private static String[] readList(ConfigReader reader) {
 		int startingLine = reader.lineNumber();
 		List<String> list = new ArrayList<>();
 		for (String line : reader) {
 			if (line.equals(">")) {
-				return list;
+				return list.toArray(new String[list.size()]);
 			}
 			list.add(line);
 		}
