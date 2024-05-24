@@ -16,7 +16,7 @@ import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.asm.config.EarlyConfigLoader;
 import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugConfiguration;
-import meldexun.renderlib.util.OpenGLDebugMode;
+import meldexun.renderlib.opengl.debug.OpenGLDebugMode;
 import net.minecraft.client.Minecraft;
 
 @Mixin(Minecraft.class)

@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import meldexun.matrixutil.MathUtil;
 import meldexun.renderlib.config.RenderLibConfig;
+import meldexun.renderlib.opengl.debug.OpenGLDebugMode;
 import meldexun.renderlib.util.GLUtil;
-import meldexun.renderlib.util.OpenGLDebugMode;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;

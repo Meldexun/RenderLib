@@ -1,4 +1,4 @@
-package meldexun.renderlib.util;
+package meldexun.renderlib.opengl.debug;
 
 import javax.annotation.Nullable;
 
@@ -12,10 +12,7 @@ import org.lwjgl.opengl.KHRDebugCallback;
 
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig.OpenGLDebugConfiguration;
-import meldexun.renderlib.opengl.debug.GLDebugMessageFilter;
-import meldexun.renderlib.opengl.debug.Severity;
-import meldexun.renderlib.opengl.debug.Source;
-import meldexun.renderlib.opengl.debug.Type;
+import meldexun.renderlib.util.GLException;
 
 public enum OpenGLDebugMode {
 
