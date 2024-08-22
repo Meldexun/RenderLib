@@ -5,8 +5,8 @@ import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL44;
 
-import meldexun.matrixutil.MemoryUtil;
-import meldexun.renderlib.util.memory.MemoryAccess;
+import meldexun.memoryutil.MemoryAccess;
+import meldexun.memoryutil.NIOBufferUtil;
 
 public class GLBuffer implements MemoryAccess {
 
@@ -40,7 +40,7 @@ public class GLBuffer implements MemoryAccess {
 			this.persistent = true;
 			this.mapped = true;
 			this.byteBuffer = GLUtil.map(this.buffer, size, persistentAccess | GL44.GL_MAP_PERSISTENT_BIT, 0, null);
-			this.address = MemoryUtil.getAddress(this.byteBuffer);
+			this.address = NIOBufferUtil.getAddress(this.byteBuffer);
 		} else {
 			this.buffer = GLUtil.createBuffer(size, flags, usage);
 			this.size = size;
@@ -72,7 +72,7 @@ public class GLBuffer implements MemoryAccess {
 	public void map(long length, int rangeAccess, int access) {
 		if (!persistent && !mapped) {
 			byteBuffer = GLUtil.map(buffer, length, rangeAccess, access, byteBuffer);
-			address = MemoryUtil.getAddress(byteBuffer);
+			address = NIOBufferUtil.getAddress(byteBuffer);
 			mapped = true;
 		}
 	}

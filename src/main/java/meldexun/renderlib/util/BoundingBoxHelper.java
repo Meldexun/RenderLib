@@ -5,9 +5,9 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
 import meldexun.matrixutil.Matrix4f;
+import meldexun.memoryutil.NIOBufferUtil;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.api.IBoundingBoxCache;
-import meldexun.renderlib.util.memory.NIOBufferUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;

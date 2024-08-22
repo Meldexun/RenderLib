@@ -18,10 +18,10 @@ import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLContext;
 
 import meldexun.matrixutil.Matrix4f;
+import meldexun.memoryutil.UnsafeBufferUtil;
+import meldexun.memoryutil.UnsafeFloatBuffer;
 import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
-import meldexun.renderlib.util.memory.UnsafeBufferUtil;
-import meldexun.renderlib.util.memory.UnsafeFloatBuffer;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GLUtil {
