@@ -36,8 +36,6 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 	protected void registerTransformers(IClassTransformerRegistry registry) {
 		// @formatter:off
 		registry.add("net.minecraft.client.renderer.RenderGlobal", "renderEntities", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/client/renderer/culling/ICamera;F)V", "a", "(Lvg;Lbxy;F)V", ClassWriter.COMPUTE_FRAMES, methodNode -> {
-			ASMUtil.LOGGER.info("Transforming method: RenderGlobal#renderEntities(Entity, ICamera, float)");
-
 			AbstractInsnNode targetNode1 = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKESTATIC, "com/google/common/collect/Lists", "newArrayList", "()Ljava/util/ArrayList;").find();
 			targetNode1 = ASMUtil.prev(targetNode1).type(LabelNode.class).find();
 			AbstractInsnNode popNode1 = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", "preDrawBatch", "()V", "bwx", "preDrawBatch", "()V").find();
