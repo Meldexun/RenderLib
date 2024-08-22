@@ -59,7 +59,7 @@ dependencies {
 
     includedDependencies 'meldexun:ASMUtil:2.0.2@jar'
     includedDependencies 'meldexun:MemoryUtil:1.0.0@jar'
-    includedDependencies 'meldexun:MatrixUtil:1.2.2@jar'
+    includedDependencies 'meldexun:MatrixUtil:1.3.0@jar'
     includedDependencies 'meldexun:RandomUtil:1.0.0@jar'
     includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
     buildDependencies 'curse.maven:FairyLights-233342:3068499'
