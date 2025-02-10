@@ -17,7 +17,7 @@ public class CBMultipartPatches {
 
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		registry.add("codechicken.multipart.MultipartGenerator$", "silentAddTile", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V", ClassWriter.COMPUTE_FRAMES, methodNode -> {
-			MethodInsnNode target = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/chunk/Chunk", "func_177426_a", "addTileEntity", "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V").find();
+			MethodInsnNode target = ASMUtil.first(methodNode).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/world/chunk/Chunk", "func_177426_a", "addTileEntity", "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V").find();
 			LabelNode label = new LabelNode();
 
 			methodNode.instructions.insert(target, ASMUtil.listOf(

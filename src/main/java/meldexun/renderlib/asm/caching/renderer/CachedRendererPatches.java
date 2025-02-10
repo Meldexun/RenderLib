@@ -12,10 +12,8 @@ import meldexun.asmutil2.IClassTransformerRegistry;
 public class CachedRendererPatches {
 
 	public static void registerTransformers(IClassTransformerRegistry registry) {
-		registry.add("net.minecraft.client.renderer.entity.RenderManager", "renderEntity", "(Lnet/minecraft/entity/Entity;DDDFFZ)V", "a", "(Lvg;DDDFFZ)V", 0, methodNode -> {
-			ASMUtil.LOGGER.info("Transforming method: RenderManager#renderEntity(Entity, double, double, double, float, float, boolean)");
-
-			AbstractInsnNode targetNode = ASMUtil.first(methodNode).methodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/client/renderer/entity/RenderManager", "getEntityRenderObject", "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/Render;", "bzf", "a", "(Lvg;)Lbzg;").find();
+		registry.addObf("net.minecraft.client.renderer.entity.RenderManager", "renderEntity", "(Lnet/minecraft/entity/Entity;DDDFFZ)V", "a", "(Lvg;DDDFFZ)V", 0, methodNode -> {
+			AbstractInsnNode targetNode = ASMUtil.first(methodNode).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/client/renderer/entity/RenderManager", "getEntityRenderObject", "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/renderer/entity/Render;", "bzf", "a", "(Lvg;)Lbzg;").find();
 
 			methodNode.instructions.insert(targetNode, ASMUtil.listOf(
 				new InsnNode(Opcodes.SWAP),

@@ -57,7 +57,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    includedDependencies 'meldexun:ASMUtil:2.3.0@jar'
+    includedDependencies 'meldexun:ASMUtil:2.6.1@jar'
     includedDependencies 'meldexun:MemoryUtil:1.1.0@jar'
     includedDependencies 'meldexun:MatrixUtil:1.3.0@jar'
     includedDependencies 'meldexun:RandomUtil:1.0.0@jar'
