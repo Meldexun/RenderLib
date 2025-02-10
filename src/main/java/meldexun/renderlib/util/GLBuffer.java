@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL44;
 import meldexun.memoryutil.MemoryAccess;
 import meldexun.memoryutil.NIOBufferUtil;
 
-public class GLBuffer implements MemoryAccess {
+public class GLBuffer implements MemoryAccess.SingleRegister {
 
 	private final int buffer;
 	private final long size;
