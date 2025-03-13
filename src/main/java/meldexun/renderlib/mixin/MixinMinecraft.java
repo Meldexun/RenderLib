@@ -8,7 +8,9 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import meldexun.renderlib.RenderLib;
 import meldexun.renderlib.config.RenderLibConfig;
+import meldexun.renderlib.integration.MenuLib;
 import meldexun.renderlib.util.RenderUtil;
 import meldexun.renderlib.util.SmoothSync;
 import net.minecraft.client.Minecraft;
@@ -52,6 +54,8 @@ public class MixinMinecraft {
 			int fps;
 			if (RenderLibConfig.mainMenuFPSSynced) {
 				fps = MathHelper.clamp(gameSettings.limitFramerate, 30, 240);
+			} else if (RenderLib.isMenuLibInstalled && MenuLib.getFPSLimit() > 0) {
+				fps = MenuLib.getFPSLimit();
 			} else {
 				fps = RenderLibConfig.mainMenuFPS;
 			}

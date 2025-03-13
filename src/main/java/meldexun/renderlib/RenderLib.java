@@ -27,6 +27,7 @@ public class RenderLib {
 	public static boolean isFairyLightsInstalled;
 	public static boolean isValkyrienSkiesInstalled;
 	public static boolean isVampirismInstalled;
+	public static boolean isMenuLibInstalled;
 
 	@EventHandler
 	public void onFMLConstructionEvent(FMLConstructionEvent event) {
@@ -44,6 +45,7 @@ public class RenderLib {
 		isFairyLightsInstalled = Loader.isModLoaded("fairylights");
 		isValkyrienSkiesInstalled = Loader.isModLoaded("valkyrienskies");
 		isVampirismInstalled = Loader.isModLoaded("vampirism");
+		isMenuLibInstalled = Loader.isModLoaded("menulib");
 	}
 
 	@SubscribeEvent
