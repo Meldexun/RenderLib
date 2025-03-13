@@ -31,7 +31,6 @@ import meldexun.asmutil2.IClassTransformerRegistry;
 import meldexun.asmutil2.NonLoadingClassWriter;
 import meldexun.asmutil2.reader.ClassUtil;
 import meldexun.renderlib.asm.animaniacatsdogs.AnimaniaCatsDogsPatches;
-import meldexun.renderlib.asm.caching.renderer.CachedRendererPatches;
 import meldexun.renderlib.asm.cbmultipart.CBMultipartPatches;
 import meldexun.renderlib.asm.pokecube.PokecubePatches;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -109,7 +108,6 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 		});
 		// @formatter:on
 
-		CachedRendererPatches.registerTransformers(registry);
 		PokecubePatches.registerTransformers(registry);
 		AnimaniaCatsDogsPatches.registerTransformers(registry);
 		CBMultipartPatches.registerTransformers(registry);
