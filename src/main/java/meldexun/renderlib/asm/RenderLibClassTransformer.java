@@ -106,6 +106,13 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 				new JumpInsnNode(Opcodes.IFEQ, (LabelNode) popNode2)
 			));
 		});
+
+		registry.addObf("net.minecraft.server.MinecraftServer", "setUserMessage", "func_71192_d", "(Ljava/lang/String;)V", 0, methodNode -> {
+			methodNode.access &= ~Opcodes.ACC_SYNCHRONIZED;
+		});
+		registry.addObf("net.minecraft.server.MinecraftServer", "getUserMessage", "func_71195_b_", "()Ljava/lang/String;", 0, methodNode -> {
+			methodNode.access &= ~Opcodes.ACC_SYNCHRONIZED;
+		});
 		// @formatter:on
 
 		PokecubePatches.registerTransformers(registry);
