@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.RenderUtil;
@@ -47,33 +46,29 @@ public class MixinMinecraft {
 		return isGamePaused ? renderPartialTicksPaused : timer.renderPartialTicks;
 	}
 
-	@Inject(method = "getLimitFramerate", cancellable = true, at = @At("HEAD"))
-	public void getLimitFramerate(CallbackInfoReturnable<Integer> info) {
+	@Inject(method = "updateDisplay", at = @At("HEAD"))
+	public void renderlibFPSLimiter(CallbackInfo info) {
 		if (world == null) {
+			int fps;
 			if (RenderLibConfig.mainMenuFPSSynced) {
-				info.setReturnValue(MathHelper.clamp(gameSettings.limitFramerate, 30, 240));
+				fps = MathHelper.clamp(gameSettings.limitFramerate, 30, 240);
 			} else {
-				info.setReturnValue(RenderLibConfig.mainMenuFPS);
+				fps = RenderLibConfig.mainMenuFPS;
 			}
-		} else {
-			info.setReturnValue(gameSettings.limitFramerate);
+			Display.sync(fps);
+		} else if (gameSettings.limitFramerate < GameSettings.Options.FRAMERATE_LIMIT.getValueMax()) {
+			Display.sync(gameSettings.limitFramerate);
 		}
 	}
 
-	@Inject(method = "isFramerateLimitBelowMax", cancellable = true, at = @At("HEAD"))
-	public void isFramerateLimitBelowMax(CallbackInfoReturnable<Boolean> info) {
-		if (world == null) {
-			info.setReturnValue(true);
-		}
+	@Redirect(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isFramerateLimitBelowMax()Z"))
+	public boolean vanillaFPSLimiterEnabled(Minecraft mc) {
+		return false;
 	}
 
 	@Redirect(method = "launchIntegratedServer", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;sleep(J)V"))
 	public void launchIntegratedServer_sleep(long millis) {
-		if (RenderLibConfig.mainMenuFPSSynced) {
-			Display.sync(MathHelper.clamp(gameSettings.limitFramerate, 30, 240));
-		} else {
-			Display.sync(RenderLibConfig.mainMenuFPS);
-		}
+
 	}
 
 }
