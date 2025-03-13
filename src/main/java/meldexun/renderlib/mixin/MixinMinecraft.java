@@ -69,7 +69,11 @@ public class MixinMinecraft {
 
 	@Redirect(method = "launchIntegratedServer", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;sleep(J)V"))
 	public void launchIntegratedServer_sleep(long millis) {
-		Display.sync(20);
+		if (RenderLibConfig.mainMenuFPSSynced) {
+			Display.sync(MathHelper.clamp(gameSettings.limitFramerate, 30, 240));
+		} else {
+			Display.sync(RenderLibConfig.mainMenuFPS);
+		}
 	}
 
 }
