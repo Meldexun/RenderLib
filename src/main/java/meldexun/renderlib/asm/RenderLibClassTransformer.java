@@ -1,6 +1,15 @@
 package meldexun.renderlib.asm;
 
-import java.lang.reflect.Field;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -11,8 +20,11 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
+import LZMA.LzmaInputStream;
 import meldexun.asmutil2.ASMUtil;
 import meldexun.asmutil2.HashMapClassNodeClassTransformer;
 import meldexun.asmutil2.IClassTransformerRegistry;
@@ -23,21 +35,25 @@ import meldexun.renderlib.asm.caching.renderer.CachedRendererPatches;
 import meldexun.renderlib.asm.cbmultipart.CBMultipartPatches;
 import meldexun.renderlib.asm.pokecube.PokecubePatches;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import net.minecraft.launchwrapper.Launch;
 
 public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer implements IClassTransformer {
 
-	private static final ClassUtil.Configuration REMAPPING_CONFIGURATION;
+	private static final ClassUtil REMAPPING_CLASS_UTIL;
 	static {
-		try {
-			Field f = FMLDeobfuscatingRemapper.class.getDeclaredField("classNameBiMap");
-			f.setAccessible(true);
-			@SuppressWarnings("unchecked")
-			BiMap<String, String> classNameBiMap = (BiMap<String, String>) f.get(FMLDeobfuscatingRemapper.INSTANCE);
-			REMAPPING_CONFIGURATION = new ClassUtil.Configuration(RenderLibClassTransformer.class.getClassLoader(), classNameBiMap.inverse(), classNameBiMap);
-		} catch (ReflectiveOperationException e) {
-			throw new UnsupportedOperationException(e);
-		}
+		@SuppressWarnings("unchecked")
+		BiMap<String, String> deobfuscationMap = (BiMap<String, String>) Launch.blackboard.computeIfAbsent("ASMUtil_deobfuscationMap", k -> {
+			String gradleStartProp = System.getProperty("net.minecraftforge.gradle.GradleStart.srg.srg-mcp");
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(Strings.isNullOrEmpty(gradleStartProp) ? new LzmaInputStream(Launch.classLoader.getResourceAsStream("deobfuscation_data-1.12.2.lzma")) : Files.newInputStream(Paths.get(gradleStartProp)), StandardCharsets.UTF_8))) {
+				return reader.lines()
+						.map(Pattern.compile(" *CL: +([^ ]*) +([^ ]*).*")::matcher)
+						.filter(Matcher::matches)
+						.collect(HashBiMap::create, (map, matcher) -> map.put(matcher.group(1), matcher.group(2)), Map::putAll);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		});
+		REMAPPING_CLASS_UTIL = ClassUtil.getInstance(new ClassUtil.Configuration(Launch.classLoader, deobfuscationMap.inverse(), deobfuscationMap));
 	}
 
 	public static final boolean OPTIFINE_DETECTED;
@@ -101,12 +117,7 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 
 	@Override
 	protected ClassWriter createClassWriter(int flags) {
-		return new NonLoadingClassWriter(flags) {
-			@Override
-			protected ClassUtil.Configuration getClassUtilConfiguration() {
-				return REMAPPING_CONFIGURATION;
-			}
-		};
+		return new NonLoadingClassWriter(flags, REMAPPING_CLASS_UTIL);
 	}
 
 }
