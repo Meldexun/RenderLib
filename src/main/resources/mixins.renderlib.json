@@ -13,6 +13,7 @@
     "caching.loadable.MixinEntity",
     "caching.loadable.MixinTileEntity",
     "caching.loadable.MixinWorld",
+    "caching.renderer.MixinAbstractClientPlayer",
     "caching.renderer.MixinEntity",
     "caching.renderer.MixinRenderManager",
     "caching.renderer.MixinTileEntity",
