@@ -1,6 +1,5 @@
 package meldexun.renderlib.mixin;
 
-import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import meldexun.renderlib.config.RenderLibConfig;
 import meldexun.renderlib.util.RenderUtil;
+import meldexun.renderlib.util.SmoothSync;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.GameSettings;
@@ -55,9 +55,9 @@ public class MixinMinecraft {
 			} else {
 				fps = RenderLibConfig.mainMenuFPS;
 			}
-			Display.sync(fps);
+			SmoothSync.sync(fps);
 		} else if (gameSettings.limitFramerate < GameSettings.Options.FRAMERATE_LIMIT.getValueMax()) {
-			Display.sync(gameSettings.limitFramerate);
+			SmoothSync.sync(gameSettings.limitFramerate);
 		}
 	}
 
