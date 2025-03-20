@@ -1,15 +1,9 @@
 package meldexun.renderlib.asm;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -20,11 +14,8 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
-import LZMA.LzmaInputStream;
 import meldexun.asmutil2.ASMUtil;
 import meldexun.asmutil2.HashMapClassNodeClassTransformer;
 import meldexun.asmutil2.IClassTransformerRegistry;
@@ -35,24 +26,36 @@ import meldexun.renderlib.asm.cbmultipart.CBMultipartPatches;
 import meldexun.renderlib.asm.pokecube.PokecubePatches;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.fml.common.asm.FMLSanityChecker;
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import net.minecraftforge.fml.relauncher.FMLInjectionData;
 
 public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer implements IClassTransformer {
 
 	private static final ClassUtil REMAPPING_CLASS_UTIL;
 	static {
-		@SuppressWarnings("unchecked")
-		BiMap<String, String> deobfuscationMap = (BiMap<String, String>) Launch.blackboard.computeIfAbsent("ASMUtil_deobfuscationMap", k -> {
-			String gradleStartProp = System.getProperty("net.minecraftforge.gradle.GradleStart.srg.srg-mcp");
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(Strings.isNullOrEmpty(gradleStartProp) ? new LzmaInputStream(Launch.classLoader.getResourceAsStream("deobfuscation_data-1.12.2.lzma")) : Files.newInputStream(Paths.get(gradleStartProp)), StandardCharsets.UTF_8))) {
-				return reader.lines()
-						.map(Pattern.compile(" *CL: +([^ ]*) +([^ ]*).*")::matcher)
-						.filter(Matcher::matches)
-						.collect(HashBiMap::create, (map, matcher) -> map.put(matcher.group(1), matcher.group(2)), Map::putAll);
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
+		try {
+			Field _classLoader = FMLDeobfuscatingRemapper.class.getDeclaredField("classLoader");
+			_classLoader.setAccessible(true);
+			if (_classLoader.get(FMLDeobfuscatingRemapper.INSTANCE) == null) {
+				Method _debfuscationDataName = FMLInjectionData.class.getDeclaredMethod("debfuscationDataName");
+				_debfuscationDataName.setAccessible(true);
+				Map<String, Object> callData = new HashMap<String, Object>();
+				callData.put("runtimeDeobfuscationEnabled", false);
+				callData.put("mcLocation", Launch.minecraftHome);
+				callData.put("classLoader", Launch.classLoader);
+				callData.put("deobfuscationFileName", _debfuscationDataName.invoke(null));
+				new FMLSanityChecker().injectData(callData);
 			}
-		});
-		REMAPPING_CLASS_UTIL = ClassUtil.getInstance(new ClassUtil.Configuration(Launch.classLoader, deobfuscationMap.inverse(), deobfuscationMap));
+
+			Field _classNameBiMap = FMLDeobfuscatingRemapper.class.getDeclaredField("classNameBiMap");
+			_classNameBiMap.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			BiMap<String, String> deobfuscationMap = (BiMap<String, String>) _classNameBiMap.get(FMLDeobfuscatingRemapper.INSTANCE);
+			REMAPPING_CLASS_UTIL = ClassUtil.getInstance(new ClassUtil.Configuration(Launch.classLoader, deobfuscationMap.inverse(), deobfuscationMap));
+		} catch (ReflectiveOperationException e) {
+			throw new UnsupportedOperationException(e);
+		}
 	}
 
 	public static final boolean OPTIFINE_DETECTED;
