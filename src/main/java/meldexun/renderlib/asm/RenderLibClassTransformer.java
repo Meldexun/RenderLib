@@ -1,9 +1,6 @@
 package meldexun.renderlib.asm;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -26,32 +23,18 @@ import meldexun.renderlib.asm.cbmultipart.CBMultipartPatches;
 import meldexun.renderlib.asm.pokecube.PokecubePatches;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraftforge.fml.common.asm.FMLSanityChecker;
-import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
-import net.minecraftforge.fml.relauncher.FMLInjectionData;
 
 public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer implements IClassTransformer {
 
 	private static final ClassUtil REMAPPING_CLASS_UTIL;
 	static {
 		try {
-			Field _classLoader = FMLDeobfuscatingRemapper.class.getDeclaredField("classLoader");
-			_classLoader.setAccessible(true);
-			if (_classLoader.get(FMLDeobfuscatingRemapper.INSTANCE) == null) {
-				Method _debfuscationDataName = FMLInjectionData.class.getDeclaredMethod("debfuscationDataName");
-				_debfuscationDataName.setAccessible(true);
-				Map<String, Object> callData = new HashMap<String, Object>();
-				callData.put("runtimeDeobfuscationEnabled", false);
-				callData.put("mcLocation", Launch.minecraftHome);
-				callData.put("classLoader", Launch.classLoader);
-				callData.put("deobfuscationFileName", _debfuscationDataName.invoke(null));
-				new FMLSanityChecker().injectData(callData);
-			}
-
-			Field _classNameBiMap = FMLDeobfuscatingRemapper.class.getDeclaredField("classNameBiMap");
+			Class<?> FMLDeobfuscatingRemapper = Class.forName("net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper", true, Launch.classLoader);
+			Field _INSTANCE = FMLDeobfuscatingRemapper.getField("INSTANCE");
+			Field _classNameBiMap = FMLDeobfuscatingRemapper.getDeclaredField("classNameBiMap");
 			_classNameBiMap.setAccessible(true);
 			@SuppressWarnings("unchecked")
-			BiMap<String, String> deobfuscationMap = (BiMap<String, String>) _classNameBiMap.get(FMLDeobfuscatingRemapper.INSTANCE);
+			BiMap<String, String> deobfuscationMap = (BiMap<String, String>) _classNameBiMap.get(_INSTANCE.get(null));
 			REMAPPING_CLASS_UTIL = ClassUtil.getInstance(new ClassUtil.Configuration(Launch.classLoader, deobfuscationMap.inverse(), deobfuscationMap));
 		} catch (ReflectiveOperationException e) {
 			throw new UnsupportedOperationException(e);
