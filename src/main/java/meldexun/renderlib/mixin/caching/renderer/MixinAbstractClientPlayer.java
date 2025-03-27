@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import meldexun.renderlib.api.IEntityRendererCache;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -14,7 +15,7 @@ import net.minecraft.entity.Entity;
 public abstract class MixinAbstractClientPlayer implements IEntityRendererCache {
 
 	@Unique
-	private Render<AbstractClientPlayer> renderer;
+	private Render<AbstractClientPlayer> renderer = Minecraft.getMinecraft().getRenderManager().playerRenderer;
 	@Unique
 	private String prevSkinType;
 
@@ -23,11 +24,10 @@ public abstract class MixinAbstractClientPlayer implements IEntityRendererCache 
 	@Override
 	@Nullable
 	public <T extends Entity> Render<T> getRenderer() {
-		String skinType = ((AbstractClientPlayer) (Object) this).playerInfo != null && ((AbstractClientPlayer) (Object) this).playerInfo.skinType != null
-				? ((AbstractClientPlayer) (Object) this).playerInfo.skinType
-				: "default";
-		if (!skinType.equals(prevSkinType)) {
-			prevSkinType = skinType;
+		if (((AbstractClientPlayer) (Object) this).playerInfo != null
+				&& ((AbstractClientPlayer) (Object) this).playerInfo.skinType != null
+				&& !((AbstractClientPlayer) (Object) this).playerInfo.skinType.equals(prevSkinType)) {
+			prevSkinType = ((AbstractClientPlayer) (Object) this).playerInfo.skinType;
 			renderer = loadRenderer((AbstractClientPlayer) (Object) this);
 		}
 		return (Render<T>) renderer;
