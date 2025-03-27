@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import meldexun.renderlib.api.IEntityRendererCache;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 
@@ -24,11 +23,7 @@ public class MixinEntity implements IEntityRendererCache {
 	@Nullable
 	public <T extends Entity> Render<T> getRenderer() {
 		if (!rendererInitialized) {
-			if (!((Entity) (Object) this instanceof AbstractClientPlayer)
-					|| (((AbstractClientPlayer) (Entity) (Object) this).playerInfo != null
-					&& ((AbstractClientPlayer) (Entity) (Object) this).playerInfo.skinType != null)) {
-				rendererInitialized = true;
-			}
+			rendererInitialized = true;
 			renderer = loadRenderer((Entity) (Object) this);
 		}
 		return (Render<T>) renderer;
