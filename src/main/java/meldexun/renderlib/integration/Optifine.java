@@ -1,8 +1,12 @@
 package meldexun.renderlib.integration;
 
+import java.nio.FloatBuffer;
+
+import meldexun.matrixutil.Matrix4f;
 import meldexun.reflectionutil.ReflectionField;
 import meldexun.reflectionutil.ReflectionMethod;
 import meldexun.renderlib.asm.RenderLibClassTransformer;
+import meldexun.renderlib.util.Vec3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.entity.Entity;
@@ -12,6 +16,9 @@ public class Optifine {
 
 	private static final ReflectionMethod<Boolean> IS_SHADERS = new ReflectionMethod<>("Config", "isShaders", "isShaders");
 	private static final ReflectionField<Boolean> IS_SHADOW_PASS = new ReflectionField<>("net.optifine.shaders.Shaders", "isShadowPass", "isShadowPass");
+	private static final ReflectionField<FloatBuffer> PROJECTION = new ReflectionField<>("net.optifine.shaders.Shaders", "projection", "projection");
+	private static final ReflectionField<FloatBuffer> MODEL_VIEW = new ReflectionField<>("net.optifine.shaders.Shaders", "modelView", "modelView");
+	private static final ReflectionField<float[]> SHADOW_LIGHT_POSITION_VECTOR = new ReflectionField<>("net.optifine.shaders.Shaders", "shadowLightPositionVector", "shadowLightPositionVector");
 	private static final ReflectionMethod<Void> NEXT_ENTITY = new ReflectionMethod<>("net.optifine.shaders.Shaders", "nextEntity", "nextEntity", Entity.class);
 	private static final ReflectionField<Entity> RENDERED_ENTITY = new ReflectionField<>(RenderGlobal.class, "renderedEntity", "renderedEntity");
 	private static final ReflectionMethod<Boolean> IS_FAST_RENDER = new ReflectionMethod<>("Config", "isFastRender", "isFastRender");
@@ -30,6 +37,22 @@ public class Optifine {
 
 	public static boolean isShadowPass() {
 		return IS_SHADOW_PASS.getBoolean(null);
+	}
+
+	public static Matrix4f getProjectionMatrix() {
+		Matrix4f m = new Matrix4f();
+		m.load(PROJECTION.get(null));
+		return m;
+	}
+
+	public static Matrix4f getModelViewMatrix() {
+		Matrix4f m = new Matrix4f();
+		m.load(MODEL_VIEW.get(null));
+		return m;
+	}
+
+	public static Vec3 getShadowLightPositionVector() {
+		return new Vec3(SHADOW_LIGHT_POSITION_VECTOR.get(null));
 	}
 
 	public static void nextEntity(Entity entity) {

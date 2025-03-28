@@ -1,29 +1,27 @@
 package meldexun.renderlib.util;
 
-public class Vec4 {
+public class Vec3 {
 
 	public final float x;
 	public final float y;
 	public final float z;
-	public final float w;
 
-	public Vec4(float x, float y, float z, float w) {
+	public Vec3(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.w = w;
 	}
 
-	public Vec4(Vec3 xyz, float w) {
-		this(xyz.x, xyz.y, xyz.z, w);
+	public Vec3(float[] data) {
+		this(data[0], data[1], data[2]);
 	}
 
-	public Vec4 add(Vec4 other) {
-		return new Vec4(x + other.x, y + other.y, z + other.z, w + other.w);
+	public Vec3 add(Vec3 other) {
+		return new Vec3(x + other.x, y + other.y, z + other.z);
 	}
 
-	public Vec4 mult(float f) {
-		return new Vec4(x * f, y * f, z * f, w * f);
+	public Vec3 mult(float f) {
+		return new Vec3(x * f, y * f, z * f);
 	}
 
 	public Vec3 cross(Vec3 other) {
@@ -38,11 +36,7 @@ public class Vec4 {
 		return x * other.x + y * other.y + z * other.z;
 	}
 
-	public float dot(Vec4 other) {
-		return x * other.x + y * other.y + z * other.z + w * other.w;
-	}
-
-	public Vec4 normalize() {
+	public Vec3 normalize() {
 		return mult(1.0F / length());
 	}
 
@@ -51,7 +45,7 @@ public class Vec4 {
 	}
 
 	public float lengthSqr() {
-		return x * x + y * y + z * z + w * w;
+		return x * x + y * y + z * z;
 	}
 
 }
