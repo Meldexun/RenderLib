@@ -18,7 +18,7 @@ public class RenderLibTweaker implements ITweaker {
 		try {
 			Class.forName("com.cleanroommc.common.CleanroomVersion");
 			classLoader.registerTransformer(AsyncKeyboardTransformer.class.getName());
-		} catch (Exception e) {
+		} catch (ClassNotFoundException e) {
 			// ignore
 		}
 		classLoader.registerTransformer(RenderLibClassTransformer.class.getName());
