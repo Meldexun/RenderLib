@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -93,6 +94,14 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 			));
 		});
 
+		registry.add("net.minecraft.server.MinecraftServer", 0, classNode -> {
+			for (FieldNode fieldNode : classNode.fields) {
+				if (fieldNode.name.equals("field_71298_S") || fieldNode.name.equals("userMessage")) {
+					fieldNode.access |= Opcodes.ACC_VOLATILE;
+					break;
+				}
+			}
+		});
 		registry.addObf("net.minecraft.server.MinecraftServer", "setUserMessage", "func_71192_d", "(Ljava/lang/String;)V", 0, methodNode -> {
 			methodNode.access &= ~Opcodes.ACC_SYNCHRONIZED;
 		});
