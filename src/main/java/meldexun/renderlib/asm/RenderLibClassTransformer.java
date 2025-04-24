@@ -101,12 +101,8 @@ public class RenderLibClassTransformer extends HashMapClassNodeClassTransformer 
 					break;
 				}
 			}
-		});
-		registry.addObf("net.minecraft.server.MinecraftServer", "setUserMessage", "func_71192_d", "(Ljava/lang/String;)V", 0, methodNode -> {
-			methodNode.access &= ~Opcodes.ACC_SYNCHRONIZED;
-		});
-		registry.addObf("net.minecraft.server.MinecraftServer", "getUserMessage", "func_71195_b_", "()Ljava/lang/String;", 0, methodNode -> {
-			methodNode.access &= ~Opcodes.ACC_SYNCHRONIZED;
+			ASMUtil.findObf(classNode, "setUserMessage", "func_71192_d").access &= ~Opcodes.ACC_SYNCHRONIZED;
+			ASMUtil.findObf(classNode, "getUserMessage", "func_71195_b_").access &= ~Opcodes.ACC_SYNCHRONIZED;
 		});
 		// @formatter:on
 
